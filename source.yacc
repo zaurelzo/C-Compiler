@@ -21,9 +21,11 @@
 
 %token tPRINT tMAIN  tCONST  tINT  tPO  tPF  tAO tAF  tMUL tDIV tEGAL tADD tSUB tVIR tPOINTVIR tNOMBREEXPO tERREUR tIF tELSE tOR tAND tWHILE
 
-%left tADD tSUB
-%left tDIV tMUL
+%left tADD tSUB tOR 
+%left tDIV tMUL tAND
 %left NEG
+
+
 
 
 %token <integer> tNOMBREDEC
@@ -32,13 +34,17 @@
 %token <comparateur> tINF
 %token <comparateur> tSUP
 %type <integer> Expression
+%type <integer> AppelFonctions
 %type <comparateur> Comparateur
 %type <integer> Cond 
 
 %start Input
 %%
  
-Input: Main;
+Input: Main
+			|Declaration Input
+			|ImplementationFonction Input
+			|Prototype Input; 
 
 
 
@@ -99,6 +105,7 @@ Body : tAO SuiteBody tAF {
 			
 SuiteBody :  Declaration SuiteBody
 			|Affectation  SuiteBody
+			|AppelFonctions SuiteBody
 			|Print SuiteBody 
 			|If SuiteBody
 			|While SuiteBody
@@ -153,6 +160,8 @@ Expression : tNOMBREDEC {
 						$$= addr;
 					} 
 				}
+				
+	|AppelFonctions
 				
   | Expression tADD Expression {
 																			int typeOp1,typeOp2; 
@@ -466,6 +475,27 @@ Cond: Expression Comparateur Expression {
 Comparateur:tEGALCOMP {strcpy($$,$1);}
 						|tSUP {strcpy($$,$1);}
 						|tINF {strcpy($$,$1);};
+						
+
+						
+Prototype : tINT tID tPO Params tPF tPOINTVIR;
+
+ImplementationFonction : tINT tID tPO Params tPF Body ;
+
+
+Params : tINT tID SuiteParams
+				|;
+				
+SuiteParams : tVIR tINT tID SuiteParams
+						|;
+						
+AppelFonctions : tID tPO ParamAppel tPF tPOINTVIR{$$=4;};
+
+ParamAppel : Expression SuiteParamAppel
+					|;
+
+SuiteParamAppel : tVIR Expression SuiteParamAppel
+						|;
 			
 %%
 
