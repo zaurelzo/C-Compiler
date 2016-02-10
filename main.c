@@ -4,7 +4,9 @@
 int main()
 {
 
-
+	 //empiler(77);
+	 //printTab(); 
 
 return 0 ; 
 }
+ 

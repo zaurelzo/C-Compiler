@@ -44,7 +44,7 @@ int recherche(char * nom_var )
 	return -1 ; 
 
 }
-
+ 
 void printTabVar()
 {
 	
@@ -65,7 +65,10 @@ int  empiler(int value )
 
 	return indPile+1 ; 
 } 
-void depiler()
+
+
+int depiler()
 {
-	indPile++; 	
+	indPile++;
+	return atoi(Array[indPile-1].nom_var); 	
 } 

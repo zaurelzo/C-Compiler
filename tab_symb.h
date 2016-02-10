@@ -42,9 +42,11 @@ La base de la pile en la fin de la table des symbol
 @retour : l'@ ou on a empilé */ 
 
 int empiler(int value ); 
-void depiler(); 
+
+/*@retour : valeur depile */
+int depiler(); 
 
 void printTabVar(); 
 
-
+ 
 #endif

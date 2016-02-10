@@ -20,6 +20,11 @@
 
 %token tPRINT tMAIN  tCONST  tINT  tPO  tPF  tAO tAF  tMUL tDIV tEGAL tADD tSUB tVIR tPOINTVIR tNOMBREEXPO tERREUR
 
+%left tADD tSUB
+%left tDIV tMUL
+%left NEG
+
+
 %token <integer> tNOMBREDEC
 %token <string> tID 
 
@@ -48,8 +53,9 @@ Declaration : tINT tID {
 														{
 															printf( "AFC @%d %d \n",recherche($3), yylval.integer);
 														}
-													} ; 
-
+													} 
+													
+		|tCONST tINT tID tEGAL Expression tPOINTVIR ; //ICI
 
 
 SuiteDeclarations :  tPOINTVIR
@@ -92,7 +98,7 @@ Print : tPRINT tPO Valeur tPF tPOINTVIR {
 															int adresse =empiler(yylval.integer);
 															printf("AFC @%d %d\n",adresse, yylval.integer);
 															printf("PRI @%d\n",adresse);
-															depiler();//on depile la valeur
+															depiler();//on depile la valeur 
 															
 																			}
 																			
@@ -107,6 +113,15 @@ Print : tPRINT tPO Valeur tPF tPOINTVIR {
 												printf("PRI @%d\n", var);
 											}
 									} ; 
+									
+									
+Expression : tNOMBREDEC { /*$$ = $1;*/ }
+  | Expression tADD Expression { /*$$ = $1 + $3; */}
+  | Expression tSUB Expression { /*$$ = $1 - $3; */}
+  | Expression tMUL Expression { /*$$ = $1 * $3; */}
+  | Expression tDIV Expression { /* $$ = $1 / $3;*/ }
+  | tSUB Expression %prec NEG  {/* $$ = -$2; */}
+  | tPO Expression tPF   { /* $$ = $2; */ } ; 
 			
 %%
 
