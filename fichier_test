@@ -1,0 +1,9 @@
+ main()
+{
+
+int var1 , op ,mll;
+const int  a = 7 ;
+var1 = 55;
+print(var1) ;
+print(vg); 
+}

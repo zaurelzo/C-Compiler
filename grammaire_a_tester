@@ -1,0 +1,26 @@
+Input: Main
+			|Declaration Main;
+			
+Declaration : tINT tID SuiteDeclarations  ;
+
+SuiteDeclarations :  tPOINTVIR
+									| tVIR tID SuiteDeclarations ;
+									
+
+							
+Main: tMAIN tPO  tPF Body ;
+
+Body : tAO SuiteBody tAF ;
+			
+SuiteBody :  Declaration SuiteBody
+						|Affectation  SuiteBody
+						|Print SuiteBody 
+						|;
+			
+Affectation : tID tEGAL Valeur tPOINTVIR ;
+
+Valeur = tNOMBREEXPO
+					|tNOMBREDEC ;
+
+Print : tPRINT tPO Valeur tPF tPOINTVIR
+				|  tPRINT tPO tID tPF tPOINTVIR ; 
