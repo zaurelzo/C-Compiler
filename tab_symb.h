@@ -11,9 +11,11 @@
 
 #define TAILLE_TAB_SYMBOL 1000
 
-#define ADRESSE_TEMPORAIRE TAILLE_TAB_SYMBOL-1
+#define ADRESSE_DEBUTPILE TAILLE_TAB_SYMBOL-1
 
 extern int ind ; 
+
+extern int indPile;
 
 struct Noeud {
 	char nom_var[TAILLE];
@@ -33,9 +35,16 @@ constante = 0 pas constante , 1 si contante
 @retour : 0 si ok , -1 si probleme */ 
 int ajouter_Var(char *nom_var,int type ,int initialiser ,int constante ) ;
 
-int recherche(char * nom_var ) ;
+int recherche(char * nom_var ) ; 
 
-void printTab(); 
+/*lorsque l'on empile , la valeur est convertit en string , et stocké dans le champ nom_var
+La base de la pile en la fin de la table des symbol
+@retour : l'@ ou on a empilé */ 
+
+int empiler(int value ); 
+void depiler(); 
+
+void printTabVar(); 
 
 
 #endif

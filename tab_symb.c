@@ -4,7 +4,9 @@
 #include "tab_symb.h"
 
 
- int ind=0;
+ int ind=0; 
+
+ int indPile=ADRESSE_DEBUTPILE;
 
 int  ajouter_Var(char *nom_var,int type ,int initialiser ,int constante ) 
 {
@@ -43,7 +45,7 @@ int recherche(char * nom_var )
 
 }
 
-void printTab()
+void printTabVar()
 {
 	
 	int i =0 ;
@@ -53,3 +55,17 @@ void printTab()
 		printf("%s \n", Array[i].nom_var );
 	}
 }
+
+int  empiler(int value )
+{
+	char buf[32];
+	sprintf(buf,"%d",value);
+	strcpy(Array[indPile].nom_var,buf);
+	indPile--;  
+
+	return indPile+1 ; 
+} 
+void depiler()
+{
+	indPile++; 	
+} 

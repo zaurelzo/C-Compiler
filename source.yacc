@@ -36,7 +36,7 @@ Declaration : tINT tID {
 								yyerror("ERROR ") ;
 							} else
 							{	
-								//printTab();
+								//printTabVar();
 							} 
 						}  SuiteDeclarations  
 
@@ -59,7 +59,7 @@ SuiteDeclarations :  tPOINTVIR
 												yyerror("ERROR ") ;
 											} else
 											{	
-												//printTab();
+												//printTabVar();
 											} 
 										};
 									
@@ -88,9 +88,15 @@ Valeur : tNOMBREEXPO
 		|tNOMBREDEC ;
 
 Print : tPRINT tPO Valeur tPF tPOINTVIR {
-											printf("AFC @%d %d\n",ADRESSE_TEMPORAIRE, yylval.integer);
-											printf("PRI @%d\n",ADRESSE_TEMPORAIRE);
-										}
+															//on empile la valeur à afficher
+															int adresse =empiler(yylval.integer);
+															printf("AFC @%d %d\n",adresse, yylval.integer);
+															printf("PRI @%d\n",adresse);
+															depiler();//on depile la valeur
+															
+																			}
+																			
+																			
 		|  tPRINT tPO tID tPF tPOINTVIR {int var ;
 											if ((  var =recherche($3))==-1)
 											{
