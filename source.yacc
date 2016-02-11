@@ -57,7 +57,7 @@ Declaration : tINT tID {
 														}
 													} 
 													
-		|tCONST tINT tID tEGAL Expression tPOINTVIR ; //ICI
+		|tCONST tINT tID tEGAL Expression tPOINTVIR ; //pas complet
 
 
 SuiteDeclarations :  tPOINTVIR
@@ -127,24 +127,66 @@ Expression : tNOMBREDEC { $$=$1;
 													printf("AFC @%d %d\n",adresse, yylval.integer); */
 												}
   | Expression tADD Expression { 
-  															/*int adr1 = empiler($1);
+  															int adr1 = empiler($1);
   															printf("AFC @%d %d\n",adr1,$1);
   															int adr2= empiler($3); 
-  															printf("AFC @%d %d\n",adr2,$3);*/
-  															//$$=$1+$3;
-  														/*	depile();depile();
+  															printf("AFC @%d %d\n",adr2,$3);
+  															$$=$1+$3;
+  															depiler();depiler();
   															int adrResult = empiler($$);
-  															printf("ADD @%d @%d @%d",adrResult,adr1,adr2);*/
+  															printf("ADD @%d @%d @%d\n",adrResult,adr1,adr2);
   															
   															}
  
  
  
-  | Expression tSUB Expression { /*$$ = $1 - $3; */}
-  | Expression tMUL Expression { /*$$ = $1 * $3; */}
-  | Expression tDIV Expression { /* $$ = $1 / $3;*/ }
-  | tSUB Expression %prec NEG  {/* $$ = -$2; */}
-  | tPO Expression tPF   { /* $$ = $2; */ } ; 
+  | Expression tSUB Expression { 
+  															int adr1 = empiler($1);
+  															printf("AFC @%d %d\n",adr1,$1);
+  															int adr2= empiler($3); 
+  															printf("AFC @%d %d\n",adr2,$3);
+  															$$=$1-$3;
+  															depiler();depiler();
+  															int adrResult = empiler($$);
+  															printf("ADD @%d @%d @%d\n",adrResult,adr1,adr2);
+  															
+  															}
+  
+  
+  | Expression tMUL Expression { 
+  															int adr1 = empiler($1);
+  															printf("AFC @%d %d\n",adr1,$1);
+  															int adr2= empiler($3); 
+  															printf("AFC @%d %d\n",adr2,$3);
+  															$$=$1*$3;
+  															depiler();depiler();
+  															int adrResult = empiler($$);
+  															printf("ADD @%d @%d @%d\n",adrResult,adr1,adr2);
+  															
+  															}
+  															
+  															
+  | Expression tDIV Expression { 
+  															int adr1 = empiler($1);
+  															printf("AFC @%d %d\n",adr1,$1);
+  															int adr2= empiler($3); 
+  															printf("AFC @%d %d\n",adr2,$3);
+  															$$=$1/$3;
+  															depiler();depiler();
+  															int adrResult = empiler($$);
+  															printf("ADD @%d @%d @%d\n",adrResult,adr1,adr2);
+  															
+  															}
+  
+  
+  | tSUB Expression %prec NEG  { //pas complet 
+  															$$=-$2;
+  															int adr1 = empiler($$);
+  															printf("AFC @%d %d\n",adr1,$$);
+  															depiler();
+  															}
+  | tPO Expression tPF   {//pas complet 
+  												/* $$ = $2; */ } ; 
 			
 %%
 
