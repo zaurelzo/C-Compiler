@@ -28,6 +28,8 @@
 %token <integer> tNOMBREDEC
 %token <string> tID 
 
+%type <integer> Expression
+
 %start Input
 %%
  
@@ -89,15 +91,20 @@ Affectation : tID tEGAL Valeur tPOINTVIR { int var ;
 												printf( "AFC @%d %d \n",var, yylval.integer);												
 											}
 										};
+										
+										
 
 Valeur : tNOMBREEXPO
 		|tNOMBREDEC ;
+		
+		
 
 Print : tPRINT tPO Valeur tPF tPOINTVIR {
 															//on empile la valeur à afficher
 															int adresse =empiler(yylval.integer);
 															printf("AFC @%d %d\n",adresse, yylval.integer);
 															printf("PRI @%d\n",adresse);
+															
 															depiler();//on depile la valeur 
 															
 																			}
@@ -115,8 +122,24 @@ Print : tPRINT tPO Valeur tPF tPOINTVIR {
 									} ; 
 									
 									
-Expression : tNOMBREDEC { /*$$ = $1;*/ }
-  | Expression tADD Expression { /*$$ = $1 + $3; */}
+Expression : tNOMBREDEC { $$=$1;
+													/*int adresse =empiler(yylval.integer);
+													printf("AFC @%d %d\n",adresse, yylval.integer); */
+												}
+  | Expression tADD Expression { 
+  															/*int adr1 = empiler($1);
+  															printf("AFC @%d %d\n",adr1,$1);
+  															int adr2= empiler($3); 
+  															printf("AFC @%d %d\n",adr2,$3);*/
+  															//$$=$1+$3;
+  														/*	depile();depile();
+  															int adrResult = empiler($$);
+  															printf("ADD @%d @%d @%d",adrResult,adr1,adr2);*/
+  															
+  															}
+ 
+ 
+ 
   | Expression tSUB Expression { /*$$ = $1 - $3; */}
   | Expression tMUL Expression { /*$$ = $1 * $3; */}
   | Expression tDIV Expression { /* $$ = $1 / $3;*/ }

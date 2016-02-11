@@ -69,6 +69,34 @@ int  empiler(int value )
 
 int depiler()
 {
+	 //* adresse = indPile; 
 	indPile++;
 	return atoi(Array[indPile-1].nom_var); 	
 } 
+
+
+
+/*int empiler_avec_calcul(int op1 , int op2, char * nom_operation)
+{
+	char buf[32]; 
+	int result;
+	if(strcmp("add",nom_operation)==0)
+	{
+		result = op1+op2;
+	} else if(strcmp("sub",nom_operation)==0)
+	{
+		result = op1-op2;
+	}else 	if(strcmp("div",nom_operation)==0)
+	{
+		result = op1/op2;
+	}else if 	(strcmp("mul",nom_operation)==0)
+	{
+		result = op1*op2;
+	}
+	
+		sprintf(buf,"%d",result);
+	strcpy(Array[indPile].nom_var,buf);
+	indPile--; 
+	return  indPile+1 ; 
+	
+}*/

@@ -35,6 +35,7 @@ constante = 0 pas constante , 1 si contante
 @retour : 0 si ok , -1 si probleme */ 
 int ajouter_Var(char *nom_var,int type ,int initialiser ,int constante ) ;
 
+
 int recherche(char * nom_var ) ; 
 
 /*lorsque l'on empile , la valeur est convertit en string , et stocké dans le champ nom_var
@@ -43,10 +44,18 @@ La base de la pile en la fin de la table des symbol
 
 int empiler(int value ); 
 
-/*@retour : valeur depile */
+
+/*par1: adreese de la valeur depilée 
+@retour : valeur depile */
 int depiler(); 
 
+
 void printTabVar(); 
+
+
+/*permet d'empiler le resultat d'une opération entre deux operation directement
+@retour : adresse ou l'on a empilé*/
+int  empiler_avec_calcul(int op1 , int op2, char * nom_operation);
 
  
 #endif
