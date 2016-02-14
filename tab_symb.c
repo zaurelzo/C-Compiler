@@ -70,39 +70,44 @@ int  empiler(int value ,int type )
 int depiler(int *  type_val_depile )
 {
 	 //* adresse = indPile; 
-	if(indPile<ADRESSE_DEBUTPILE) 
+	if(indPile<=ADRESSE_DEBUTPILE) 
 	{
 			indPile++;
-			*type_val_depile= Array[indPile-1].type; 
+			*type_val_depile= Array[indPile].type; 
+			//printf("adr ou l'on cherche type:%d\n",indPile);
 	return atoi(Array[indPile-1].nom_var);
 	}
 	
 	return -1 ; 	
 } 
 
-
-
-/*int empiler_avec_calcul(int op1 , int op2, char * nom_operation)
+int obtenirAdressePremierOperande()
 {
-	char buf[32]; 
-	int result;
-	if(strcmp("add",nom_operation)==0)
-	{
-		result = op1+op2;
-	} else if(strcmp("sub",nom_operation)==0)
-	{
-		result = op1-op2;
-	}else 	if(strcmp("div",nom_operation)==0)
-	{
-		result = op1/op2;
-	}else if 	(strcmp("mul",nom_operation)==0)
-	{
-		result = op1*op2;
-	}
+	return indPile;
+}
+
+int obtenirAdressDeuxiemeOperande()
+{
+	return indPile-1;
+}
+
+void empilerVide() 
+{
+	indPile--;
+}
+
+
+void modifierChampInitialiserVariable(char * nom_var)
+{
+	int i =0 ;
+
 	
-		sprintf(buf,"%d",result);
-	strcpy(Array[indPile].nom_var,buf);
-	indPile--; 
-	return  indPile+1 ; 
-	
-}*/
+		for (i=0 ; i<ind;i++)
+		{
+			if ( strcmp(Array[i].nom_var,nom_var)==0)
+				Array[i].initialiser=1;
+		}
+}
+
+
+

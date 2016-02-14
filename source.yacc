@@ -53,7 +53,7 @@ Declaration : tINT tID {
 																												yyerror("ERROR ") ;
 																											}else 
 																											{
-																												printf( "AFC @%d %d \n",recherche($3), $5);
+																												printf( "COP @%d @%d \n",recherche($3), $5);
 																											}
 																									} ; 
 										
@@ -86,7 +86,7 @@ Affectation : tID tEGAL  Expression tPOINTVIR {
 																											yyerror("ERROR \n") ;
 																									}else 
 																									{
-																										printf( "AFC @%d %d \n",var, $3);												
+																										printf( "COP @%d @%d \n",var, $3);												
 																									}
 																						} ;
 										
@@ -134,56 +134,185 @@ Expression : tNOMBREDEC {
 				}
 				
   | Expression tADD Expression {
-																	 int typeOp1,typeOp2; 
-																	int valeurOp2 = depiler(&typeOp2);
-																	int valeurOp1= depiler(&typeOp1);
-																	
-																	if (valeurOp2==-1 || valeurOp1==-1 )
-																	{
-																		yyerror("ERREUR LORS DU DÉPILEMENT DES OPÉRANDES  \n") ;
-																	}else 
-																	{
-																				if (typeOp1==1 && typeOp2==1)//si 1er et 2iem opérande est une variable 
-																				{
-																					$$= valeurOp1 ; 
-																					printf("ADD @%d @%d @%d\n",valeurOp1,valeurOp1,valeurOp2);
-																				}else if( typeOp1==1 && typeOp2==0) //si 1er est une var et 2iem est une constante
-																				{
-																					$$= valeurOp1 ; 
-																					int NouvAdrOp2=empiler(valeurOp2,0); // je réempile la valeur que je viens de dépiler
-																					printf("AFC @%d %d\n",NouvAdrOp2,valeurOp2);
-																					printf("ADD @%d @%d @%d\n",valeurOp1,valeurOp1,NouvAdrOp2);
-																			
-																				}else if( typeOp1==0 && typeOp2==1) //si 1er est une constante et 2iem est une var
-																				{
-																					int NouvAdrOp1=empiler(valeurOp1,0); // je réempile la valeur que je viens de dépiler
-																					printf("AFC @%d %d\n",NouvAdrOp1,valeurOp1);
-																					$$=NouvAdrOp1;
-																					printf("ADD @%d @%d @%d\n",NouvAdrOp1,NouvAdrOp1,valeurOp2);
-																			
-																				}else if( typeOp1==0 && typeOp2==0) //si 1er est une constante et 2iem est une constante
-																				{
-																					int NouvAdrOp1=empiler(valeurOp1,0); // je réempile la valeur que je viens de dépiler
-																					printf("AFC @%d %d\n",NouvAdrOp1,valeurOp1);
-																					$$=NouvAdrOp1;
-																					int NouvAdrOp2 = empiler(valeurOp2,0);
-																					printf("AFC @%d %d\n",NouvAdrOp2,valeurOp2);
-																					printf("ADD @%d @%d @%d\n",NouvAdrOp1,NouvAdrOp1,NouvAdrOp2);
-																				}
-  																}
+																			int typeOp1,typeOp2; 
+																			int valeurOp2 = depiler(&typeOp2);
+																			int valeurOp1= depiler(&typeOp1);
+																			//printf("type 1 : %d | type 2 : %d\n",typeOp1,typeOp2);
+																			if (valeurOp2==-1 || valeurOp1==-1 )
+																			{
+																				//printf("ERREUR indicePile :%d\n",indPile );
+																				yyerror("ERREUR LORS DU DÉPILEMENT DES OPÉRANDES \n") ;
+																			}else 
+																			{
+																						if (typeOp1==1 && typeOp2==1)//si 1er et 2iem opérande est une variable 
+																						{
+																						//printf("pff++\n");
+																							$$= valeurOp2 ; 
+																							printf("ADD @%d @%d @%d\n",valeurOp2,valeurOp2,valeurOp1);
+																							empilerVide() ;
+																						}else if( typeOp1==1 && typeOp2==0) //si 1er est une var et 2iem est une constante
+																						{
+																							//printf("pff---\n");
+																							$$= valeurOp2 ; 
+																							int NouvAdrOp2= obtenirAdressePremierOperande();
+
+																							printf("ADD @%d @%d @%d\n",valeurOp2,valeurOp2,NouvAdrOp2);
+																							empilerVide() ;
+																						}else if( typeOp1==0 && typeOp2==1) //si 1er est une constante et 2iem est une var
+																						{
+																							//printf("pff//\n");
+																							int NouvAdrOp1=obtenirAdressePremierOperande(); 
+																							$$=obtenirAdressePremierOperande();
+																							printf("ADD @%d @%d @%d\n",NouvAdrOp1,NouvAdrOp1,valeurOp1);
+																							empilerVide() ;
+																						}else if( typeOp1==0 && typeOp2==0) //si 1er est une constante et 2iem est une constante
+																						{
+																							//printf("pff\n");
+																							int NouvAdrOp1=obtenirAdressePremierOperande(); 	
+																							$$=NouvAdrOp1;
+																							int NouvAdrOp2 = obtenirAdressDeuxiemeOperande();
+																							printf("ADD @%d @%d @%d\n",NouvAdrOp1,NouvAdrOp1,NouvAdrOp2);
+																							empilerVide() ;
+																						}
+																			}
   														}
  
  
  
-  | Expression tSUB Expression { 
-  															
-  															}
+  | Expression tSUB Expression {
+																			int typeOp1,typeOp2; 
+																			int valeurOp2 = depiler(&typeOp2);
+																			int valeurOp1= depiler(&typeOp1);
+																			//printf("type 1 : %d | type 2 : %d\n",typeOp1,typeOp2);
+																			if (valeurOp2==-1 || valeurOp1==-1 )
+																			{
+																				//printf("ERREUR indicePile :%d\n",indPile );
+																				yyerror("ERREUR LORS DU DÉPILEMENT DES OPÉRANDES \n") ;
+																			}else 
+																			{
+																						if (typeOp1==1 && typeOp2==1)//si 1er et 2iem opérande est une variable 
+																						{
+																						//printf("pff++\n");
+																							$$= valeurOp2 ; 
+																							printf("SOU @%d @%d @%d\n",valeurOp2,valeurOp2,valeurOp1);
+																							empilerVide() ;
+																						}else if( typeOp1==1 && typeOp2==0) //si 1er est une var et 2iem est une constante
+																						{
+																							//printf("pff---\n");
+																							$$= valeurOp2 ; 
+																							int NouvAdrOp2= obtenirAdressePremierOperande();
+
+																							printf("SOU @%d @%d @%d\n",valeurOp2,valeurOp2,NouvAdrOp2);
+																							empilerVide() ;
+																						}else if( typeOp1==0 && typeOp2==1) //si 1er est une constante et 2iem est une var
+																						{
+																							//printf("pff//\n");
+																							int NouvAdrOp1=obtenirAdressePremierOperande(); 
+																							$$=obtenirAdressePremierOperande();
+																							printf("SOU @%d @%d @%d\n",NouvAdrOp1,NouvAdrOp1,valeurOp1);
+																							empilerVide() ;
+																						}else if( typeOp1==0 && typeOp2==0) //si 1er est une constante et 2iem est une constante
+																						{
+																							//printf("pff\n");
+																							int NouvAdrOp1=obtenirAdressePremierOperande(); 	
+																							$$=NouvAdrOp1;
+																							int NouvAdrOp2 = obtenirAdressDeuxiemeOperande();
+																							printf("SOU @%d @%d @%d\n",NouvAdrOp1,NouvAdrOp1,NouvAdrOp2);
+																							empilerVide() ;
+																						}
+																			}
+  														}
   
   
-  | Expression tMUL Expression {}
+  | Expression tMUL Expression {
+																			int typeOp1,typeOp2; 
+																			int valeurOp2 = depiler(&typeOp2);
+																			int valeurOp1= depiler(&typeOp1);
+																			//printf("type 1 : %d | type 2 : %d\n",typeOp1,typeOp2);
+																			if (valeurOp2==-1 || valeurOp1==-1 )
+																			{
+																				//printf("ERREUR indicePile :%d\n",indPile );
+																				yyerror("ERREUR LORS DU DÉPILEMENT DES OPÉRANDES \n") ;
+																			}else 
+																			{
+																						if (typeOp1==1 && typeOp2==1)//si 1er et 2iem opérande est une variable 
+																						{
+																						//printf("pff++\n");
+																							$$= valeurOp2 ; 
+																							printf("MUL @%d @%d @%d\n",valeurOp2,valeurOp2,valeurOp1);
+																							empilerVide() ;
+																						}else if( typeOp1==1 && typeOp2==0) //si 1er est une var et 2iem est une constante
+																						{
+																							//printf("pff---\n");
+																							$$= valeurOp2 ; 
+																							int NouvAdrOp2= obtenirAdressDeuxiemeOperande();
+
+																							printf("MUL @%d @%d @%d\n",valeurOp2,valeurOp2,NouvAdrOp2);
+																							empilerVide() ;
+																						}else if( typeOp1==0 && typeOp2==1) //si 1er est une constante et 2iem est une var
+																						{
+																							//printf("pff//\n");
+																							int NouvAdrOp1=obtenirAdressePremierOperande(); 
+																							$$=obtenirAdressePremierOperande();
+																							printf("MUL @%d @%d @%d\n",NouvAdrOp1,NouvAdrOp1,valeurOp1);
+																							empilerVide() ;
+																						}else if( typeOp1==0 && typeOp2==0) //si 1er est une constante et 2iem est une constante
+																						{
+																							//printf("pff\n");
+																							int NouvAdrOp1=obtenirAdressePremierOperande(); 	
+																							$$=NouvAdrOp1;
+																							int NouvAdrOp2 = obtenirAdressDeuxiemeOperande();
+																							printf("MUL @%d @%d @%d\n",NouvAdrOp1,NouvAdrOp1,NouvAdrOp2);
+																							empilerVide() ;
+																						}
+																			}
+  														}
+  
   															
   															
-  | Expression tDIV Expression {  }
+  | Expression tDIV Expression {
+																			int typeOp1,typeOp2; 
+																			int valeurOp2 = depiler(&typeOp2);
+																			int valeurOp1= depiler(&typeOp1);
+																			//printf("type 1 : %d | type 2 : %d\n",typeOp1,typeOp2);
+																			if (valeurOp2==-1 || valeurOp1==-1 )
+																			{
+																				//printf("ERREUR indicePile :%d\n",indPile );
+																				yyerror("ERREUR LORS DU DÉPILEMENT DES OPÉRANDES \n") ;
+																			}else 
+																			{
+																						if (typeOp1==1 && typeOp2==1)//si 1er et 2iem opérande est une variable 
+																						{
+																						//printf("pff++\n");
+																							$$= valeurOp2 ; 
+																							printf("DIV @%d @%d @%d\n",valeurOp2,valeurOp2,valeurOp1);
+																							empilerVide() ;
+																						}else if( typeOp1==1 && typeOp2==0) //si 1er est une var et 2iem est une constante
+																						{
+																							//printf("pff---\n");
+																							$$= valeurOp2 ; 
+																							int NouvAdrOp2= obtenirAdressDeuxiemeOperande();
+
+																							printf("DIV @%d @%d @%d\n",valeurOp2,valeurOp2,NouvAdrOp2);
+																							empilerVide() ;
+																						}else if( typeOp1==0 && typeOp2==1) //si 1er est une constante et 2iem est une var
+																						{
+																							//printf("pff//\n");
+																							int NouvAdrOp1=obtenirAdressePremierOperande(); 
+																							$$=obtenirAdressePremierOperande();
+																							printf("DIV @%d @%d @%d\n",NouvAdrOp1,NouvAdrOp1,valeurOp1);
+																							empilerVide() ;
+																						}else if( typeOp1==0 && typeOp2==0) //si 1er est une constante et 2iem est une constante
+																						{
+																							//printf("pff\n");
+																							int NouvAdrOp1=obtenirAdressePremierOperande(); 	
+																							$$=NouvAdrOp1;
+																							int NouvAdrOp2 = obtenirAdressDeuxiemeOperande();
+																							printf("DIV @%d @%d @%d\n",NouvAdrOp1,NouvAdrOp1,NouvAdrOp2);
+																							empilerVide() ;
+																						}
+																			}
+  														}
   
   
   | tSUB Expression %prec NEG  {	}

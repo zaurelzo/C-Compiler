@@ -60,9 +60,20 @@ int depiler(int *  type_val_depile ) ;
 void printTabVar(); 
 
 
-/*permet d'empiler le resultat d'une opération entre deux operation directement
-@retour : adresse ou l'on a empilé*/
-int  empiler_avec_calcul(int op1 , int op2, char * nom_operation);
+
+int obtenirAdressePremierOperande();
+
+int obtenirAdressDeuxiemeOperande();
+
+/*cette void fonctionne est neccessaire pour le bon maintient de la pile
+: étant donné que lorsque l'on dépile deux arg pour faire une opération arithmétique ,on
+empile aucun résultat (ie on genere juste le code de l'opération , il est nécessaire de similuer l'empiler 
+d'un résultat : sinon on aura des probles de gestions des adresses de la pile )*/
+void empilerVide() ;
+
+/*permet d'indiquer que la var est maintenant initialiser */
+void modifierChampInitialiserVariable(char * nom_var); 
+
 
  
 #endif
