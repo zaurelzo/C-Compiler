@@ -38,38 +38,35 @@ Input: Main;
 
 
 Declaration : tINT tID { 
-							if ( ajouter_Var($2,1,0,0)==-1 )  
-							{
-								yyerror("ERROR ") ;
-							} else
-							{	
-								//printTabVar();
-							} 
-						}  SuiteDeclarations  
+													if ( ajouter_Var($2,1,0,0)==-1 )  
+													{
+														yyerror("ERROR ") ;
+													}/* else
+													{	
+														printTabVar();
+													} */
+												}  SuiteDeclarations  
 
-			|tCONST tINT tID tEGAL Valeur tPOINTVIR { 
-														if (ajouter_Var($3,1,0,1)==-1)
-														{
-															yyerror("ERROR ") ;
-														}else 
-														{
-															printf( "AFC @%d %d \n",recherche($3), yylval.integer);
-														}
-													} 
-													
-		|tCONST tINT tID tEGAL Expression tPOINTVIR ; //pas complet
-
-
+			|tCONST tINT tID tEGAL Expression tPOINTVIR  { 
+																											if (ajouter_Var($3,1,0,1)==-1)
+																											{
+																												yyerror("ERROR ") ;
+																											}else 
+																											{
+																												printf( "AFC @%d %d \n",recherche($3), $5);
+																											}
+																									} ; 
+										
 SuiteDeclarations :  tPOINTVIR
 					| tVIR tID SuiteDeclarations  { 
-											if ( ajouter_Var($2,1,0,0)==-1 )  
-											{
-												yyerror("ERROR ") ;
-											} else
-											{	
-												//printTabVar();
-											} 
-										};
+																					if ( ajouter_Var($2,1,0,0)==-1 )  
+																					{
+																						yyerror("ERROR ") ;
+																					} /*else
+																					{	
+																						printTabVar();
+																					} */
+																			};
 									
 
 							
@@ -82,109 +79,114 @@ SuiteBody :  Declaration SuiteBody
 			|Print SuiteBody 
 			|;
 			
-Affectation : tID tEGAL Valeur tPOINTVIR { int var ;
-											if ((  var =recherche($1))==-1)
-											{
-															yyerror("ERROR \n") ;
-											}else 
-											{
-												printf( "AFC @%d %d \n",var, yylval.integer);												
-											}
-										};
+Affectation : tID tEGAL  Expression tPOINTVIR { 
+																									int var ;
+																									if ((  var =recherche($1))==-1)
+																									{
+																											yyerror("ERROR \n") ;
+																									}else 
+																									{
+																										printf( "AFC @%d %d \n",var, $3);												
+																									}
+																						} ;
 										
 										
 
-Valeur : tNOMBREEXPO
-		|tNOMBREDEC ;
+/*Valeur : tNOMBREEXPO
+		|tNOMBREDEC ;*/
 		
 		
-
-Print : tPRINT tPO Valeur tPF tPOINTVIR {
-															//on empile la valeur à afficher
-															int adresse =empiler(yylval.integer);
-															printf("AFC @%d %d\n",adresse, yylval.integer);
-															printf("PRI @%d\n",adresse);
-															
-															depiler();//on depile la valeur 
-															
+//à completer
+Print : tPRINT tPO Expression tPF tPOINTVIR {
+																							printf("PRI @%d\n",$3);
+																						}
+																			
+																			
+		|  tPRINT tPO tID tPF tPOINTVIR {
+																			int var ;
+																			if ((  var =recherche($3))==-1)
+																			{
+																							yyerror("ERROR \n") ;
 																			}
-																			
-																			
-		|  tPRINT tPO tID tPF tPOINTVIR {int var ;
-											if ((  var =recherche($3))==-1)
-											{
-															yyerror("ERROR \n") ;
-											}
-											else 
-											{
-												printf("PRI @%d\n", var);
-											}
-									} ; 
+																			else 
+																			{
+																				printf("PRI @%d\n", var);
+																			}
+																} ; 
 									
 									
-Expression : tNOMBREDEC { $$=$1;
-													/*int adresse =empiler(yylval.integer);
-													printf("AFC @%d %d\n",adresse, yylval.integer); */
+Expression : tNOMBREDEC { 
+													//$$=$1;
+													printf("AFC @%d %d\n",empiler($1,0) ,$1);
 												}
-  | Expression tADD Expression { 
-  															int adr1 = empiler($1);
-  															printf("AFC @%d %d\n",adr1,$1);
-  															int adr2= empiler($3); 
-  															printf("AFC @%d %d\n",adr2,$3);
-  															$$=$1+$3;
-  															depiler();depiler();
-  															int adrResult = empiler($$);
-  															printf("ADD @%d @%d @%d\n",adrResult,adr1,adr2);
-  															
-  															}
+												
+	|tID {
+					//$$=$1; 
+					int addr ;
+					if ((  addr =recherche($1))==-1)
+					{
+						yyerror("ERROR : Variable %s non existante \n",$1) ;
+					}else 
+					{
+						
+						printf("AFC @%d %d\n",empiler(addr,1) ,addr);
+					} 
+				}
+				
+  | Expression tADD Expression {
+																	 int typeOp1,typeOp2; 
+																	int valeurOp2 = depiler(&typeOp2);
+																	int valeurOp1= depiler(&typeOp1);
+																	
+																	if (valeurOp2==-1 || valeurOp1==-1 )
+																	{
+																		yyerror("ERREUR LORS DU DÉPILEMENT DES OPÉRANDES  \n") ;
+																	}else 
+																	{
+																				if (typeOp1==1 && typeOp2==1)//si 1er et 2iem opérande est une variable 
+																				{
+																					$$= valeurOp1 ; 
+																					printf("ADD @%d @%d @%d\n",valeurOp1,valeurOp1,valeurOp2);
+																				}else if( typeOp1==1 && typeOp2==0) //si 1er est une var et 2iem est une constante
+																				{
+																					$$= valeurOp1 ; 
+																					int NouvAdrOp2=empiler(valeurOp2,0); // je réempile la valeur que je viens de dépiler
+																					printf("AFC @%d %d\n",NouvAdrOp2,valeurOp2);
+																					printf("ADD @%d @%d @%d\n",valeurOp1,valeurOp1,NouvAdrOp2);
+																			
+																				}else if( typeOp1==0 && typeOp2==1) //si 1er est une constante et 2iem est une var
+																				{
+																					int NouvAdrOp1=empiler(valeurOp1,0); // je réempile la valeur que je viens de dépiler
+																					printf("AFC @%d %d\n",NouvAdrOp1,valeurOp1);
+																					$$=NouvAdrOp1;
+																					printf("ADD @%d @%d @%d\n",NouvAdrOp1,NouvAdrOp1,valeurOp2);
+																			
+																				}else if( typeOp1==0 && typeOp2==0) //si 1er est une constante et 2iem est une constante
+																				{
+																					int NouvAdrOp1=empiler(valeurOp1,0); // je réempile la valeur que je viens de dépiler
+																					printf("AFC @%d %d\n",NouvAdrOp1,valeurOp1);
+																					$$=NouvAdrOp1;
+																					int NouvAdrOp2 = empiler(valeurOp2,0);
+																					printf("AFC @%d %d\n",NouvAdrOp2,valeurOp2);
+																					printf("ADD @%d @%d @%d\n",NouvAdrOp1,NouvAdrOp1,NouvAdrOp2);
+																				}
+  																}
+  														}
  
  
  
   | Expression tSUB Expression { 
-  															int adr1 = empiler($1);
-  															printf("AFC @%d %d\n",adr1,$1);
-  															int adr2= empiler($3); 
-  															printf("AFC @%d %d\n",adr2,$3);
-  															$$=$1-$3;
-  															depiler();depiler();
-  															int adrResult = empiler($$);
-  															printf("ADD @%d @%d @%d\n",adrResult,adr1,adr2);
   															
   															}
   
   
-  | Expression tMUL Expression { 
-  															int adr1 = empiler($1);
-  															printf("AFC @%d %d\n",adr1,$1);
-  															int adr2= empiler($3); 
-  															printf("AFC @%d %d\n",adr2,$3);
-  															$$=$1*$3;
-  															depiler();depiler();
-  															int adrResult = empiler($$);
-  															printf("ADD @%d @%d @%d\n",adrResult,adr1,adr2);
-  															
-  															}
+  | Expression tMUL Expression {}
   															
   															
-  | Expression tDIV Expression { 
-  															int adr1 = empiler($1);
-  															printf("AFC @%d %d\n",adr1,$1);
-  															int adr2= empiler($3); 
-  															printf("AFC @%d %d\n",adr2,$3);
-  															$$=$1/$3;
-  															depiler();depiler();
-  															int adrResult = empiler($$);
-  															printf("ADD @%d @%d @%d\n",adrResult,adr1,adr2);
-  															
-  															}
+  | Expression tDIV Expression {  }
   
   
-  | tSUB Expression %prec NEG  { //pas complet 
-  															$$=-$2;
-  															int adr1 = empiler($$);
-  															printf("AFC @%d %d\n",adr1,$$);
-  															depiler();
-  															}
+  | tSUB Expression %prec NEG  {	}
   | tPO Expression tPF   {//pas complet 
   												/* $$ = $2; */ } ; 
 			

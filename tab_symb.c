@@ -4,9 +4,9 @@
 #include "tab_symb.h"
 
 
- int ind=0; 
+ int ind = 0; 
 
- int indPile=ADRESSE_DEBUTPILE;
+ int indPile = ADRESSE_DEBUTPILE;
 
 int  ajouter_Var(char *nom_var,int type ,int initialiser ,int constante ) 
 {
@@ -56,22 +56,28 @@ void printTabVar()
 	}
 }
 
-int  empiler(int value )
+int  empiler(int value ,int type )
 {
 	char buf[32];
 	sprintf(buf,"%d",value);
 	strcpy(Array[indPile].nom_var,buf);
+	Array[indPile].type=type;
 	indPile--;  
-
 	return indPile+1 ; 
 } 
 
 
-int depiler()
+int depiler(int *  type_val_depile )
 {
 	 //* adresse = indPile; 
-	indPile++;
-	return atoi(Array[indPile-1].nom_var); 	
+	if(indPile<ADRESSE_DEBUTPILE) 
+	{
+			indPile++;
+			*type_val_depile= Array[indPile-1].type; 
+	return atoi(Array[indPile-1].nom_var);
+	}
+	
+	return -1 ; 	
 } 
 
 

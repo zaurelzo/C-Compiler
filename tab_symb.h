@@ -38,16 +38,23 @@ int ajouter_Var(char *nom_var,int type ,int initialiser ,int constante ) ;
 
 int recherche(char * nom_var ) ; 
 
+
+
 /*lorsque l'on empile , la valeur est convertit en string , et stocké dans le champ nom_var
 La base de la pile en la fin de la table des symbol
-@retour : l'@ ou on a empilé */ 
 
-int empiler(int value ); 
+ type : 0 : la valeur empilé est une constante ,
+	1: la valeur empilé est l'@ d'une varible qui est existe ! 
+	@retour : l'@ ou on a empilé 
+	*/ 
+int empiler(int value , int type  ); 
 
 
-/*par1: adreese de la valeur depilée 
-@retour : valeur depile */
-int depiler(); 
+
+
+/*par1: type  de la valeur depilée , 0 :constante , 1 : @ d'une var existante 
+@retour : valeur depile , -1 si l'on ne peut pas dépiler(ie : on est début de la pile ) */
+int depiler(int *  type_val_depile ) ;
 
 
 void printTabVar(); 
