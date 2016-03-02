@@ -75,7 +75,7 @@ int depiler(int *  type_val_depile )
 			indPile++;
 			*type_val_depile= Array[indPile].type; 
 			//printf("adr ou l'on cherche type:%d\n",indPile);
-	return atoi(Array[indPile-1].nom_var);
+	return atoi(Array[indPile].nom_var);
 	}
 	
 	return -1 ; 	
@@ -91,10 +91,6 @@ int obtenirAdressDeuxiemeOperande()
 	return indPile-1;
 }
 
-void empilerVide() 
-{
-	indPile--;
-}
 
 
 void modifierChampInitialiserVariable(char * nom_var)
@@ -109,5 +105,15 @@ void modifierChampInitialiserVariable(char * nom_var)
 		}
 }
 
+int getAdressePile()
+{
+	return indPile;
+}
+ 
 
+
+void viderPile()
+{
+	indPile=ADRESSE_DEBUTPILE;
+}
 
