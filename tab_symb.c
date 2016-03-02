@@ -117,3 +117,17 @@ void viderPile()
 	indPile=ADRESSE_DEBUTPILE;
 }
 
+int  getAdressePremierOperandeCondition()
+{
+	return ADRESSE_DEBUTPILE+1;
+}
+int  getAdresseDeuxiemeOperandeCondition()
+{
+	return ADRESSE_DEBUTPILE+2;
+}
+
+int getAdresseResultatComparaison()
+{
+	return ADRESSE_DEBUTPILE+3;
+}
+

@@ -1,3 +1,3 @@
 #!//bin/bash
-
-./executable
+clear
+./executable < fichier_test

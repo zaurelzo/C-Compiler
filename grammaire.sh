@@ -31,7 +31,7 @@ Print : tPRINT tPO Valeur tPF tPOINTVIR
 //rajouter tIF 	,ie : suiteBody represente les instructions possibles 			
 If: tIF tPO Cond tPF tAO SuiteBody tAF Else; 
 
-Else : tAO SuiteBody tAF
+Else : tELSE tAO SuiteBody tAF
 			|;
 
 

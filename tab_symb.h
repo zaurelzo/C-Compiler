@@ -11,7 +11,7 @@
 
 #define TAILLE_TAB_SYMBOL 1000
 
-#define ADRESSE_DEBUTPILE TAILLE_TAB_SYMBOL-1
+#define ADRESSE_DEBUTPILE TAILLE_TAB_SYMBOL-4
 
 extern int ind ; 
 
@@ -72,4 +72,10 @@ void modifierChampInitialiserVariable(char * nom_var);
 int getAdressePile();
 
 void viderPile();
+
+int getAdressePremierOperandeCondition();
+
+int getAdresseDeuxiemeOperandeCondition();
+int getAdresseResultatComparaison();
+
 #endif

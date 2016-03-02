@@ -16,6 +16,20 @@
 
 "int"  { return tINT ;}
 
+"if" {return tIF;}
+
+"else" {return tELSE;}
+
+"==" {strcpy(yylval.comparateur,yytext);return tEGALCOMP;}
+
+"<" {strcpy(yylval.comparateur,yytext);return tINF;}
+
+">" {strcpy(yylval.comparateur,yytext);return tSUP;}
+
+"and" {return tAND;}
+
+"or" {return tOR;}
+
 "("  return tPO;
 
 ")"  return tPF;
