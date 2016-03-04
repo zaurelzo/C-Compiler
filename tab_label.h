@@ -15,15 +15,15 @@ extern int indice;
 extern int pc ; 
 
 
-struct Noeu {
+struct Noeud_label {
 	char nomLabel[TAILLE];
 	int num_instruction; 
 };
 
 
-typedef struct Noeu  Noeu ; 
+typedef struct Noeud_label  Noeud_label ; 
 
-Noeu  TABLEAU[TAILLE_TAB_LABEL] ; 
+Noeud_label  TABLEAU[TAILLE_TAB_LABEL] ; 
 
 char* ajouter_label();
 int modifierNum_instruction(char * nom_label,int val_pc);
@@ -31,4 +31,8 @@ void afficherTab();
 void incrementerPC();
 void empilerLabel(char * label); 
 char * depilerLabel();
+
+
+/*ecrit la table des labels dans un fichier*/
+void generer_fichier_tab_label();
 #endif

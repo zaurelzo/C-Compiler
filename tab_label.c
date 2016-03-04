@@ -59,3 +59,22 @@ char * depilerLabel()
 	indiceLabel++;
 	return TABLEAU[indiceLabel].nomLabel;
 }
+
+void generer_fichier_tab_label()
+{
+	FILE* fichier = NULL;
+ 	int i ;
+    fichier = fopen("fichier_table_des_symbols", "w+");
+ 
+    if (fichier != NULL)
+    {
+    	//printf("******indice : %d"indiceLabel)
+    	for ( i = 0; i < indice; ++i)
+    	{
+    		fprintf(fichier,"%s %d \n",TABLEAU[i].nomLabel,TABLEAU[i].num_instruction );
+    	}
+    	 fclose(fichier);
+	}
+       
+}
+ 	

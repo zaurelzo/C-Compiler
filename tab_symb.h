@@ -17,16 +17,16 @@ extern int ind ;
 
 extern int indPile;
 
-struct Noeud {
+struct Noeud_symbol {
 	char nom_var[TAILLE];
 	int type;
 	int initialiser;
 	int constante ; 
 };
 
-typedef struct Noeud  Noeud ; 
+typedef struct  Noeud_symbol   Noeud_symbol ; 
 
-Noeud  Array[TAILLE_TAB_SYMBOL] ; 
+ Noeud_symbol  Array[TAILLE_TAB_SYMBOL] ; 
 
 
 /* type : 1 pour entier 
@@ -76,6 +76,8 @@ void viderPile();
 int getAdressePremierOperandeCondition();
 
 int getAdresseDeuxiemeOperandeCondition();
+
 int getAdresseResultatComparaison();
 
+void generer_fichier_table_des_symboles();
 #endif

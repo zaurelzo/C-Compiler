@@ -131,3 +131,20 @@ int getAdresseResultatComparaison()
 	return ADRESSE_DEBUTPILE+3;
 }
 
+void  generer_fichier_table_des_symboles()
+{
+	FILE* fichier = NULL;
+ 	int i ;
+    fichier = fopen("fichier_table_des_labels", "w+");
+ 
+    if (fichier != NULL)
+    {
+    	//printf("******indice : %d"indiceLabel)
+    	for ( i = 0; i < ind; ++i)
+    	{
+    		fprintf(fichier,"%s %d %d %d\n",Array[i].nom_var,Array[i].type ,Array[i].initialiser,Array[i].constante);
+    	}
+    	 fclose(fichier);
+	}
+}
+
