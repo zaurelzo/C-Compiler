@@ -80,7 +80,7 @@ SuiteDeclarations :  tPOINTVIR
 Main: tMAIN tPO  tPF Body ;
 
 Body : tAO SuiteBody tAF {
-														//generer_fichier_table_des_symboles();
+														generer_fichier_table_des_symboles();
 														generer_fichier_tab_label();
 												} ;
 			
