@@ -135,7 +135,7 @@ void  generer_fichier_table_des_symboles()
 {
 	FILE* fichier = NULL;
  	int i ;
-    fichier = fopen("fichier_table_des_labels", "w+");
+    fichier = fopen("fichier_table_des_symbols", "w+");
  
     if (fichier != NULL)
     {

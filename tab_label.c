@@ -75,7 +75,7 @@ void generer_fichier_tab_label()
 {
 	FILE* fichier = NULL;
  	int i ;
-    fichier = fopen("fichier_table_des_symbols", "w+");
+    fichier = fopen("fichier_table_des_labels", "w+");
  
     if (fichier != NULL)
     {
