@@ -8,7 +8,7 @@ SuiteDeclarations :  tPOINTVIR
 									
 
 							
-Main: tINT tMAIN tPO  tPF Body ;
+Main: tINT tMAIN tPO  tPF Body  ;
 
 Body : tAO SuiteBody tRETURN tID tAF ;
 			|tAO SuiteBody tRETURN tNOMBREDEC  tAF ;
@@ -56,7 +56,7 @@ Fonctions:Prototype Fonctions
 				
 Prototype : tINT tID tPO Params tPF tPOINTVIR;
 
-ImplementationFonction : tINT tID tPO Params tPF Body 
+ImplementationFonction : tINT tID tPO Params tPF Body ;
 
 
 Params : tIND tID SuiteParams

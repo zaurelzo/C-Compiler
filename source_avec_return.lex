@@ -18,6 +18,8 @@
 
 "if" {return tIF;}
 
+"while" {return tWHILE;}
+
 "else" {return tELSE;}
 
 "==" {strcpy(yylval.comparateur,yytext);return tEGALCOMP;}

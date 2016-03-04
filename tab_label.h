@@ -24,6 +24,7 @@ struct Noeud_label {
 typedef struct Noeud_label  Noeud_label ; 
 
 Noeud_label  TABLEAU[TAILLE_TAB_LABEL] ; 
+Noeud_label TAB_FILE_DES_LABELS[TAILLE_TAB_LABEL] ;
 
 char* ajouter_label();
 int modifierNum_instruction(char * nom_label,int val_pc);

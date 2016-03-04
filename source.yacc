@@ -19,7 +19,7 @@
 %error-verbose
 
 
-%token tPRINT tMAIN  tCONST  tINT  tPO  tPF  tAO tAF  tMUL tDIV tEGAL tADD tSUB tVIR tPOINTVIR tNOMBREEXPO tERREUR tIF tELSE tOR tAND 
+%token tPRINT tMAIN  tCONST  tINT  tPO  tPF  tAO tAF  tMUL tDIV tEGAL tADD tSUB tVIR tPOINTVIR tNOMBREEXPO tERREUR tIF tELSE tOR tAND tWHILE
 
 %left tADD tSUB
 %left tDIV tMUL
@@ -79,12 +79,16 @@ SuiteDeclarations :  tPOINTVIR
 							
 Main: tMAIN tPO  tPF Body ;
 
-Body : tAO SuiteBody tAF ;
+Body : tAO SuiteBody tAF {
+														//generer_fichier_table_des_symboles();
+														generer_fichier_tab_label();
+												} ;
 			
 SuiteBody :  Declaration SuiteBody
 			|Affectation  SuiteBody
 			|Print SuiteBody 
 			|If SuiteBody
+			|While SuiteBody
 			|;
 			
 Affectation : tID tEGAL  Expression tPOINTVIR { 
@@ -353,12 +357,40 @@ If: tIF tPO Cond tPF tAO {
 														empilerLabel(label); 
 													}  SuiteBody tAF Else 
 
-Else : tELSE tAO SuiteBody tAF {}
+Else : tELSE tAO SuiteBody tAF {
+																		char * label = depilerLabel();
+																		modifierNum_instruction(label,pc);
+																}
 			|{
 				char* label= depilerLabel();
 				printf("LABEL %s\n",label);
-				modifierNum_instruction(label,pc+1);
+				modifierNum_instruction(label,pc);
 				};
+				
+				
+While : tWHILE{
+							char * label = ajouter_label(); 
+							
+							printf("LABEL %s\n",label);
+							empilerLabel(label);
+							modifierNum_instruction(label,pc);
+							incrementerPC();
+							} 
+						tPO Cond tPF tAO {
+																char * label =  ajouter_label();
+																printf("JMF %s\n",label);
+																incrementerPC();
+																empilerLabel(label); 													
+																}
+								SuiteBody{
+													printf("JMP %s\n",depilerLabel());
+													incrementerPC();
+												} 
+								tAF {
+											char * label = depilerLabel();
+											printf("LABEL %s\n",label);
+											modifierNum_instruction(label,pc);
+										}; 			
 
 //rajouter tOR et tAND
 Cond: Expression Comparateur Expression {

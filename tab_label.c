@@ -6,7 +6,7 @@
 
  int indice = 0; 
  int pc=0;
- int indiceLabel= ADRESSE_DEBUT_TABLABEL ; 
+ int indiceLabel= 0 ; 
 
 char *  ajouter_label()
 {	
@@ -50,14 +50,25 @@ void incrementerPC()
 
 void empilerLabel(char * label)
 {
-	strcpy(TABLEAU[indiceLabel].nomLabel,label);
-	indiceLabel--;
+	strcpy(TAB_FILE_DES_LABELS[indiceLabel].nomLabel,label);
+	indiceLabel++;
 }
 
 char * depilerLabel()
 {
-	indiceLabel++;
-	return TABLEAU[indiceLabel].nomLabel;
+	int i ; 
+	char  retour[20];
+	if (indiceLabel>0)
+	{
+		 strcpy(retour ,TAB_FILE_DES_LABELS[0].nomLabel);
+		indiceLabel--;
+		for (i = 1; i <= indiceLabel; ++i)
+		{
+			strcpy( TAB_FILE_DES_LABELS[i-1].nomLabel,TAB_FILE_DES_LABELS[i].nomLabel);
+			TAB_FILE_DES_LABELS[i-1].num_instruction= TAB_FILE_DES_LABELS[i].num_instruction;
+		}
+	}
+	return retour;
 }
 
 void generer_fichier_tab_label()
