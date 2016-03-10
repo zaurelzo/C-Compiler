@@ -48,28 +48,76 @@ void incrementerPC()
 	pc++;
 }
 
-void empilerLabel(char * label)
+void empilerLabelIF(char * label1 )
 {
-	strcpy(TAB_FILE_DES_LABELS[indiceLabel].nomLabel,label);
+	strcpy(TAB_FILE_DES_LABELS[indiceLabel].type,"if");	
+	strcpy(TAB_FILE_DES_LABELS[indiceLabel].label1,label1);	
 	indiceLabel++;
 }
 
-char * depilerLabel()
+void empilerPremierLabelWhile(char * label1 )
 {
-	int i ; 
-	char  retour[20];
+	strcpy(TAB_FILE_DES_LABELS[indiceLabel].type,"while");	
+	strcpy(TAB_FILE_DES_LABELS[indiceLabel].label1,label1);	
+	//indiceLabel++;
+}
+
+
+
+void empilerDeuxiemeLabelWhile(char * label2)
+{
+	//strcpy(TAB_FILE_DES_LABELS[indiceLabel].type,"if");	
+	strcpy(TAB_FILE_DES_LABELS[indiceLabel].label2,label2);	
+	indiceLabel++;
+}
+
+void  depilerLabelIF(char  * retour) 
+{
+	
 	if (indiceLabel>0)
 	{
-		 strcpy(retour ,TAB_FILE_DES_LABELS[0].nomLabel);
-		indiceLabel--;
-		for (i = 1; i <= indiceLabel; ++i)
+
+		
+		 if (strcmp(TAB_FILE_DES_LABELS[indiceLabel-1].type,"if")==0)
 		{
-			strcpy( TAB_FILE_DES_LABELS[i-1].nomLabel,TAB_FILE_DES_LABELS[i].nomLabel);
-			TAB_FILE_DES_LABELS[i-1].num_instruction= TAB_FILE_DES_LABELS[i].num_instruction;
+			indiceLabel--;
+			strcpy(retour ,TAB_FILE_DES_LABELS[indiceLabel].label1);
 		}
 	}
-	return retour;
+	//return retour;
 }
+
+void  depilerPremierLabelWhile(char  * retour) 
+{
+	if (indiceLabel>0)
+	{
+		if (strcmp(TAB_FILE_DES_LABELS[indiceLabel-1].type,"while")==0)
+		{
+			strcpy(retour ,TAB_FILE_DES_LABELS[indiceLabel-1].label1);
+		}
+	}
+		
+	//return retour;
+}
+
+void  depilerDeuxiemeLabelWhile(char  * retour) 
+{
+	//char  retour[40]="";
+	if (indiceLabel>0)
+	{
+		if (strcmp(TAB_FILE_DES_LABELS[indiceLabel-1].type,"while")==0)
+		{
+			strcpy(retour ,TAB_FILE_DES_LABELS[indiceLabel-1].label2);
+			indiceLabel--;
+		}
+	}/*else 
+	{
+		printf("------------------\n");
+	}*/
+		
+	//return retour;
+}
+
 
 void generer_fichier_tab_label()
 {

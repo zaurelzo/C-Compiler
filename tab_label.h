@@ -20,18 +20,39 @@ struct Noeud_label {
 	int num_instruction; 
 };
 
+typedef struct Noeud_label Noeud_label ;
+/****************************************************************************************/
+//permet de faire une pile pour stocker les lables des while et les labels des ifs 
 
+
+
+struct pileDesLables
+{
+	char  type[TAILLE];
+	 char label1[TAILLE];
+	 char label2[TAILLE];
+};
+typedef struct pileDesLables  pileDesLables ; 
+
+pileDesLables TAB_FILE_DES_LABELS[TAILLE_TAB_LABEL] ;
+/***********************************************************************************/
 typedef struct Noeud_label  Noeud_label ; 
 
 Noeud_label  TABLEAU[TAILLE_TAB_LABEL] ; 
-Noeud_label TAB_FILE_DES_LABELS[TAILLE_TAB_LABEL] ;
+
 
 char* ajouter_label();
 int modifierNum_instruction(char * nom_label,int val_pc);
 void afficherTab();
 void incrementerPC();
-void empilerLabel(char * label); 
-char * depilerLabel();
+void  empilerLabelIF(char * label1 );
+void empilerPremierLabelWhile(char * label1 );
+void empilerDeuxiemeLabelWhile(char * label2) ;
+
+void  depilerLabelIF(char  * retour) ;
+void  depilerPremierLabelWhile(char  * retour)  ;
+void  depilerDeuxiemeLabelWhile(char  * retour) ;
+
 
 
 /*ecrit la table des labels dans un fichier*/

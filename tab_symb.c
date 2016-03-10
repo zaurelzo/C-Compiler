@@ -117,7 +117,7 @@ void viderPile()
 	indPile=ADRESSE_DEBUTPILE;
 }
 
-int  getAdressePremierOperandeCondition()
+/*int  getAdressePremierOperandeCondition()
 {
 	return ADRESSE_DEBUTPILE+1;
 }
@@ -129,7 +129,7 @@ int  getAdresseDeuxiemeOperandeCondition()
 int getAdresseResultatComparaison()
 {
 	return ADRESSE_DEBUTPILE+3;
-}
+}*/
 
 void  generer_fichier_table_des_symboles()
 {

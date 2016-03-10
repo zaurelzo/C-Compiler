@@ -11,7 +11,7 @@
 
 #define TAILLE_TAB_SYMBOL 1000
 
-#define ADRESSE_DEBUTPILE TAILLE_TAB_SYMBOL-4
+#define ADRESSE_DEBUTPILE TAILLE_TAB_SYMBOL-1
 
 extern int ind ; 
 
@@ -73,11 +73,11 @@ int getAdressePile();
 
 void viderPile();
 
-int getAdressePremierOperandeCondition();
+/*int getAdressePremierOperandeCondition();
 
 int getAdresseDeuxiemeOperandeCondition();
 
-int getAdresseResultatComparaison();
+int getAdresseResultatComparaison();*/
 
 void generer_fichier_table_des_symboles();
 #endif

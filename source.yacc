@@ -33,6 +33,7 @@
 %token <comparateur> tSUP
 %type <integer> Expression
 %type <comparateur> Comparateur
+%type <integer> Cond 
 
 %start Input
 %%
@@ -52,6 +53,18 @@ Declaration : tINT tID {
 												}  SuiteDeclarations  
 
 			|tCONST tINT tID tEGAL Expression tPOINTVIR  { //pas complet , changer champ initialiser var
+																											if (ajouter_Var($3,1,0,1)==-1)
+																											{
+																												yyerror("ERROR ") ;
+																											}else 
+																											{
+																												printf( "COP @%d @%d \n",recherche($3), $5);
+																												incrementerPC();
+																												 viderPile();
+																												  modifierChampInitialiserVariable($3);
+																											}
+																									} 
+			|tINT tID tEGAL Expression tPOINTVIR{ //pas complet , changer champ initialiser var
 																											if (ajouter_Var($3,1,0,1)==-1)
 																											{
 																												yyerror("ERROR ") ;
@@ -134,8 +147,8 @@ Expression : tNOMBREDEC {
 						yyerror("ERROR : Variable %s non existante \n",$1) ;
 					}else 
 					{
-						
-						printf("AFC @%d %d\n",empiler(addr,1) ,addr);
+						empiler(addr,1);
+						//printf("AFC @%d %d\n",empiler(addr,1) ,addr);
 						incrementerPC();
 						$$= addr;
 					} 
@@ -351,18 +364,22 @@ Expression : tNOMBREDEC {
   												
   //À resoudre : generer le JMF apres Accolade fermante 														
 If: tIF tPO Cond tPF tAO {
+														viderPile();
 														char * label =  ajouter_label();
-														printf("JMF %s\n",label);
+														printf("JMF %d %s\n",$3,label);
 														incrementerPC();
-														empilerLabel(label); 
+														empilerLabelIF(label); 
 													}  SuiteBody tAF Else 
 
 Else : tELSE tAO SuiteBody tAF {
-																		char * label = depilerLabel();
+																		char label[TAILLE];
+																		 depilerLabelIF(label) ;
 																		modifierNum_instruction(label,pc);
 																}
 			|{
-				char* label= depilerLabel();
+				//char  label2[TAILLE];
+				char label[TAILLE];
+				 depilerLabelIF(label) ;
 				printf("LABEL %s\n",label);
 				modifierNum_instruction(label,pc);
 				};
@@ -372,51 +389,64 @@ While : tWHILE{
 							char * label = ajouter_label(); 
 							
 							printf("LABEL %s\n",label);
-							empilerLabel(label);
+							empilerPremierLabelWhile(label);
 							modifierNum_instruction(label,pc);
-							incrementerPC();
+						//	incrementerPC();
 							} 
 						tPO Cond tPF tAO {
+																viderPile();
 																char * label =  ajouter_label();
-																printf("JMF %s\n",label);
+																printf("JMF %d %s\n",$4,label);
 																incrementerPC();
-																empilerLabel(label); 													
+																empilerDeuxiemeLabelWhile(label); 													
 																}
 								SuiteBody{
-													printf("JMP %s\n",depilerLabel());
+													char  label[TAILLE] ; 
+													depilerPremierLabelWhile(label);
+													printf("JMP %s\n", label);
 													incrementerPC();
 												} 
 								tAF {
-											char * label = depilerLabel();
+											char  label[TAILLE] ;
+											depilerDeuxiemeLabelWhile(label) ;
 											printf("LABEL %s\n",label);
 											modifierNum_instruction(label,pc);
 										}; 			
 
 //rajouter tOR et tAND
 Cond: Expression Comparateur Expression {
-																					printf("COP @%d @%d\n",getAdressePremierOperandeCondition(),$1);
-																					incrementerPC(); 
-																					printf("COP @%d @%d\n",getAdresseDeuxiemeOperandeCondition(),$3);
-																					incrementerPC();
+																						//on s'en fou de ce que l'empile , c'est l'@ qui nous interesse 
+																					int retour =empiler(-1,1);
+																					$$=retour; 
 																					if(strcmp($2,"==")==0)
 																					{
-																						printf("EQU @%d @%d @%d\n", getAdresseResultatComparaison(),getAdressePremierOperandeCondition(),getAdresseDeuxiemeOperandeCondition());
+																					
+																						printf("EQU @%d @%d @%d\n", retour,$1,$3);
+																					
 																						incrementerPC();
 
 																					}else if(strcmp($2,"<")==0)
 																					{
-																						printf("INF @%d @%d @%d\n", getAdresseResultatComparaison(),getAdressePremierOperandeCondition(),getAdresseDeuxiemeOperandeCondition());
+																						printf("INF @%d @%d @%d\n",  retour,$1,$3);
 																						incrementerPC();
 
 																					}else if(strcmp($2,">")==0)
 																					{
-																						printf("SUP @%d @%d @%d\n", getAdresseResultatComparaison(),getAdressePremierOperandeCondition(),getAdresseDeuxiemeOperandeCondition());
+																						printf("SUP @%d @%d @%d\n",retour,$1,$3);
 																						incrementerPC();
 
 																					}
+																					
 																				}
-			|Cond tOR Cond 
-			|Cond tAND Cond;
+			|Expression {$$=$1;}
+			|Cond tOR Cond {int retour = empiler(-1,1);
+											$$=retour; 
+											printf("OR @%d @%d @%d\n", retour,$1,$3);
+										}
+			|Cond tAND Cond{int retour = empiler(-1,1);
+											$$=retour; 
+											printf("AND @%d @%d @%d\n", retour,$1,$3);
+										};
 
  
 							
