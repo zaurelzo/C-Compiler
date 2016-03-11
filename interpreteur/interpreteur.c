@@ -1,7 +1,7 @@
 #include "interpreteur.h"
 
 
- int PC =0 ;
+ //int PC =0 ;
 int nb_Instruction_Programme = 0 ;
 
 int traiter_ligne(char * chaine , int *tab_retour)
@@ -25,16 +25,16 @@ void charger_Programme_dans_Ram(char * name_fichier)
 	FILE* fichier = NULL;
  	int codeOP, resultat , retour , op1,op2; 
     fichier = fopen(name_fichier, "r");
-    char line[10];
+    char line[40];
     int tableau_retour[4];
 
  	if (fichier!=NULL)
  	{
  	
- 		while(fgets(line,10,fichier)!=NULL)
+ 		while(fgets(line,40,fichier)!=NULL)
  		{
  			retour = traiter_ligne(line ,tableau_retour);
- 				//printf("---------- retour %d | %d| %d| %d |%d-------------\n",retour,codeOP,resultat,op1,op2);
+ 			//printf("----------------------\n");
  			Tableau_Ram[nb_Instruction_Programme].format_instruction=retour;
  			if (retour==4)
  			{
@@ -44,6 +44,7 @@ void charger_Programme_dans_Ram(char * name_fichier)
  				Tableau_Ram[nb_Instruction_Programme].operande2=tableau_retour[3];
  			}else if (retour==3)
  			{
+ 				//printf("----------------%d\n", tableau_retour[0]);
  				Tableau_Ram[nb_Instruction_Programme].code_operation=tableau_retour[0] ;
  				Tableau_Ram[nb_Instruction_Programme].result=tableau_retour[1];
  				Tableau_Ram[nb_Instruction_Programme].operande1=tableau_retour[2];
@@ -81,24 +82,26 @@ void afficher_ram()
 
 void interpreter()
 {
-	
-	while(PC < nb_Instruction_Programme)
+
+	//printf("------------%d\n",nb_Instruction_Programme);
+	int PC= 0;
+	while(PC <= nb_Instruction_Programme-1)
 	{	
 		if(Tableau_Ram[PC].code_operation==1)//ADD
 		{
-			Tableau_Memoire_des_donnes[Tableau_Ram[PC].result].valeur= Tableau_Ram[PC].operande1+ Tableau_Ram[PC].operande2;
+			Tableau_Memoire_des_donnes[Tableau_Ram[PC].result].valeur= Tableau_Memoire_des_donnes[Tableau_Ram[PC].operande1].valeur+ Tableau_Memoire_des_donnes[Tableau_Ram[PC].operande2].valeur;
 			PC++;
 		} else if(Tableau_Ram[PC].code_operation==2)//MUL
 		{
-			Tableau_Memoire_des_donnes[Tableau_Ram[PC].result].valeur= Tableau_Ram[PC].operande1* Tableau_Ram[PC].operande2;
+			Tableau_Memoire_des_donnes[Tableau_Ram[PC].result].valeur= Tableau_Memoire_des_donnes[Tableau_Ram[PC].operande1].valeur* Tableau_Memoire_des_donnes[Tableau_Ram[PC].operande2].valeur;
 			PC++;
 		} else if(Tableau_Ram[PC].code_operation==3)//SOU
 		{
-			Tableau_Memoire_des_donnes[Tableau_Ram[PC].result].valeur= Tableau_Ram[PC].operande1- Tableau_Ram[PC].operande2;
+			Tableau_Memoire_des_donnes[Tableau_Ram[PC].result].valeur= Tableau_Memoire_des_donnes[Tableau_Ram[PC].operande1].valeur- Tableau_Memoire_des_donnes[Tableau_Ram[PC].operande2].valeur;
 			PC++;
 		} else if(Tableau_Ram[PC].code_operation==4)//DIV
 		{
-			Tableau_Memoire_des_donnes[Tableau_Ram[PC].result].valeur= Tableau_Ram[PC].operande1/ Tableau_Ram[PC].operande2;
+			Tableau_Memoire_des_donnes[Tableau_Ram[PC].result].valeur= Tableau_Memoire_des_donnes[Tableau_Ram[PC].operande1].valeur/ Tableau_Memoire_des_donnes[Tableau_Ram[PC].operande2].valeur;
 			PC++;
 		} else if(Tableau_Ram[PC].code_operation==5)//COPIE
 		{
@@ -106,36 +109,50 @@ void interpreter()
 			PC++;
 		} else if(Tableau_Ram[PC].code_operation==6)//AFC
 		{
+			//printf("........................................%d\n",Tableau_Ram[PC].result);
 			Tableau_Memoire_des_donnes[Tableau_Ram[PC].result].valeur=Tableau_Ram[PC].operande1;
 			PC++;
 		} else if(Tableau_Ram[PC].code_operation==7)//SAUT INCONDITIONNEL 
 		{
-			PC=Tableau_Ram[PC].operande1;
+			PC=Tableau_Ram[PC].result;
 		} else if(Tableau_Ram[PC].code_operation==8)//saut si la condition est fausse  
 		{
-			if (Tableau_Memoire_des_donnes[getAdresseResultatComparaison()].valeur==0)
-				PC =Tableau_Ram[PC].operande1;
+			if (Tableau_Memoire_des_donnes[Tableau_Ram[PC].result].valeur==0)
+				{
+					//printf("==========////%d\n", Tableau_Ram[PC].operande1);
+					PC =Tableau_Ram[PC].operande1;
+				}else 
+				{
+					//printf("%d==========d\n",PC);
+					PC++;
+				}
 		} else if(Tableau_Ram[PC].code_operation==9)//Inferieur  
 		{
-			if (Tableau_Memoire_des_donnes[getAdressePremierOperandeCondition()].valeur<Tableau_Memoire_des_donnes[getAdresseDeuxiemeOperandeCondition()].valeur)
-				Tableau_Memoire_des_donnes[getAdresseResultatComparaison()].valeur==1;
+			if (Tableau_Memoire_des_donnes[Tableau_Ram[PC].operande1].valeur<Tableau_Memoire_des_donnes[Tableau_Ram[PC].operande2].valeur)
+				Tableau_Memoire_des_donnes[Tableau_Ram[PC].result].valeur=1;
 			else 
-				Tableau_Memoire_des_donnes[getAdresseResultatComparaison()].valeur==0 ;
+				Tableau_Memoire_des_donnes[Tableau_Ram[PC].result].valeur=0 ;
 			PC++;
 		} else if(Tableau_Ram[PC].code_operation==10)//superieur  
 		{
-			if (Tableau_Memoire_des_donnes[getAdressePremierOperandeCondition()].valeur>Tableau_Memoire_des_donnes[getAdresseDeuxiemeOperandeCondition()].valeur)
-				Tableau_Memoire_des_donnes[getAdresseResultatComparaison()].valeur==1;
+			if (Tableau_Memoire_des_donnes[Tableau_Ram[PC].operande1].valeur>Tableau_Memoire_des_donnes[Tableau_Ram[PC].operande2].valeur)
+				Tableau_Memoire_des_donnes[Tableau_Ram[PC].result].valeur=1;
 			else 
-				Tableau_Memoire_des_donnes[getAdresseResultatComparaison()].valeur==0 ;
+				Tableau_Memoire_des_donnes[Tableau_Ram[PC].result].valeur=0 ;
 			PC++;
-		} else if(Tableau_Ram[PC].code_operation==11)//superieur  
+		} else if(Tableau_Ram[PC].code_operation==11)//egal 
 		{
-			if (Tableau_Memoire_des_donnes[getAdressePremierOperandeCondition()].valeur==Tableau_Memoire_des_donnes[getAdresseDeuxiemeOperandeCondition()].valeur)
-				Tableau_Memoire_des_donnes[getAdresseResultatComparaison()].valeur==1;
+			if (Tableau_Memoire_des_donnes[Tableau_Ram[PC].operande1].valeur==Tableau_Memoire_des_donnes[Tableau_Ram[PC].operande2].valeur)
+				{
+					//printf("vrai============%d\n",PC);
+					Tableau_Memoire_des_donnes[Tableau_Ram[PC].result].valeur=1; 
+				}
 			else 
-				Tableau_Memoire_des_donnes[getAdresseResultatComparaison()].valeur==0 ;
+			{	
+				Tableau_Memoire_des_donnes[Tableau_Ram[PC].result].valeur=0 ;
+			}
 			PC++;
+			//printf("////////////////%d\n",Tableau_Ram[PC].code_operation);
 		}else if(Tableau_Ram[PC].code_operation==12)//PRINTER 
 		{
 			printf("%d\n",Tableau_Memoire_des_donnes[Tableau_Ram[PC].result].valeur);

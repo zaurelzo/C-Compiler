@@ -71,7 +71,19 @@ void empilerDeuxiemeLabelWhile(char * label2)
 	indiceLabel++;
 }
 
-void  depilerLabelIF(char  * retour) 
+void empilerPremierLabelIF(char * label1 )
+{
+	strcpy(TAB_FILE_DES_LABELS[indiceLabel].type,"ifElse");	
+	strcpy(TAB_FILE_DES_LABELS[indiceLabel].label1,label1);	
+}
+void empilerDeuxiemeLabelIF(char * label2) 
+{
+	//strcpy(TAB_FILE_DES_LABELS[indiceLabel].type,"if");	
+	strcpy(TAB_FILE_DES_LABELS[indiceLabel].label2,label2);	
+	indiceLabel++;
+}
+
+/*void  depilerLabelIF(char  * retour) 
 {
 	
 	if (indiceLabel>0)
@@ -85,7 +97,7 @@ void  depilerLabelIF(char  * retour)
 		}
 	}
 	//return retour;
-}
+}*/
 
 void  depilerPremierLabelWhile(char  * retour) 
 {
@@ -110,12 +122,32 @@ void  depilerDeuxiemeLabelWhile(char  * retour)
 			strcpy(retour ,TAB_FILE_DES_LABELS[indiceLabel-1].label2);
 			indiceLabel--;
 		}
-	}/*else 
+	}
+}
+
+
+void  depilerPremierLabelIF(char  * retour)  
+{
+
+	if (indiceLabel>0)
 	{
-		printf("------------------\n");
-	}*/
-		
-	//return retour;
+		if (strcmp(TAB_FILE_DES_LABELS[indiceLabel-1].type,"ifElse")==0)
+		{
+			strcpy(retour ,TAB_FILE_DES_LABELS[indiceLabel-1].label1);
+		}
+	}
+}
+void  depilerDeuxiemeLabelIF(char  * retour) 
+{
+	//char  retour[40]="";
+	if (indiceLabel>0)
+	{
+		if (strcmp(TAB_FILE_DES_LABELS[indiceLabel-1].type,"ifElse")==0)
+		{
+			strcpy(retour ,TAB_FILE_DES_LABELS[indiceLabel-1].label2);
+			indiceLabel--;
+		}
+	}
 }
 
 
@@ -137,3 +169,33 @@ void generer_fichier_tab_label()
        
 }
  	
+
+void  enleverConnard(char * mot, char *  retour  )
+{
+	int i ; 
+	//char retour [TAILLE]; 
+	strcpy(retour,mot); 
+	retour[strlen(mot)-1]='\0';
+	///return retour; 
+}	
+
+
+int  getNumeroInstruction(char * label , Noeud_label * tab, int j ) 
+{
+	int i ; 
+	char retou [TAILLE] ;
+	enleverConnard(label,retou) ;  
+	//printf("---------%s\n",retou);
+	for(i=0; i<j; i++)
+	{
+
+		if(strcmp( retou ,tab[i].nomLabel)==0)
+		{
+			return tab[i].num_instruction ;
+			//sprintf(mot_courant, " %d\n", tab_label[i].num_instruction);
+
+		}
+	}
+
+	return -1 ; 
+}

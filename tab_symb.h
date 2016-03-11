@@ -80,4 +80,5 @@ int getAdresseDeuxiemeOperandeCondition();
 int getAdresseResultatComparaison();*/
 
 void generer_fichier_table_des_symboles();
+
 #endif

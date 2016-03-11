@@ -11,7 +11,7 @@
 #define TAILLE_MEM_DATA TAILLE_TAB_SYMBOL
 #define TAILLE_RAM 5000
 
-extern int PC ;
+//extern int PC ;
 extern int nb_Instruction_Programme; 
 
 struct Noeud_memoire_donnes
