@@ -1,0 +1,23 @@
+
+ main()
+{
+int ge,ho;
+ge = 21 ;
+
+while(ge < 25 )
+{ 
+	if (ge==22)
+	{
+		print(55);
+	} else 
+	{
+		if(ge==23)
+		{
+		print(ge*-2);
+		}	
+		print(ge);
+	}
+	ge=ge+(-3+4);
+}
+	print(100+1);
+}

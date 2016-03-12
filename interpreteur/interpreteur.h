@@ -4,8 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../tab_label.h"
-#include "../tab_symb.h"
+#include "../compilateur/tab_label.h"
+#include "../compilateur/tab_symb.h"
 
 
 #define TAILLE_MEM_DATA TAILLE_TAB_SYMBOL
