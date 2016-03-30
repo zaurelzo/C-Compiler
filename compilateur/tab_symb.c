@@ -5,10 +5,10 @@
 
 
  int ind = 0; 
-
+int nombreDeVariabeleglobale = -1; 
  int indPile = ADRESSE_DEBUTPILE;
 
- int profondeur = 0 ;
+// int profondeur = 0 ;
 
 int ajouter_Var(char *nom_var,int type ,int initialiser ,int constante ) 
 {
@@ -33,18 +33,29 @@ int ajouter_Var(char *nom_var,int type ,int initialiser ,int constante )
 	return 0 ; 
 }
 
-int recherche(char * nom_var )
+ int recherche(char * nom_var) {return 0 ;} // pour debug à effacer 
+
+
+/*relative_ou_absolue : 0 relative , 1 :absolue*/
+int recherchet(char * nom_var , int * relative_ou_absolue )
 {
 	int i =0 ;
 	//int retour =-1 ; 
+	int retour =-1 ;
 
 	for (i=0 ; i<=ind;i++)
 	{
 		if ( (strcmp(Array[i].nom_var,nom_var)==0 ))
-			return i ; 
+		{
+			if (i <=nombreDeVariabeleglobale)
+				*relative_ou_absolue= 1 ;
+			else 
+				*relative_ou_absolue = 0; 
+			retour=  i ;
+		} 
 	}
 
-	return -1 ; 
+	return retour ; 
 }
  
 void printTabVar()
@@ -58,24 +69,30 @@ void printTabVar()
 	}
 }
 
-int  empiler(int value ,int type )
+int  empilert(int value ,int type ,int abs_ou_rel )
 {
 	char buf[32];
 	sprintf(buf,"%d",value);
 	strcpy(Array[indPile].nom_var,buf);
 	Array[indPile].type=type;
+	Array[indPile].abs_rel=abs_ou_rel ;
 	indPile--;  
 	return indPile+1 ; 
 } 
 
+int empiler(int value , int type  ) {return 0 ;} // pour debug à effacer 
 
-int depiler(int *  type_val_depile )
+
+int depiler(int *  type_val_depile ) {return 0 ;} // pour debug à effacer 
+
+int depilert(int *  type_val_depile , int *  abs_ou_rel )
 {
 	 //* adresse = indPile; 
 	if(indPile<=ADRESSE_DEBUTPILE) 
 	{
 			indPile++;
 			*type_val_depile= Array[indPile].type; 
+			*abs_ou_rel=Array[indPile].abs_rel;
 			//printf("adr ou l'on cherche type:%d\n",indPile);
 	return atoi(Array[indPile].nom_var);
 	}
@@ -151,7 +168,7 @@ void  generer_fichier_table_des_symboles()
 }
 
 
-void empilerProfondeur()
+/*void empilerProfondeur()
 {
 	TAB_PROFONDEUR[profondeur]=ind; 
 	profondeur++;
@@ -160,4 +177,16 @@ int depilerProfondeur()
 {
 	profondeur--; 
 	return TAB_PROFONDEUR[profondeur] ;
-} 
+} */
+
+void setNombredevariableglobale()
+{
+
+	nombreDeVariabeleglobale = ind-1;
+}
+
+void setIndiceTableLable()
+{
+
+	 ind = nombreDeVariabeleglobale ;
+}

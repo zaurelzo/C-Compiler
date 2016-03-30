@@ -16,6 +16,8 @@
 
 "int"  { return tINT ;}
 
+"return" {return tRETURN;}
+
 "if" {return tIF;}
 
 "while" {return tWHILE;}

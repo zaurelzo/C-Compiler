@@ -16,13 +16,15 @@
 extern int ind ; 
 
 extern int indPile;
-extern int profondeur ; 
+extern int profondeur ;
+extern nombreDeVariabeleglobale  ;
 
 struct Noeud_symbol {
 	char nom_var[TAILLE];
 	int type;
 	int initialiser;
 	int constante ; 
+	int abs_rel;
 	//int global ; // 0 global , 1 pas global 
 };
 
@@ -41,9 +43,9 @@ constante = 0 pas constante , 1 si contante
 int ajouter_Var(char *nom_var,int type ,int initialiser ,int constante ) ;
 
 
-int recherche(char * nom_var ) ; 
+int recherchet(char * nom_var , int * relative_ou_absolue ) ;
 
-
+ int recherche(char * nom_var); // pour debug à effacer apres 
 
 /*lorsque l'on empile , la valeur est convertit en string , et stocké dans le champ nom_var
 La base de la pile en la fin de la table des symbol
@@ -52,15 +54,16 @@ La base de la pile en la fin de la table des symbol
 	1: la valeur empilé est l'@ d'une varible qui est existe ! 
 	@retour : l'@ ou on a empilé 
 	*/ 
-int empiler(int value , int type  ); 
+int empiler(int value , int type  ); //pour debug à effacer apres 
 
 
-
+int empilert(int value , int type , int abs_ou_rel ); 
 
 /*par1: type  de la valeur depilée , 0 :constante , 1 : @ d'une var existante 
 @retour : valeur depile , -1 si l'on ne peut pas dépiler(ie : on est début de la pile ) */
 int depiler(int *  type_val_depile ) ;
 
+int depilert(int *  type_val_depile , int *  abs_ou_rel ) ;
 
 void printTabVar(); 
 
@@ -87,8 +90,12 @@ int getAdresseResultatComparaison();*/
 void generer_fichier_table_des_symboles();
 
 /*fonction pour la gestion de la profondeur */
-void empilerProfondeur();
-int depilerProfondeur(); 
+/*void empilerProfondeur();
+int depilerProfondeur(); */
+
+void setNombredevariableglobale();
+
+void setIndiceTableLable();
 
 
 
