@@ -5,12 +5,10 @@
 int main(int argc, char const *argv[])
 {
 
-	/*char  ligne[20] ="1 99 5 6" ;
-	int  tab[4];
-	printf("-----%d\n",traiter_ligne(ligne ,tab));*/
+	//TODO : permettre le passage en parametre du fichier a interprété 
+
 	charger_Programme_dans_Ram("../compilateur/fichier_asm_binaire");
 	//afficher_ram();
-	//printf("=======================================\n");
 	interpreter();
 	return 0;
 }

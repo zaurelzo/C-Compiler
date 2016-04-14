@@ -4,9 +4,10 @@
 #include "tab_label.h"
 #include "deuxieme_passe.h"
 #include "gestion_des_fonctions.h"
-
+#include "asm.h"
 int main()
 {
+	printf("%s djfdj",KRED);
 	/*Noeud_label tab_label[50] ; 
 
 	 int nb_element_tab_label = recreer_tableLabel("fichier_table_des_labels", tab_label);

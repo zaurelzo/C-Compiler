@@ -169,3 +169,107 @@ void nombre_negatif_asm(int * dollar_addr,int * dollar_relative_ou_absolue)
 	*dollar_relative_ou_absolue=abs_rel;
 	//empiler(-valeurOp,0);
 }
+
+void JMF_IF_ASM(int addr_condition)
+{
+	viderPile();
+	char * label =  ajouter_label();
+	printf("\x1B[37mJMF @%d %s\n",addr_condition,label); //condition se trouve toujours à une adresse au format fixe 
+	incrementerPC();
+	empilerPremierLabelIF(label); 
+}
+
+void JMP_IF_ASM()
+{
+	char * label =  ajouter_label();
+	printf("\x1B[37mJMP %s\n",label);
+	incrementerPC();
+	empilerDeuxiemeLabelIF(label);
+}
+
+void ELSE_FIRST_LABEL_ASM()
+{
+	char label[TAILLE];
+	depilerPremierLabelIF(label) ;
+	modifierNum_instruction(label,pc);
+}
+
+void ELSE_SECOND_LABEL_ASM()
+{
+	char label[TAILLE];
+	depilerDeuxiemeLabelIF(label);
+	modifierNum_instruction(label,pc);
+}
+
+void IF_WITHOUT_ELSE_ASM()
+{
+	char label[TAILLE];
+	depilerPremierLabelIF(label) ;
+	char label2[TAILLE];
+	depilerDeuxiemeLabelIF(label2);
+	modifierNum_instruction(label,pc);
+	//printf("------------------------%d\n",pc);
+	modifierNum_instruction(label2,pc);
+	//printf("------------------------%d\n",pc);
+	//viderPile();
+}
+
+//avec les conditions, tout est en adressage fixe car on les empile 
+
+void CONDITION_ASM(char * comparateur, int * dollar_addr , int * dollar_relative_ou_absolue, int addr_exp1,int addr_exp2)
+{
+	int retour =empilert(-1,1,1);
+	*dollar_addr=retour;
+	*dollar_relative_ou_absolue=1;
+	if(strcmp(comparateur,"==")==0)
+	{
+		printf("\x1B[37mEQU @%d @%d @%d\n", retour,addr_exp1,addr_exp2);
+		incrementerPC();
+	}else if(strcmp(comparateur,"<")==0)
+	{
+		printf("\x1B[37mINF @%d @%d @%d\n", retour,addr_exp1,addr_exp2);
+		incrementerPC();
+	}else if(strcmp(comparateur,">")==0)
+	{
+		printf("\x1B[37mSUP @%d @%d @%d\n", retour,addr_exp1,addr_exp2);
+		incrementerPC();
+	}
+} 
+
+void WHILE_FIRST_LABEL_ASM()
+{
+	char * label = ajouter_label(); 
+	//printf("LABEL %s\n",label);
+	empilerPremierLabelWhile(label);
+	modifierNum_instruction(label,pc);
+	//	incrementerPC();
+}
+
+void JMF_WHILE_ASM(int dollar_addr)
+{
+	viderPile();
+	char * label =  ajouter_label();
+	printf("\x1B[37mJMF @%d %s\n",dollar_addr,label);
+	incrementerPC();
+	empilerDeuxiemeLabelWhile(label); 	
+}
+
+void JMP_WHILE_ASM()
+{
+	char  label[TAILLE] ; 
+	depilerPremierLabelWhile(label);
+	printf("\x1B[37mJMP %s\n", label);
+	incrementerPC();
+}
+
+
+void WHILE_SECOND_LABEL_ASM()
+{
+	char  label[TAILLE] ;
+	depilerDeuxiemeLabelWhile(label) ;
+	//printf("LABEL %s\n",label);
+	modifierNum_instruction(label,pc);
+	//viderPile();
+}
+
+//s'occuper des fonction

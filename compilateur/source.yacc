@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include "tab_symb.h"
 #include "tab_label.h"
+#include "asm.h"
 
 %}
 
@@ -60,82 +61,61 @@ PrototypeGlobal : Prototype PrototypeGlobal | ;
 ImplementationFonctionGlobal : ImplementationFonction ImplementationFonctionGlobal | ;
 
 
-Declaration : tINT tID { 
-													if ( ajouter_Var($2,1,0,0)==-1 )  
-													{
-														yyerror("ERROR ") ;
-													}/* else
-													{	
-														printTabVar();
-													} */
-												}  SuiteDeclarations  
-
-			|tCONST tINT tID tEGAL Expression tPOINTVIR  { //pas complet , changer champ initialiser var
-																											if (ajouter_Var($3,1,0,1)==-1)
-																											{
-																												yyerror("ERROR ") ;
-																											}else 
-																											{
-																												int abs_rel ; 
-																												int var = recherchet($3,&abs_rel);
-																												
-																												if ($5.relative_ou_absolue==0 && abs_rel==0)
-																													printf( "COP @@%d @@%d \n",var,$5.adresse);
-																												else if  ($5.relative_ou_absolue==0 && abs_rel==1)
-																													printf( "COP @@%d @%d \n",var,$5.adresse);
-																												else if  ($5.relative_ou_absolue==1 && abs_rel==0)
-																													printf( "COP @%d @@%d \n",var,$5.adresse);
-																												else if  ($5.relative_ou_absolue==1 && abs_rel==1)
-																													printf( "COP @%d @%d \n",var,$5.adresse);
-																													
-																												incrementerPC();
-																												viderPile();
-																												modifierChampInitialiserVariable($3);
-																											}
-																									} 
-			|tINT tID tEGAL Expression tPOINTVIR{ //pas complet , changer champ initialiser var
-																											if (ajouter_Var($2,1,0,1)==-1)
-																											{
-																												yyerror("ERROR ") ;
-																											}else 
-																											{
-																												int abs_rel ; 
-																												int var = recherchet($2,&abs_rel);
-																												
-																												if ($4.relative_ou_absolue==0 && abs_rel==0)
-																													printf( "COP @@%d @@%d \n",var,$4.adresse);
-																												else if  ($4.relative_ou_absolue==0 && abs_rel==1)
-																													printf( "COP @@%d @%d \n",var,$4.adresse);
-																												else if  ($4.relative_ou_absolue==1 && abs_rel==0)
-																													printf( "COP @%d @@%d \n",var,$4.adresse);
-																												else if  ($4.relative_ou_absolue==1 && abs_rel==1)
-																													printf( "COP @%d @%d \n",var,$4.adresse);
-																													
-																												incrementerPC();
-																												viderPile();
-																												modifierChampInitialiserVariable($2);
-																											}
-																									} ; 
+Declaration : 
+	tINT tID 
+	{ 
+		if ( ajouter_Var($2,1,0,0)==-1 )  
+		{
+			yyerror("ERROR WHEN DECLARATION OF ") ;
+			yyerror($2);yyerror("\n");
+		}/* else
+		{	
+			printTabVar();
+		} */
+	}  SuiteDeclarations  
+							
+							
+	|tCONST tINT tID tEGAL Expression tPOINTVIR 
+		{ 
+			if (declaration_affectation_asm( $3 ,1 ,$5.relative_ou_absolue, $5.adresse)==-1)
+			{
+				yyerror("ERROR WHEN CONSTANT DECLARATION AFFECTATION,VAR NOT EXIST :") ;
+				yyerror($3);yyerror("\n");	
+			}
+		} 
+		
+		
+	|tINT tID tEGAL Expression tPOINTVIR
+		{ 
+			if (declaration_affectation_asm( $2 ,0 ,$4.relative_ou_absolue, $4.adresse)==-1)
+			{
+				yyerror("ERROR WHEN DECLARATION AFFECTATION,VAR NOT EXIST :") ;
+				yyerror($2);yyerror("\n");	
+			}
+		}; 
+	
 										
-SuiteDeclarations :  tPOINTVIR
-					| tVIR tID SuiteDeclarations  { 
-																					if ( ajouter_Var($2,1,0,0)==-1 )  
-																					{
-																						yyerror("ERROR ") ;
-																					} /*else
-																					{	
-																						printTabVar();
-																					} */
-																			};
+SuiteDeclarations : 
+	 tPOINTVIR
+	| tVIR tID SuiteDeclarations  
+		{ 
+			if ( ajouter_Var($2,1,0,0)==-1 )  
+			{
+				yyerror("ERROR WHEN DECLARATION");
+				yyerror($2);yyerror("\n");	
+			} 
+		};
 									
 
 							
 Main: tMAIN tPO  tPF Body ;
 
-Body : tAO SuiteBody Return tAF {
-														//generer_fichier_table_des_symboles();
-														generer_fichier_tab_label();
-												} ;
+Body : 
+	tAO SuiteBody Return tAF 
+	{
+		//generer_fichier_table_des_symboles();
+		generer_fichier_tab_label();
+	} ;
 			
 SuiteBody :  Declaration SuiteBody
 			|Affectation  SuiteBody
@@ -145,429 +125,174 @@ SuiteBody :  Declaration SuiteBody
 			|While SuiteBody
 			|;
 			
-Affectation : tID tEGAL  Expression tPOINTVIR { 
-																									int var ;
-																									int abs_rel ; 
-																									
-																									if ((  var =recherchet($1,&abs_rel))==-1)
-																									{
-																											yyerror("ERROR \n") ;
-																									}else 
-																									{
-																											//printf("nombre var glabal :  %d \n " ,nombreDeVariabeleglobale);
-																											if ($3.relative_ou_absolue==0 && abs_rel==0)
-																													printf( "COP @@%d @@%d \n",var,$3.adresse);
-																												else if  ($3.relative_ou_absolue==0 && abs_rel==1)
-																													printf( "COP @%d @@%d \n",var,$3.adresse);
-																												else if  ($3.relative_ou_absolue==1 && abs_rel==0)
-																													printf( "COP @@%d @%d \n",var,$3.adresse);
-																												else if  ($3.relative_ou_absolue==1 && abs_rel==1)
-																													printf( "COP @%d @%d \n",var,$3.adresse);
-																													
-																										incrementerPC();
-																										viderPile();
-																										modifierChampInitialiserVariable($1);									
-																									}
-																						} ;
+Affectation : 
+	tID tEGAL  Expression tPOINTVIR 
+	{
+		if (affection_asm( $1 ,$3.relative_ou_absolue, $3.adresse)==-1)
+		{
+			yyerror("ERROR WHEN AFFECTATION,VAR NOT EXIST :") ;
+			yyerror($1);yyerror("\n");	
+		} 
+	};
 										
 										
-
-/*Valeur : tNOMBREEXPO
-		|tNOMBREDEC ;*/
-		
 		
 //à completer
-Print : tPRINT tPO Expression tPF tPOINTVIR {
-																							if($3.relative_ou_absolue==0)
-																								printf("PRI @@%d\n",$3.adresse);
-																							else 
-																								printf("PRI @%d\n",$3.adresse);
-																							
-																							incrementerPC();
-																							viderPile();
-																						} ; 
+Print : 
+	tPRINT tPO Expression tPF tPOINTVIR 
+	{
+		print_asm($3.relative_ou_absolue);
+	} ; 
 									
 									
-Expression : tNOMBREDEC { 
-													//$$=$1;
-													printf("AFC @%d %d\n",empilert($1,0,1) ,$1);
-													incrementerPC();
-													$$.adresse=getAdressePile()+1;
-													$$.relative_ou_absolue=1 ; // absolue   
-												}
+Expression : 
+	tNOMBREDEC 
+	{ 
+		printf("AFC @%d %d\n",empilert($1,0,1) ,$1);
+		incrementerPC();
+		$$.adresse=getAdressePile()+1;
+		$$.relative_ou_absolue=1 ; // absolue   
+	}
 												
-	|tID {
-					//$$=$1; 
-					int addr ;
-					int abs_rel;
-					if ((  addr =recherchet($1,&abs_rel))==-1)
-					{
-						yyerror("ERROR : Variable %s non existante \n",$1) ;
-					}else 
-					{
-					
-						
-						empilert(addr,1,abs_rel);
-						//printf("AFC %d %d\n",empiler(addr,1) ,addr);
-						//incrementerPC();
-						$$.adresse= addr;
-						$$.relative_ou_absolue=abs_rel ; // absolue 
-					} 
-				}
+	|tID 
+	{ 
+		int addr ;
+		int abs_rel;
+		if ((  addr =recherchet($1,&abs_rel))==-1)
+		{
+			yyerror("ERROR : Variable %s non existante\n",$1) ;
+		}else 
+		{				
+			empilert(addr,1,abs_rel);
+			//printf("AFC %d %d\n",empiler(addr,1) ,addr);
+			//incrementerPC();
+			$$.adresse= addr;
+			$$.relative_ou_absolue=abs_rel ; // absolue 
+		} 
+	}
 				
 	|AppelFonctions /*{return }*/
 				
-  | Expression tADD Expression {
-																			int typeOp1,typeOp2; 
-																			int  abs_rel1,abs_rel2;
-																			int valeurOp2 = depilert(&typeOp2,&abs_rel2);
-																			int valeurOp1= depilert(&typeOp1,&abs_rel1);
-																			//printf("type 1 : %d | type 2 : %d\n",typeOp1,typeOp2);
-																			if (valeurOp2==-1 || valeurOp1==-1 )
-																			{
-																				//printf("ERREUR indicePile :%d\n",indPile );
-																				yyerror("ERREUR LORS DU DÉPILEMENT DES OPÉRANDES \n") ;
-																			}else 
-																			{
-																						$$.adresse= getAdressePile();
-																						incrementerPC();
-																						$$.relative_ou_absolue=1;
-																						
-																						if (typeOp1==1 && typeOp2==1)//si 1er et 2iem opérande est une variable 
-																						{
-																							if (abs_rel1==0 && abs_rel2==0)
-																								printf("ADD @%d @@%d @@%d\n",getAdressePile(),valeurOp2,valeurOp1);
-																							else if (abs_rel1==0 && abs_rel2==1)
-																								printf("ADD @%d @%d @@%d\n",getAdressePile(),valeurOp2,valeurOp1); 	
-																							else if (abs_rel1==1 && abs_rel2==0)
-																								printf("ADD @%d @@%d @%d\n",getAdressePile(),valeurOp2,valeurOp1); 	
-																							else if (abs_rel1==1 && abs_rel2==1)
-																								printf("ADD @%d @%d @%d\n",getAdressePile(),valeurOp2,valeurOp1); 	
-																							empiler(getAdressePile(),1) ;
-																							
-																						}else if( typeOp1==1 && typeOp2==0) //si 1er est une var et 2iem est une constante
-																						{
-																							//printf("++++++++++++++++++++++++ %d %d \n",abs_rel1,abs_rel2);
-																							int NouvAdrOp2= obtenirAdressDeuxiemeOperande();
-																							if (abs_rel1==0 && abs_rel2==0)
-																								printf("ADD @%d @@%d @@%d\n",getAdressePile(),valeurOp1,NouvAdrOp2);
-																							else if (abs_rel1==0 && abs_rel2==1)
-																								printf("ADD @%d @@%d @%d\n",getAdressePile(),valeurOp1,NouvAdrOp2);
-																							else if (abs_rel1==1 && abs_rel2==0)
-																								printf("ADD @%d @%d @@%d\n",getAdressePile(),valeurOp1,NouvAdrOp2);
-																							else if (abs_rel1==1 && abs_rel2==1)
-																								printf("ADD @%d @%d @%d\n",getAdressePile(),valeurOp1,NouvAdrOp2);
-																						
-																							empiler(getAdressePile(),1) ;
-																						}else if( typeOp1==0 && typeOp2==1) //si 1er est une constante et 2iem est une var
-																						{
-																							
-																							int NouvAdrOp1=obtenirAdressePremierOperande(); 
-																							
-																							if (abs_rel1==0 && abs_rel2==0)
-																								printf("ADD @%d @@%d @@%d\n",getAdressePile(),NouvAdrOp1,valeurOp2);
-																							if (abs_rel1==0 && abs_rel2==1)
-																								printf("ADD @%d @@%d @%d\n",getAdressePile(),NouvAdrOp1,valeurOp2);
-																							if (abs_rel1==1 && abs_rel2==0)
-																								printf("ADD @%d @%d @@%d\n",getAdressePile(),NouvAdrOp1,valeurOp2);
-																							if (abs_rel1==1 && abs_rel2==1)
-																								printf("ADD @%d @%d @%d\n",getAdressePile(),NouvAdrOp1,valeurOp2);
-																								
-																							empiler(getAdressePile(),1) ;
-																							
-																						}else if( typeOp1==0 && typeOp2==0) //si 1er est une constante et 2iem est une constante
-																						{
-																							//printf("++++++++++++++++++++++++ %d %d \n",abs_rel1,abs_rel2);
-																							int NouvAdrOp1=obtenirAdressePremierOperande(); 	
-																							int NouvAdrOp2 = obtenirAdressDeuxiemeOperande();
-																							
-																							if (abs_rel1==0 && abs_rel2==0)
-																								printf("ADD @%d @@%d @@%d\n",getAdressePile(),NouvAdrOp1,NouvAdrOp2);
-																							else if (abs_rel1==0 && abs_rel2==1)
-																								 printf("ADD @%d @@%d @%d\n",getAdressePile(),NouvAdrOp1,NouvAdrOp2);
-																							else if (abs_rel1==1 && abs_rel2==0)
-																								 printf("ADD @%d @%d @@%d\n",getAdressePile(),NouvAdrOp1,NouvAdrOp2);
-																							else if (abs_rel1==1 && abs_rel2==1)
-																								 printf("ADD @%d @%d @%d\n",getAdressePile(),NouvAdrOp1,NouvAdrOp2);
-																						
-																							empiler(getAdressePile(),1) ;
-																						}
-																			}
-  														}
+  | Expression tADD Expression 
+  	{
+   		if (operation_arithmetique_asm("ADD", &($$.adresse),&($$.relative_ou_absolue))==-1)
+   		{
+   			yyerror("ERROR WHEN POP OPERANDS\n");
+   		}
+		}
  
  
  
-  | Expression tSUB Expression /*{
-																			int typeOp1,typeOp2; 
-																			int valeurOp2 = depiler(&typeOp2);
-																			int valeurOp1= depiler(&typeOp1);
-																			//printf("type 1 : %d | type 2 : %d\n",typeOp1,typeOp2);
-																			if (valeurOp2==-1 || valeurOp1==-1 )
-																			{
-																				//printf("ERREUR indicePile :%d\n",indPile );
-																				yyerror("ERREUR LORS DU DÉPILEMENT DES OPÉRANDES \n") ;
-																			}else 
-																			{
-																						if (typeOp1==1 && typeOp2==1)//si 1er et 2iem opérande est une variable 
-																						{
-																						//printf("pff++\n");
-																							$$= getAdressePile();	
-																							printf("SOU %d %d %d\n",getAdressePile(),valeurOp2,valeurOp1);
-																							incrementerPC();
-																							empiler(getAdressePile(),1) ;
-																						}else if( typeOp1==1 && typeOp2==0) //si 1er est une var et 2iem est une constante
-																						{
-																							//printf("pff---\n");
-																							$$= getAdressePile() ; 
-																							int NouvAdrOp2= obtenirAdressDeuxiemeOperande();
-																							printf("SOU %d %d %d\n",getAdressePile(),valeurOp1,NouvAdrOp2);
-																							incrementerPC();
-																							empiler(getAdressePile(),1) ;
-																						}else if( typeOp1==0 && typeOp2==1) //si 1er est une constante et 2iem est une var
-																						{
-																							//printf("pff//\n");
-																							int NouvAdrOp1=obtenirAdressePremierOperande(); 
-																							$$=getAdressePile();
-																							printf("SOU %d %d %d\n",getAdressePile(),NouvAdrOp1,valeurOp2);
-																							incrementerPC();
-																							empiler(getAdressePile(),1) ;
-																						}else if( typeOp1==0 && typeOp2==0) //si 1er est une constante et 2iem est une constante
-																						{
-																							//printf("pff\n");
-																							int NouvAdrOp1=obtenirAdressePremierOperande(); 	
-																							$$=getAdressePile();
-																							int NouvAdrOp2 = obtenirAdressDeuxiemeOperande();
-																							printf("SOU %d %d %d\n",getAdressePile(),NouvAdrOp1,NouvAdrOp2);
-																							incrementerPC();
-																							empiler(getAdressePile(),1) ;
-																						}
-																			}
-  														}*/
+  | Expression tSUB Expression 
+  	{
+   		if (operation_arithmetique_asm("SUB", &($$.adresse),&($$.relative_ou_absolue))==-1)
+   		{
+   			yyerror("ERROR WHEN POP OPERANDS\n");
+   		}
+		}
   
   
-  | Expression tMUL Expression /*{
-																			int typeOp1,typeOp2; 
-																			int valeurOp2 = depiler(&typeOp2);
-																			int valeurOp1= depiler(&typeOp1);
-																			//printf("type 1 : %d | type 2 : %d\n",typeOp1,typeOp2);
-																			if (valeurOp2==-1 || valeurOp1==-1 )
-																			{
-																				//printf("ERREUR indicePile :%d\n",indPile );
-																				yyerror("ERREUR LORS DU DÉPILEMENT DES OPÉRANDES \n") ;
-																			}else 
-																			{
-																						if (typeOp1==1 && typeOp2==1)//si 1er et 2iem opérande est une variable 
-																						{
-																						//printf("pff++\n");
-																							$$= getAdressePile();	
-																							printf("MUL %d %d %d\n",getAdressePile(),valeurOp2,valeurOp1);
-																							incrementerPC();
-																							empiler(getAdressePile(),1) ;
-																						}else if( typeOp1==1 && typeOp2==0) //si 1er est une var et 2iem est une constante
-																						{
-																							//printf("pff---\n");
-																							$$= getAdressePile() ; 
-																							int NouvAdrOp2= obtenirAdressDeuxiemeOperande();
-																							printf("MUL %d %d %d\n",getAdressePile(),valeurOp1,NouvAdrOp2);
-																							incrementerPC();
-																							empiler(getAdressePile(),1) ;
-																						}else if( typeOp1==0 && typeOp2==1) //si 1er est une constante et 2iem est une var
-																						{
-																							//printf("pff//\n");
-																							int NouvAdrOp1=obtenirAdressePremierOperande(); 
-																							$$=getAdressePile();
-																							printf("MUL %d %d %d\n",getAdressePile(),NouvAdrOp1,valeurOp2);
-																							incrementerPC();
-																							empiler(getAdressePile(),1) ;
-																						}else if( typeOp1==0 && typeOp2==0) //si 1er est une constante et 2iem est une constante
-																						{
-																							//printf("pff\n");
-																							int NouvAdrOp1=obtenirAdressePremierOperande(); 	
-																							$$=getAdressePile();
-																							int NouvAdrOp2 = obtenirAdressDeuxiemeOperande();
-																							printf("MUL %d %d %d\n",getAdressePile(),NouvAdrOp1,NouvAdrOp2);
-																							incrementerPC();
-																							empiler(getAdressePile(),1) ;
-																						}
-																			}
-  														}*/
+  | Expression tMUL Expression
+  	{
+   		if (operation_arithmetique_asm("MUL", &($$.adresse),&($$.relative_ou_absolue))==-1)
+   		{
+   			yyerror("ERROR WHEN POP OPERANDS\n");
+   		}
+		}
   															
   															
-  | Expression tDIV Expression /*{
-																			int typeOp1,typeOp2; 
-																			int valeurOp2 = depiler(&typeOp2);
-																			int valeurOp1= depiler(&typeOp1);
-																			//printf("type 1 : %d | type 2 : %d\n",typeOp1,typeOp2);
-																			if (valeurOp2==-1 || valeurOp1==-1 )
-																			{
-																				//printf("ERREUR indicePile :%d\n",indPile );
-																				yyerror("ERREUR LORS DU DÉPILEMENT DES OPÉRANDES \n") ;
-																			}else 
-																			{
-																						if (typeOp1==1 && typeOp2==1)//si 1er et 2iem opérande est une variable 
-																						{
-																						//printf("pff++\n");
-																							$$= getAdressePile();	
-																							printf("DIV %d %d %d\n",getAdressePile(),valeurOp2,valeurOp1);
-																							incrementerPC();
-																							empiler(getAdressePile(),1) ;
-																						}else if( typeOp1==1 && typeOp2==0) //si 1er est une var et 2iem est une constante
-																						{
-																							//printf("pff---\n");
-																							$$= getAdressePile() ; 
-																							int NouvAdrOp2= obtenirAdressDeuxiemeOperande();
-																							printf("DIV %d %d %d\n",getAdressePile(),valeurOp1,NouvAdrOp2);
-																							incrementerPC();
-																							empiler(getAdressePile(),1) ;
-																						}else if( typeOp1==0 && typeOp2==1) //si 1er est une constante et 2iem est une var
-																						{
-																							//printf("pff//\n");
-																							int NouvAdrOp1=obtenirAdressePremierOperande(); 
-																							$$=getAdressePile();
-																							printf("DIV %d %d %d\n",getAdressePile(),NouvAdrOp1,valeurOp2);
-																							incrementerPC();
-																							empiler(getAdressePile(),1) ;
-																						}else if( typeOp1==0 && typeOp2==0) //si 1er est une constante et 2iem est une constante
-																						{
-																							//printf("pff\n");
-																							int NouvAdrOp1=obtenirAdressePremierOperande(); 	
-																							$$=getAdressePile();
-																							int NouvAdrOp2 = obtenirAdressDeuxiemeOperande();
-																							printf("DIV %d %d %d\n",getAdressePile(),NouvAdrOp1,NouvAdrOp2);
-																							incrementerPC();
-																							empiler(getAdressePile(),1) ;
-																						}
-																			}
-  														}*/
+  | Expression tDIV Expression 
+  	{
+   		if (operation_arithmetique_asm("ADD", &($$.adresse),&($$.relative_ou_absolue))==-1)
+   		{
+   			yyerror("ERROR WHEN POP OPERANDS\n");
+   		}
+		}
   
   
-  | tSUB Expression %prec NEG  {	
-  																$$.adresse=1;
-  																$$.relative_ou_absolue=1;
-  																/*int typeOp;
-  																int valeurOp = depiler(&typeOp);
-  																if (typeOp==0)//si constante
-  																{
-  																	printf("AFC %d -%d\n",empiler(-valeurOp,0),valeurOp);
-  																	incrementerPC();
-  																}
-  																$$=getAdressePile()+1;
-  																//empiler(-valeurOp,0);*/	
-  															}
-  | tPO Expression tPF   {
-  													$$.adresse=1;
-  													$$.relative_ou_absolue=1;
-  												 //$$ = $2;  
-  												} ; 
+  | tSUB Expression %prec NEG  
+		{
+			nombre_negatif_asm(&($$.adresse),&($$.relative_ou_absolue));																	
+		}
+ 	
+	| tPO Expression tPF   
+  	{
+  		$$.adresse=$2.adresse;
+  		$$.relative_ou_absolue=$2.relative_ou_absolue;  
+  	} ; 
   												
 
-If: tIF tPO Cond tPF tAO {
-														viderPile();
-														char * label =  ajouter_label();
-														printf("JMF @%d %s\n",$3.adresse,label);
-														incrementerPC();
-														empilerPremierLabelIF(label); 
-													}  SuiteBody { 
-																				char * label =  ajouter_label();
-																					printf("JMP %s\n",label);
-																					incrementerPC();
-																					empilerDeuxiemeLabelIF(label);
-																				} tAF Else ;
+If: 
+	tIF tPO Cond tPF tAO 
+	{
+		JMF_IF_ASM($3.adresse); 
+	}  SuiteBody 
+	{
+		JMP_IF_ASM();	
+	} tAF Else ;
 																						
-Else : tELSE tAO {char label[TAILLE];
-								depilerPremierLabelIF(label) ;
-								modifierNum_instruction(label,pc);
-								} SuiteBody tAF {
-																	char label[TAILLE];
-																	depilerDeuxiemeLabelIF(label);
-																	modifierNum_instruction(label,pc);
-																	//viderPile();
-																} 
-																
-			|{
-				char label[TAILLE];
-				depilerPremierLabelIF(label) ;
-				char label2[TAILLE];
-				depilerDeuxiemeLabelIF(label2);
-				modifierNum_instruction(label,pc);
-				//printf("------------------------%d\n",pc);
-				modifierNum_instruction(label2,pc);
-				//printf("------------------------%d\n",pc);
-				//viderPile();
-				};
+Else : 
+	tELSE tAO 
+	{
+		ELSE_FIRST_LABEL_ASM();
+	} SuiteBody tAF 
+	{
+		ELSE_SECOND_LABEL_ASM();
+		//viderPile();
+	} 
+|	{
+		 IF_WITHOUT_ELSE_ASM();
+	};
 		
 				
 				
-While : tWHILE{
-							char * label = ajouter_label(); 
-							
-							//printf("LABEL %s\n",label);
-							empilerPremierLabelWhile(label);
-							modifierNum_instruction(label,pc);
-						//	incrementerPC();
-							} 
-						tPO Cond tPF tAO {
-																viderPile();
-																char * label =  ajouter_label();
-																printf("JMF @%d %s\n",$4.adresse,label);
-																incrementerPC();
-																empilerDeuxiemeLabelWhile(label); 													
-																}
-								SuiteBody{
-													char  label[TAILLE] ; 
-													depilerPremierLabelWhile(label);
-													printf("JMP %s\n", label);
-													incrementerPC();
-												} 
-								tAF {
-											char  label[TAILLE] ;
-											depilerDeuxiemeLabelWhile(label) ;
-											//printf("LABEL %s\n",label);
-											modifierNum_instruction(label,pc);
-											//viderPile();
-										}; 			
+While : 
+	tWHILE
+	{
+		 WHILE_FIRST_LABEL_ASM();
+	} 
+	tPO Cond tPF tAO 
+	{
+		JMF_WHILE_ASM($4.adresse);
+	}SuiteBody
+	{
+		JMP_WHILE_ASM();
+	} 
+	tAF 
+	{
+		 WHILE_SECOND_LABEL_ASM();
+	}; 			
 
 //rajouter tOR et tAND
-Cond: Expression Comparateur Expression {
-																						//on s'en fou de ce que l'empile , c'est l'@ qui nous interesse 
-																					int retour =empilert(-1,1,1);
-																					$$.adresse=retour;
-																					$$.relative_ou_absolue=1;
-																					if(strcmp($2,"==")==0)
-																					{
-																							printf("EQU @%d @%d @%d\n", retour,$1.adresse,$3.adresse);
-																						incrementerPC();
-
-																					}else if(strcmp($2,"<")==0)
-																					{
-																						printf("INF @%d @%d @%d\n", retour,$1.adresse,$3.adresse);
-																						incrementerPC();
-
-																					}else if(strcmp($2,">")==0)
-																					{
-																						printf("SUP @%d @%d @%d\n", retour,$1.adresse,$3.adresse);
-																						incrementerPC();
-
-																					}
-																					
-																				}
-			|Expression {$$=$1;}
-			|Cond tOR Cond {int retour = empilert(-1,1,1);
-											$$.adresse=retour;
-											$$.relative_ou_absolue=1; 
-											printf("OR @%d @%d @%d\n", retour,$1.adresse,$3.adresse);
-										}
-			|Cond tAND Cond{int retour = empilert(-1,1,1);
-											$$.adresse=retour;
-											$$.relative_ou_absolue=1;
-											printf("AND %d %d %d\n", retour,$1.adresse,$3.adresse);
-										};
+Cond: 
+	Expression Comparateur Expression 
+	{
+		CONDITION_ASM($2, &($$.adresse),&($$.relative_ou_absolue) , $1.adresse,$1.adresse);
+	}
+	|Expression {$$=$1;}
+	|Cond tOR Cond 
+	{
+		int retour = empilert(-1,1,1);
+		$$.adresse=retour;
+		$$.relative_ou_absolue=1; 
+		printf("OR @%d @%d @%d\n", retour,$1.adresse,$3.adresse);
+		incrementerPC();
+	}
+	|Cond tAND Cond
+	{
+		int retour = empilert(-1,1,1);
+		$$.adresse=retour;
+		$$.relative_ou_absolue=1;
+		printf("AND %d %d %d\n", retour,$1.adresse,$3.adresse);
+		incrementerPC();
+	};
 
  
 							
-Comparateur:tEGALCOMP {strcpy($$,$1);}
-						|tSUP {strcpy($$,$1);}
-						|tINF {strcpy($$,$1);};
+Comparateur:
+	tEGALCOMP {strcpy($$,$1);}
+	|tSUP {strcpy($$,$1);}
+	|tINF {strcpy($$,$1);};
 						
 
 						
@@ -600,7 +325,7 @@ Return : tRETURN Expression tPOINTVIR
 
 
 int yyerror(char *s) {
-  printf("%s\n",s);
+  printf("%s %s",KRED,s);
 }
 
 int main(void) {
