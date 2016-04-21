@@ -167,4 +167,21 @@ void initNombreDeParametres()
 	indTableDesParametres=0;
 }
 
+void setIDprototype(char *  name )
+{
+	strcpy(nom_fonction,name);
+}
 
+char * getIDprototype()
+{
+	return nom_fonction ; 
+}
+
+void setTypeRetour(int type_retour)
+{
+	type_retour = type_retour ; 
+} 
+int getTypeRetour()
+{
+	return type_retour ;
+}

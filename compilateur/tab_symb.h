@@ -13,6 +13,8 @@
 
 #define ADRESSE_DEBUTPILE TAILLE_TAB_SYMBOL-1
 
+/*==============================VARIABLES *===========================*/ 
+
 extern int ind ; 
 
 extern int indPile;
@@ -35,6 +37,13 @@ typedef struct  Noeud_symbol   Noeud_symbol ;
 
 /*TABLEAU POUR GERER LA LOCALITÉ DES VARIABLES ET LES VARIABLES DES FONCTIONS*/
 int TAB_PROFONDEUR[TAILLE_TAB_SYMBOL] ; 
+
+/*====================================END VARIABLES ================================*/
+
+
+
+
+/*====================================FONCTIONS ========================================*/
 
 /* type : 1 pour entier 
  initialiser : 0 pas init  1 init 
@@ -97,6 +106,7 @@ void setNombredevariableglobale();
 
 void setIndiceTableLable();
 
+/*===============================END FONCTIONS================================================*/
 
 
 #endif

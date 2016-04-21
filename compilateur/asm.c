@@ -272,4 +272,17 @@ void WHILE_SECOND_LABEL_ASM()
 	//viderPile();
 }
 
+int ADD_PROTOTYPE_ASM() 
+{
+	parametres  t[getNombredeParametres()] ;
+	getTab_parametres(t) ;
+
+	if (ajouter_Prototype(getIDprototype(), getTypeRetour(), t, getNombredeParametres())!=0)
+	{
+		return -1 ;  
+	}else 
+	{
+		return 0 ;
+	}
+}
 //s'occuper des fonction

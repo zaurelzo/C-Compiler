@@ -1,10 +1,14 @@
+%code requires{
+extern int yylineno;
+}
+
 %{
 #include <stdio.h>
 #include <stdlib.h>
 #include "tab_symb.h"
 #include "tab_label.h"
 #include "asm.h"
-
+#include "gestion_des_fonctions.h"
 %}
 
 
@@ -28,7 +32,7 @@
 %token tPRINT tMAIN  tCONST  tINT  tPO  tPF  tAO tAF  tMUL tDIV tEGAL tADD tSUB tVIR tPOINTVIR tNOMBREEXPO tERREUR tIF tELSE tOR tAND tWHILE tRETURN
 
 %left tADD tSUB tOR 
-%left tDIV tMUL tAND
+%left tDIV tMUL tAND 
 %left NEG
 
 
@@ -47,18 +51,54 @@
 %start Input
 %%
  
-Input: DeclarationGlobale {setNombredevariableglobale();} Input1 | Input1;
+Input: DeclarationGlobaleAndOthers {setNombredevariableglobale();} 
 
-Input1 : AffectationGlobale Input2 | Input2;
+DeclarationGlobaleAndOthers : ListDecl AffectationsAndOthers 
+| AffectationsAndOthers ;
 
-Input2 : PrototypeGlobal   Input3 | Input3;
+ListDecl : Declaration
+       |Declaration ListDecl
+  		| ;
 
-Input3 : ImplementationFonctionGlobal Main; 
 
-DeclarationGlobale : Declaration DeclarationGlobale | ;
-AffectationGlobale : Affectation AffectationGlobale | ;
-PrototypeGlobal : Prototype PrototypeGlobal | ;
-ImplementationFonctionGlobal : ImplementationFonction ImplementationFonctionGlobal | ;
+
+AffectationsAndOthers : AffectationList ProtosAndOthers
+	| ProtosAndOthers;
+
+AffectationList : Affectation
+	| Affectation AffectationList
+	|;
+
+ProtosAndOthers : ProtoList FunctionsAndOthers
+ |FunctionList ;
+
+ProtoList:  Prototype 
+		| Prototype  ProtoList 
+		|;
+
+FunctionsAndOthers :FunctionList  Main
+					| Main;
+
+FunctionList : ImplementationFonction 
+	|ImplementationFonction FunctionList ;
+	| ;
+
+/*PrototypeGlobal : 
+	Prototype 
+	{
+		if (ADD_PROTOTYPE_ASM()==-1)
+		{
+			yyerror("ERROR WHEN ADD PROTOTYPE\n");
+		} 
+	} PrototypeGlobal 
+	
+	| {
+			//debug 
+			print_TABLE_DES_FONCTION() ; 
+		} ;
+
+
+ImplementationFonctionGlobal :  ImplementationFonction ImplementationFonctionGlobal |;*/
 
 
 Declaration : 
@@ -296,21 +336,36 @@ Comparateur:
 						
 
 						
-Prototype : tINT tID tPO Params tPF tPOINTVIR;
+Prototype : 
+	tINT tID
+	{
+		setTypeRetour(1);
+		setIDprototype($2);
+	} tPO Params tPF tPOINTVIR;
 
 ImplementationFonction : tINT tID tPO Params tPF Body  ;
 
 
-Params : tINT tID SuiteParams
-				|;
+Params : 
+	tINT tID 
+	{
+		ajouter_parametre(1,0) ;
+	} SuiteParams
+	|;
 				
-SuiteParams : tVIR tINT tID SuiteParams
-						|;
+SuiteParams : 
+	tVIR tINT tID
+	{
+		ajouter_parametre(1,0) ;
+	} SuiteParams
+	|;
 						
-AppelFonctions : tID tPO ParamAppel tPF tPOINTVIR{
-																									$$.adresse=4;
-																									$$.relative_ou_absolue=1;
-																									};
+AppelFonctions : 
+	tID tPO ParamAppel tPF tPOINTVIR
+	{
+		$$.adresse=4;
+		$$.relative_ou_absolue=1;
+	};
 
 ParamAppel : Expression SuiteParamAppel
 					|;
@@ -325,7 +380,8 @@ Return : tRETURN Expression tPOINTVIR
 
 
 int yyerror(char *s) {
-  printf("%s %s",KRED,s);
+  printf("%s %s %d",KRED,s, yylineno);
+	
 }
 
 int main(void) {

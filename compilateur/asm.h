@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "color_constantes.h" 
+#include "gestion_des_fonctions.h"
 
 
 
@@ -24,4 +25,5 @@ void WHILE_FIRST_LABEL_ASM();
 void JMF_WHILE_ASM(int dollar_addr);
 void JMP_WHILE_ASM();
 void WHILE_SECOND_LABEL_ASM() ;
+int  ADD_PROTOTYPE_ASM() ;
 #endif 
