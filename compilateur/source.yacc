@@ -79,8 +79,8 @@ Declaration :
 		{ 
 			if (declaration_affectation_asm( $3 ,1 ,$5.relative_ou_absolue, $5.adresse)==-1)
 			{
-				yyerror("ERROR WHEN CONSTANT DECLARATION AFFECTATION,VAR NOT EXIST :") ;
-				yyerror($3);yyerror("\n");	
+				yyerror("ERROR WHEN CONSTANT DECLARATION AFFECTATION,VARIABLE %s IS NOT EXIST :",$3) ;
+				yyerror("\n");	
 			}
 		} 
 		
@@ -89,8 +89,8 @@ Declaration :
 		{ 
 			if (declaration_affectation_asm( $2 ,0 ,$4.relative_ou_absolue, $4.adresse)==-1)
 			{
-				yyerror("ERROR WHEN DECLARATION AFFECTATION,VAR NOT EXIST :") ;
-				yyerror($2);yyerror("\n");	
+				yyerror("ERROR WHEN DECLARATION AFFECTATION,VAR %s NOT EXIST :",$2) ;
+				yyerror("\n");	
 			}
 		}; 
 	
@@ -101,7 +101,7 @@ SuiteDeclarations :
 		{ 
 			if ( ajouter_Var($2,1,0,0)==-1 )  
 			{
-				yyerror("ERROR WHEN DECLARATION");
+				yyerror("ERROR WHEN DECLARATION OF");
 				yyerror($2);yyerror("\n");	
 			} 
 		};
@@ -130,8 +130,8 @@ Affectation :
 	{
 		if (affection_asm( $1 ,$3.relative_ou_absolue, $3.adresse)==-1)
 		{
-			yyerror("ERROR WHEN AFFECTATION,VAR NOT EXIST :") ;
-			yyerror($1);yyerror("\n");	
+			yyerror("ERROR WHEN AFFECTATION,VAR %s IS NOT EXIST :",$1) ;
+			yyerror("\n");	
 		} 
 	};
 										
@@ -160,7 +160,7 @@ Expression :
 		int abs_rel;
 		if ((  addr =recherchet($1,&abs_rel))==-1)
 		{
-			yyerror("ERROR : Variable %s non existante\n",$1) ;
+			yyerror("ERROR WHEN SEARCH VARIABLE %s\n",$1) ;
 		}else 
 		{				
 			empilert(addr,1,abs_rel);

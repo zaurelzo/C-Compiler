@@ -14,8 +14,8 @@ extern int indiceNombreDefonctionDeclare ;
 
 struct parametres
 {
-	int type_du_parametre; //0 pour un entier ;
-	int entier; 
+	int type_du_parametre; //1 pour un entier ;
+	int profondeur; 
 } ;
 
 typedef struct parametres parametres ;
@@ -29,20 +29,34 @@ struct Noeud_Fonctions
 	char nom_fonction[TAILLE_NOM_FONCTION] ;  
 	int nombres_paramatres ; 
 	parametres Tab_parametres[NOMBRES_PARAMATRES]; 
-	int retour ; //0 int  
+	int retour ; //0 void , 1 : int   
 };
 
 typedef struct Noeud_Fonctions Noeud_Fonctions ; 
 
-Noeud_Fonctions Tableau_des_fonctions[NOMBRES_MAX_DE_FONCTIONS_A_GERER] ; 
+Noeud_Fonctions Tableau_des_fonctions[NOMBRES_MAX_DE_FONCTIONS_A_GERER] ;
 
-void ajouter_Prototype(char * nom_fonction , int type_retour, parametres * p , int nombres_paramatres) ; 
+/*=========construction des parametres ============================*/
+extern int indTableDesParametres;
+parametres Tab_parametres[NOMBRES_PARAMATRES];  
+/*======================================================*/
+//-1 si le prototype existe dejà
+int ajouter_Prototype(char * nom_fonction , int type_retour, parametres * p , int nombres_paramatres) ;
 
-void ajouter_implementations(char * nom_fonction , int type_retour, parametres *  p ,int  adresse_implementation , int nombres_paramatres); 
+//-1: si une fonction de même nom, et même parametres a déjà été déclarée
+int ajouter_implementations(char * nom_fonction , int type_retour, parametres *  p ,int  adresse_implementation , int nombres_paramatres); 
 
 /*-1 si la fonction n'est existe pas dans la table des fonctions */
-int  fonctionExiste(char * nom_fonction , parametres * p , int nombres_paramatres , int  type_retour ) ;
+int  fonction_ou_prototype_Existe(char * nom_fonction , parametres * p , int nombres_paramatres , int  type_retour ,int * prototype_ou_fonction);
 
 
+void ajouter_parametre(int type_du_parametre , int profondeur) ;
+
+//renvoie un tableau avec  le nombre de parametre de la fonction et reinitialise ce tableau
+void  getTab_parametres(parametres * t ) ;
+
+void printTableParametres() ;
+int getNombredeParametres() ;
+void initNombreDeParametres() ;
 
 #endif
