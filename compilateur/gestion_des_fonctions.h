@@ -14,8 +14,11 @@
 /*==============================VARIABLES *===========================*/ 
 
 extern int indiceNombreDefonctionDeclare ;
+extern int numeroParametresEncoursDAnalyse; 
+
 struct parametres
 {
+	char nom[TAILLE_NOM_FONCTION ] ; // on en a besoin pour quand on fait les calculs en utilisant les parametres 
 	int type_du_parametre; //1 pour un entier ;
 	int profondeur; 
 } ;
@@ -45,6 +48,7 @@ parametres Tab_parametres[NOMBRES_PARAMATRES];
 char nom_fonction[TAILLE_NOM_FONCTION] ;
 //type retour ; 
 int type_retour;
+
 /*====================================END VARIABLES ================================*/
 
 
@@ -62,8 +66,7 @@ int  fonction_ou_prototype_Existe(char * nom_fonction , parametres * p , int nom
 
 
 /*GESTION PARAMETRES */
-void ajouter_parametre(int type_du_parametre , int profondeur) ;
-
+int ajouter_parametre(int type_du_parametre , int profondeur ,char * nom_du_parametre);
 //renvoie un tableau avec  le nombre de parametre de la fonction et reinitialise ce tableau
 void  getTab_parametres(parametres * t ) ;
 
@@ -73,13 +76,20 @@ void printTableParametres() ;
 int getNombredeParametres() ;
 void initNombreDeParametres() ;
 
+void setIDprototypeOrImplementationFunction(char * name ); 
+char * getIDprototypeOrImplementationFunction() ;
 
-
-void setIDprototype(char * name ); 
-char * getIDprototype() ;
 
 void setTypeRetour(int type_retour); 
 int getTypeRetour(); 
+
+/*GESTION APPEL FONCTION*/
+
+int incrementeNumeroParametresEncoursDAnalyse() ;
+void initNumeroParametresEncoursDAnalyse() ;
+
+//renvoie -1 si le numero du parametre appelé est pas du bon type , 0 sinon 
+int checkAppelFonctionParametreConforme(char * nom_fonction , int numParametre,int type , int profondeur) ;
 /*===============================END FONCTIONS================================================*/
 
 #endif

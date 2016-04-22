@@ -10,6 +10,9 @@
 #define TAILLE_TAB_LABEL 1000
 #define ADRESSE_DEBUT_TABLABEL TAILLE_TAB_LABEL-1
 
+
+/*==============================VARIABLES *===========================*/ 
+
 extern int indiceLabel;
 extern int indice; 
 extern int pc ; 
@@ -21,9 +24,9 @@ struct Noeud_label {
 };
 
 typedef struct Noeud_label Noeud_label ;
-/****************************************************************************************/
-//permet de faire une pile pour stocker les lables des while et les labels des ifs 
 
+/*********************/
+//permet de faire une pile pour stocker les lables des while et les labels des ifs 
 
 
 struct pileDesLables
@@ -40,11 +43,18 @@ typedef struct Noeud_label  Noeud_label ;
 
 Noeud_label  TABLEAU[TAILLE_TAB_LABEL] ; 
 
+/*====================================END VARIABLES ================================*/
+
+
+
+
+/*====================================FONCTIONS ========================================*/
 
 char* ajouter_label();
 int modifierNum_instruction(char * nom_label,int val_pc);
 void afficherTab();
 void incrementerPC();
+int getPcValue();
 //void  empilerLabelIF(char * label1 );
 void empilerPremierLabelWhile(char * label1 );
 void empilerDeuxiemeLabelWhile(char * label2) ;
@@ -68,4 +78,6 @@ int  getNumeroInstruction (char * label , Noeud_label * tab ,int j ) ;
 
 /*ecrit la table des labels dans un fichier*/
 void generer_fichier_tab_label();
+/*===============================END FONCTIONS================================================*/
+
 #endif

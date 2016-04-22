@@ -103,8 +103,10 @@ void generer_fichier_table_des_symboles();
 int depilerProfondeur(); */
 
 void setNombredevariableglobale();
-
+int getNombredevariableglobale();
 void setIndiceTableLable();
+
+int getAdresseRetour(int nombres_de_casse_a_reserver) ; 
 
 /*===============================END FONCTIONS================================================*/
 

@@ -19,9 +19,21 @@ int main()
 		printf("==PAS YES :( \n");
 	}
 
-	ajouter_parametre(1 , 0) ;
-	ajouter_parametre(1 , 0) ;
-	parametres  t[getNombredeParametres()] ;
+	if (ajouter_parametre(1 , 0 , "a") ==-1)
+	{
+		printf("PARAMETRE EXISTE\n") ;
+	}else 
+	{
+		printf("N'EXISTE PAS \n");
+	}
+	if (ajouter_parametre(1 , 0 , "c") ==-1)
+	{
+		printf("PARAMETRE EXISTE\n") ;
+	}else
+	{
+		printf("N'EXISTE PAS \n");
+	}
+	/*parametres  t[getNombredeParametres()] ;
 	
 	getTab_parametres(t) ;
 
@@ -32,27 +44,10 @@ int main()
 	}else 
 	{
 		printf("==PAS YES :( \n");
-	}
-
-	
-	
-	if (ajouter_implementations("fonction_tes" , 1, t ,44, getNombredeParametres())==0)
-	{
-		printf("IMPLEMENTATION FAITE  and NOMBRE DE PARAMETRES %d \n",getNombredeParametres());
-		print_TABLE_DES_FONCTION();
-	} else
-	{
-		printf("IMPLEMENTATION PAS FAITE \n");
-	}
-
-	/*if (ajouter_implementations("fonction_test" , 1, tab_param,4, 2)==0)
-	{
-		printf("IMPLEMENTATION FAITE \n");
-	} else
-	{
-		printf("IMPLEMENTATION PAS FAITE \n");
 	}*/
 
+	
+	
 	return 0;
 }
  

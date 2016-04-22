@@ -17,6 +17,7 @@
 	{
 		int adresse; 
 		int relative_ou_absolue;
+		int type ; 
 	 } adresseDesVariables ;
 }
 
@@ -50,8 +51,10 @@
 Input: DeclarationGlobale ;
 
 
-DeclarationGlobale : Declaration DeclarationGlobale |  AffectationGlobale ;
-AffectationGlobale :{setNombredevariableglobale();} Affectation AffectationGlobale | PrototypeAndImplementationGlobalAndMain  ;
+DeclarationGlobale : Declaration  {setNombredevariableglobale();} DeclarationGlobale  |  AffectationGlobale ;
+AffectationGlobale : Affectation AffectationGlobale | PrototypeAndImplementationGlobalAndMain  ;
+
+
 
 PrototypeAndImplementationGlobalAndMain  : 
 	Prototype 
@@ -65,7 +68,8 @@ PrototypeAndImplementationGlobalAndMain  :
 	
 	| {
 			//debug 
-			print_TABLE_DES_FONCTION() ; 
+			//print_TABLE_DES_FONCTION() ;
+			//printf("***value nombre variable globale : %d\n",getNombredevariableglobale()); 
 		} Main ;
 
 
@@ -105,14 +109,15 @@ Declaration :
 										
 SuiteDeclarations : 
 	 tPOINTVIR
-	| tVIR tID SuiteDeclarations  
-		{ 
-			if ( ajouter_Var($2,1,0,0)==-1 )  
-			{
-				yyerror("ERROR WHEN DECLARATION OF");
-				yyerror($2);yyerror("\n");	
-			} 
-		};
+	| tVIR tID 
+	{ 
+		if ( ajouter_Var($2,1,0,0)==-1 )  
+		{
+			yyerror("ERROR WHEN DECLARATION OF");
+			yyerror($2);yyerror("\n");	
+		} 
+	} SuiteDeclarations ; 
+		
 									
 
 							
@@ -179,7 +184,7 @@ Expression :
 		} 
 	}
 				
-	|AppelFonctions /*{return }*/
+	|AppelFonctions /*{return } à faire */
 				
   | Expression tADD Expression 
   	{
@@ -308,38 +313,70 @@ Prototype :
 	tINT tID tPO Params tPF tPOINTVIR
 	{
 		setTypeRetour(1);
-		setIDprototype($2);
+		setIDprototypeOrImplementationFunction($2);
 	} ;
 
-ImplementationFonction : tINT tID tPO Params tPF Body  ;
+ImplementationFonction : 
+	tINT tID tPO Params tPF
+	{
+		setIDprototypeOrImplementationFunction($2);
+		if (ADD_IMPLEMENTATION_FUNCTION_ASM(getPcValue())==-1)
+		{
+			yyerror("ERROR WHEN ADD FUNCTION IMPLEMENTATION\n");
+		}
+	} Body 
+	{
+		initNombreDeParametres() ; // on a fini de generer la code de la fonction, on peut init nb parametres pour que la fonction suivante puisse ajouter ces parametre 
+	} ;
 
 
 Params : 
 	tINT tID 
 	{
-		ajouter_parametre(1,0) ;
+		if (ajouter_parametre(1,0,$2)==-1 )
+		{
+			yyerror("ERROR : PARAMETER %s IS ALREADY DECLARED",$2);
+		}
 	} SuiteParams
 	|;
 				
 SuiteParams : 
 	tVIR tINT tID
 	{
-		ajouter_parametre(1,0) ;
+		if (ajouter_parametre(1,0,$3) ==-1)
+		{
+			yyerror("ERROR : PARAMETER %s IS ALREADY DECLARED",$3);
+		}
 	} SuiteParams
 	|;
 						
 AppelFonctions : 
-	tID tPO ParamAppel tPF tPOINTVIR
+	tID tPO 
 	{
+		//on fixe l'id de la fonction appelée 
+		setIDprototypeOrImplementationFunction($1);
+		 PUSH_ADDR_RETOUR_AND_PC_ASM(1);
+	}
+	ParamAppel tPF tPOINTVIR
+	{
+		//dans ce cas-ci , on s'en fou de ce que l'on renvoit
 		$$.adresse=4;
 		$$.relative_ou_absolue=1;
 	};
 
-ParamAppel : Expression SuiteParamAppel
-					|;
+ParamAppel : 
+	Expression 
+	{		 
+		CALL_PARAMETERS_ASM($1.adresse, $1.relative_ou_absolue);
+	} SuiteParamAppel
+	|;
 
-SuiteParamAppel : tVIR Expression SuiteParamAppel
-						|;
+SuiteParamAppel : 
+	tVIR Expression
+	{
+		CALL_PARAMETERS_ASM($2.adresse, $2.relative_ou_absolue);
+	} SuiteParamAppel
+	|;
 						
 Return : tRETURN Expression tPOINTVIR
 				|;
@@ -349,6 +386,7 @@ Return : tRETURN Expression tPOINTVIR
 
 int yyerror(char *s) {
   printf("%s %s",KRED,s);
+  exit(1);
 }
 
 int main(void) {

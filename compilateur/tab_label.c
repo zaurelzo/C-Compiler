@@ -48,6 +48,11 @@ void incrementerPC()
 	pc++;
 }
 
+int getPcValue()
+{
+	return pc;
+}
+
 void empilerLabelIF(char * label1 )
 {
 	strcpy(TAB_FILE_DES_LABELS[indiceLabel].type,"if");	

@@ -185,8 +185,20 @@ void setNombredevariableglobale()
 	nombreDeVariabeleglobale = ind-1;
 }
 
+int getNombredevariableglobale()
+{
+	return nombreDeVariabeleglobale ;
+}
+
 void setIndiceTableLable()
 {
 
 	 ind = nombreDeVariabeleglobale ;
 }
+
+int getAdresseRetour(int nombres_de_casse_a_reserver) 
+{
+	int retour =  indPile ;
+	 indPile=  indPile - nombres_de_casse_a_reserver ;
+	return retour ;
+} 

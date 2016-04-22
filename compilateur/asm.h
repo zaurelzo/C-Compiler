@@ -26,4 +26,7 @@ void JMF_WHILE_ASM(int dollar_addr);
 void JMP_WHILE_ASM();
 void WHILE_SECOND_LABEL_ASM() ;
 int  ADD_PROTOTYPE_ASM() ;
+int ADD_IMPLEMENTATION_FUNCTION_ASM(int addr_implementation);
+void PUSH_ADDR_RETOUR_AND_PC_ASM(int taille_element_retour);
+void CALL_PARAMETERS_ASM(int dollar_addr , int dollar_relative_ou_absolue); 
 #endif 

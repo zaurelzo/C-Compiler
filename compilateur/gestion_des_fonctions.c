@@ -3,6 +3,8 @@
  int indiceNombreDefonctionDeclare =0 ; 
 int indTableDesParametres = 0 ;
 
+ int numeroParametresEncoursDAnalyse = -1;
+
 //@return 
 int ajouter_Prototype(char * nom_fonction , int type_retour, parametres * p , int nombres_paramatres) 
 {
@@ -126,11 +128,23 @@ void print_TABLE_DES_FONCTION()
 
 
 
-void ajouter_parametre(int type_du_parametre , int profondeur) 
+int ajouter_parametre(int type_du_parametre , int profondeur ,char * nom_du_parametre)
 {
+	int i ;
+	for ( i = 0; i < indTableDesParametres; ++i)
+	{
+		// si param de meme nom et meme type existe deja, alors erreur 
+		if ( strcmp(Tab_parametres[i].nom,nom_du_parametre)==0  && Tab_parametres[i].type_du_parametre == type_du_parametre )
+		{
+			return -1 ;
+		}
+	}
+
 	Tab_parametres[indTableDesParametres].type_du_parametre =type_du_parametre;
+	strcpy(Tab_parametres[i].nom,nom_du_parametre);
 	//Tab_parametres[indTableDesParametres].profondeur= profondeur ; //à predre en compte plus tard 
 	indTableDesParametres++;
+	return 0 ;
 }
 
 int getNombredeParametres()
@@ -167,12 +181,12 @@ void initNombreDeParametres()
 	indTableDesParametres=0;
 }
 
-void setIDprototype(char *  name )
+void setIDprototypeOrImplementationFunction(char *  name )
 {
 	strcpy(nom_fonction,name);
 }
 
-char * getIDprototype()
+char * getIDprototypeOrImplementationFunction()
 {
 	return nom_fonction ; 
 }
@@ -185,3 +199,29 @@ int getTypeRetour()
 {
 	return type_retour ;
 }
+
+int  incrementeNumeroParametresEncoursDAnalyse()  
+{
+ 	numeroParametresEncoursDAnalyse++;
+ 	return  numeroParametresEncoursDAnalyse ;
+}
+
+void NumeroParametresEncoursDAnalyse()
+{
+	 numeroParametresEncoursDAnalyse=0;
+}
+
+int checkAppelFonctionParametreConforme(char * nom_fonction , int numParametre,int type , int profondeur) 
+{
+	int i ; 
+	for (i = 0; i <indiceNombreDefonctionDeclare ; ++i)
+	{
+		if (strcmp(nom_fonction, Tableau_des_fonctions[i].nom_fonction)==0  && Tableau_des_fonctions[i].Tab_parametres[numParametre].type_du_parametre ==type)
+		{	
+			//s'occuper de la profondeur plus tard 
+			return 0 ;
+		}
+	}
+	return -1 ; 
+}
+

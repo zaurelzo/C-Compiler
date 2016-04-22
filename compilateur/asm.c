@@ -277,7 +277,7 @@ int ADD_PROTOTYPE_ASM()
 	parametres  t[getNombredeParametres()] ;
 	getTab_parametres(t) ;
 
-	if (ajouter_Prototype(getIDprototype(), getTypeRetour(), t, getNombredeParametres())!=0)
+	if (ajouter_Prototype(getIDprototypeOrImplementationFunction(), getTypeRetour(), t, getNombredeParametres())!=0)
 	{
 		return -1 ;  
 	}else 
@@ -286,4 +286,44 @@ int ADD_PROTOTYPE_ASM()
 		return 0 ;
 	}
 }
-//s'occuper des fonction
+
+int ADD_IMPLEMENTATION_FUNCTION_ASM(int addr_implementation)
+{
+	parametres  t[getNombredeParametres()] ;
+	getTab_parametres(t) ;
+
+	if ( ajouter_implementations(getIDprototypeOrImplementationFunction(), getTypeRetour(),t,addr_implementation, getNombredeParametres())!=0)
+	{
+		return -1;
+	} 
+		//initNombreDeParametres() ; Il faut le faire quand on est sorti de la fonction
+		return 0 ;
+
+}
+
+void PUSH_ADDR_RETOUR_AND_PC_ASM(int taille_element_retour)
+{
+	printf("\x1B[37mPUSH PC\n");
+	incrementerPC();
+	printf("\x1B[37mPUSH %d\n",getAdresseRetour(taille_element_retour));
+	incrementerPC();
+}
+
+void CALL_PARAMETERS_ASM(int dollar_addr , int dollar_relative_ou_absolue)
+{
+	
+	if (dollar_relative_ou_absolue==0) //relatif 
+	{	
+		printf("\x1B[37mPUSHA @@%d\n",dollar_addr);	
+	}else //absolue
+	{
+		printf("\x1B[37mPUSHA @%d\n",dollar_addr);
+	}
+	incrementerPC();
+}
+
+/*void CALL_ASM()
+{
+
+	printf("\x1B[37mCALL \n");
+}*/
