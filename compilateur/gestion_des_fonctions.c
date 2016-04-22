@@ -107,7 +107,7 @@ int ajouter_implementations(char * nom_fonction , int type_retour, parametres * 
 
 void print_TABLE_DES_FONCTION()
 {
-	//prinf("======================================")
+	printf("=================CONTENTS TABLE FUNCTIONS =====================");
 	int i ,j;
 	for ( i = 0; i < indiceNombreDefonctionDeclare; ++i)
 	{

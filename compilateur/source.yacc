@@ -1,7 +1,3 @@
-%code requires{
-extern int yylineno;
-}
-
 %{
 #include <stdio.h>
 #include <stdlib.h>
@@ -32,7 +28,7 @@ extern int yylineno;
 %token tPRINT tMAIN  tCONST  tINT  tPO  tPF  tAO tAF  tMUL tDIV tEGAL tADD tSUB tVIR tPOINTVIR tNOMBREEXPO tERREUR tIF tELSE tOR tAND tWHILE tRETURN
 
 %left tADD tSUB tOR 
-%left tDIV tMUL tAND 
+%left tDIV tMUL tAND
 %left NEG
 
 
@@ -51,54 +47,26 @@ extern int yylineno;
 %start Input
 %%
  
-Input: DeclarationGlobaleAndOthers {setNombredevariableglobale();} 
-
-DeclarationGlobaleAndOthers : ListDecl AffectationsAndOthers 
-| AffectationsAndOthers ;
-
-ListDecl : Declaration
-       |Declaration ListDecl
-  		| ;
+Input: DeclarationGlobale ;
 
 
+DeclarationGlobale : Declaration DeclarationGlobale |  AffectationGlobale ;
+AffectationGlobale :{setNombredevariableglobale();} Affectation AffectationGlobale | PrototypeAndImplementationGlobalAndMain  ;
 
-AffectationsAndOthers : AffectationList ProtosAndOthers
-	| ProtosAndOthers;
-
-AffectationList : Affectation
-	| Affectation AffectationList
-	|;
-
-ProtosAndOthers : ProtoList FunctionsAndOthers
- |FunctionList ;
-
-ProtoList:  Prototype 
-		| Prototype  ProtoList 
-		|;
-
-FunctionsAndOthers :FunctionList  Main
-					| Main;
-
-FunctionList : ImplementationFonction 
-	|ImplementationFonction FunctionList ;
-	| ;
-
-/*PrototypeGlobal : 
+PrototypeAndImplementationGlobalAndMain  : 
 	Prototype 
 	{
 		if (ADD_PROTOTYPE_ASM()==-1)
 		{
 			yyerror("ERROR WHEN ADD PROTOTYPE\n");
 		} 
-	} PrototypeGlobal 
+	} PrototypeAndImplementationGlobalAndMain
+	| ImplementationFonction PrototypeAndImplementationGlobalAndMain
 	
 	| {
 			//debug 
 			print_TABLE_DES_FONCTION() ; 
-		} ;
-
-
-ImplementationFonctionGlobal :  ImplementationFonction ImplementationFonctionGlobal |;*/
+		} Main ;
 
 
 Declaration : 
@@ -337,11 +305,11 @@ Comparateur:
 
 						
 Prototype : 
-	tINT tID
+	tINT tID tPO Params tPF tPOINTVIR
 	{
 		setTypeRetour(1);
 		setIDprototype($2);
-	} tPO Params tPF tPOINTVIR;
+	} ;
 
 ImplementationFonction : tINT tID tPO Params tPF Body  ;
 
@@ -380,8 +348,7 @@ Return : tRETURN Expression tPOINTVIR
 
 
 int yyerror(char *s) {
-  printf("%s %s %d",KRED,s, yylineno);
-	
+  printf("%s %s",KRED,s);
 }
 
 int main(void) {

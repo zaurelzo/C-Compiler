@@ -1,6 +1,8 @@
-int global1(); 
 
+int alpha =2 ;
+int fonctsansparam();
+int fonct2(int a , int b ); 
+int autrefonctSansParam();
 main()
 {
- pri(2);
 }

@@ -282,6 +282,7 @@ int ADD_PROTOTYPE_ASM()
 		return -1 ;  
 	}else 
 	{
+		initNombreDeParametres() ;
 		return 0 ;
 	}
 }
