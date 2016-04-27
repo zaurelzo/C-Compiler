@@ -34,9 +34,14 @@ typedef struct  Noeud_symbol   Noeud_symbol ;
 
  Noeud_symbol  Array[TAILLE_TAB_SYMBOL] ; 
 
-
 /*TABLEAU POUR GERER LA LOCALITÉ DES VARIABLES ET LES VARIABLES DES FONCTIONS*/
 int TAB_PROFONDEUR[TAILLE_TAB_SYMBOL] ; 
+
+
+/*GENERATION D'ADRESSE POUR LES FONCTIONS*/
+
+extern char mode[TAILLE];
+extern int taille_type_retour_fonction ; 
 
 /*====================================END VARIABLES ================================*/
 
@@ -108,6 +113,23 @@ void setIndiceTableLable();
 
 int getAdresseRetour(int nombres_de_casse_a_reserver) ; 
 
+
+
+
+/*pour les fonctions*/
+void changeMode();
+char * getMode();
+
+void initParametreForNewfunction() ;
+
+void setTailleTypeRetourFonction(int taille) ;
+int getTailleTypeRetourFonction();
+
+/*void IncrementeNbVariableLocalDeClare() ;
+int getNbVariableLocalDeClare() ; 
+
+void IncrementeNBParametre();
+int getNbParametre() ;*/
 /*===============================END FONCTIONS================================================*/
 
 

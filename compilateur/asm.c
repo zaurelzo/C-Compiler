@@ -2,6 +2,23 @@
 #include "tab_symb.h"
 #include "tab_label.h"
 
+
+int declaration_asm(char * nom_var,int type_de_la_var) 
+{
+	
+	if ( ajouter_Var(nom_var,type_de_la_var,0,0)==-1)  
+	{
+		return -1 ;
+	} else 
+	{
+		/*if(strcmp(getMode(),"fonction")==0)
+		{
+			IncrementeNbVariableLocalDeClare() ;
+		}*/
+		return 0 ;
+	}
+}
+
 int declaration_affectation_asm( char * nom_var,int constante ,int dollar_relative_ou_absolue , int dollar_addr)
 {
 	if (ajouter_Var(nom_var,1,1,constante )==-1)
@@ -9,17 +26,40 @@ int declaration_affectation_asm( char * nom_var,int constante ,int dollar_relati
 		return -1 ; //pas reussi 
 	}else 
 	{
-		int abs_rel ; 
-		int var = recherchet(nom_var,&abs_rel);
-		if (dollar_relative_ou_absolue==0 && abs_rel==0)
-			printf( "\x1B[37mCOP @@%d @@%d \n",var,dollar_addr);
-		else if  (dollar_relative_ou_absolue==0 && abs_rel==1)
-			printf( "\x1B[37mCOP @@%d @%d \n",var,dollar_addr);
-		else if  (dollar_relative_ou_absolue==1 && abs_rel==0)
-			printf( "\x1B[37mCOP @%d @@%d \n",var,dollar_addr);
-		else if  (dollar_relative_ou_absolue==1 && abs_rel==1)
-		printf( "\x1B[37mCOP @%d @%d \n",var,dollar_addr);
+		int abs_rel ;
+		int var = recherchet(nom_var,&abs_rel); 
+		
+		/*if (strcmp(getMode(),"fonction")==0) 
+		{
+			//printf("------------%d\n",getTailleTypeRetourFonction());	
+			var += getTailleTypeRetourFonction() ; //si on un type retour
+			
+		}*/
 
+		if (dollar_relative_ou_absolue==0 && abs_rel==0)
+		{	
+			/*if (strcmp(getMode(),"fonction")==0)
+			{
+				dollar_addr +=getTailleTypeRetourFonction() ;
+			}*/
+			printf( "\x1B[37mCOP @@%d @@%d \n",var,dollar_addr);
+
+		} else if  (dollar_relative_ou_absolue==0 && abs_rel==1)
+		{
+			/*if (strcmp(getMode(),"fonction")==0)
+			{
+				dollar_addr +=getTailleTypeRetourFonction() ;
+			}*/
+			printf( "\x1B[37mCOP @@%d @%d \n",var,dollar_addr);
+
+		} else if  (dollar_relative_ou_absolue==1 && abs_rel==0)
+		{
+			
+			printf( "\x1B[37mCOP @%d @@%d \n",var,dollar_addr);
+		} else if  (dollar_relative_ou_absolue==1 && abs_rel==1)
+		{
+			printf( "\x1B[37mCOP @%d @%d \n",var,dollar_addr);
+		}
 		incrementerPC();
 		viderPile();
 		modifierChampInitialiserVariable(nom_var);
@@ -39,15 +79,32 @@ int affection_asm( char * nom_var ,int dollar_relative_ou_absolue , int dollar_a
 		return -1 ;
 	}else 
 	{
+		/*if(strcmp(getMode(),"fonction")==0)
+		{
+			var += getTailleTypeRetourFonction() ; //si on un type retour
+		}*/
+
 		if (dollar_relative_ou_absolue==0 && abs_rel==0)
+		{
+			/*if (strcmp(getMode(),"fonction")==0)
+			{
+				dollar_addr +=getTailleTypeRetourFonction() ;
+			}*/
 			printf( "\x1B[37mCOP @@%d @@%d \n",var,dollar_addr);
-		else if  (dollar_relative_ou_absolue==0 && abs_rel==1)
+		}else if  (dollar_relative_ou_absolue==0 && abs_rel==1)
+		{	
+			/*if (strcmp(getMode(),"fonction")==0)
+			{
+				dollar_addr +=getTailleTypeRetourFonction() ;
+			}*/
 			printf( "\x1B[37mCOP @%d @@%d \n",var,dollar_addr);
-		else if  (dollar_relative_ou_absolue==1 && abs_rel==0)
+		}else if  (dollar_relative_ou_absolue==1 && abs_rel==0)
+		{
 			printf( "\x1B[37mCOP @@%d @%d \n",var,dollar_addr);
-		else if  (dollar_relative_ou_absolue==1 && abs_rel==1)
+		}else if  (dollar_relative_ou_absolue==1 && abs_rel==1)
+		{
 			printf( "\x1B[37mCOP @%d @%d \n",var,dollar_addr);
-																													
+		}																											
 		incrementerPC();
 		viderPile();
 		modifierChampInitialiserVariable(nom_var);									
@@ -75,7 +132,7 @@ int operation_arithmetique_asm(char * operation , int * dollar_addr, int * dolla
 	//printf("type 1 : %d | type 2 : %d\n",typeOp1,typeOp2);
 	if (valeurOp2==-1 || valeurOp1==-1 )
 	{
-	//printf("ERREUR indicePile :%d\n",indPile );
+		//printf("ERREUR indicePile :%d\n",indPile );
 		return -1 ; // erreur depilement des opérandes 
 	}else 
 	{
@@ -85,15 +142,21 @@ int operation_arithmetique_asm(char * operation , int * dollar_addr, int * dolla
 		
 		if (typeOp1==1 && typeOp2==1)//si 1er et 2iem opérande est une variable 
 		{
+
 			if (abs_rel1==0 && abs_rel2==0)
+			{
 				printf("\x1B[37m%s @%d @@%d @@%d\n",operation,getAdressePile(),valeurOp2,valeurOp1);
-			else if (abs_rel1==0 && abs_rel2==1)
+			}else if (abs_rel1==0 && abs_rel2==1)
+			{
 				printf("\x1B[37m%s @%d @%d @@%d\n",operation,getAdressePile(),valeurOp2,valeurOp1); 	
-			else if (abs_rel1==1 && abs_rel2==0)
+			}else if (abs_rel1==1 && abs_rel2==0)
+			{
 				printf("\x1B[37m%s @%d @@%d @%d\n",operation,getAdressePile(),valeurOp2,valeurOp1); 	
-			else if (abs_rel1==1 && abs_rel2==1)
+			}else if (abs_rel1==1 && abs_rel2==1)
+			{
 				printf("\x1B[37m%s @%d @%d @%d\n",operation,getAdressePile(),valeurOp2,valeurOp1); 	
-			
+			}
+
 			empilert(getAdressePile(),1,1) ;
 			
 		}else if( typeOp1==1 && typeOp2==0) //si 1er est une var et 2iem est une constante

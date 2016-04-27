@@ -4,9 +4,17 @@
 #include "tab_symb.h"
 
 
- int ind = 0; 
+int ind = 0; 
 int nombreDeVariabeleglobale = -1; 
- int indPile = ADRESSE_DEBUTPILE;
+int indPile = ADRESSE_DEBUTPILE;
+
+
+
+char mode[TAILLE]="Pasfonction";
+int taille_type_retour_fonction = 0; 
+/*int  ind_nb_variable_local = 0 ; 
+ int nbParametre = 0 ;*/
+
 
 // int profondeur = 0 ;
 
@@ -43,7 +51,7 @@ int recherchet(char * nom_var , int * relative_ou_absolue )
 	//int retour =-1 ; 
 	int retour =-1 ;
 
-	for (i=0 ; i<=ind;i++)
+	for (i=0 ; i<=ind-1;i++)
 	{
 		if ( (strcmp(Array[i].nom_var,nom_var)==0 ))
 		{
@@ -55,7 +63,15 @@ int recherchet(char * nom_var , int * relative_ou_absolue )
 		} 
 	}
 
-	return retour ; 
+	if(strcmp(getMode(),"Pasfonction")==0)//pas en mode fonction, c'est une global
+	{
+		return retour ; 
+	}else
+	{
+		//if(strcmp(nom_var,"a")==0) printf("ret : %d / nbglo %d \n",retour,nombreDeVariabeleglobale);
+		return retour - nombreDeVariabeleglobale -1 + getTailleTypeRetourFonction();
+	}
+	
 }
  
 void printTabVar()
@@ -202,3 +218,60 @@ int getAdresseRetour(int nombres_de_casse_a_reserver)
 	 indPile=  indPile - nombres_de_casse_a_reserver ;
 	return retour ;
 } 
+
+void changeMode()
+{
+	if (strcmp(mode,"Pasfonction")==0)
+	{
+		strcpy(mode,"fonction");
+	}/*else 
+	{
+		strcpy(mode,"Pasfonction");
+	}*/
+}
+
+char * getMode()
+{
+	return mode ; 
+}
+
+
+void initParametreForNewfunction() 
+{
+	
+	taille_type_retour_fonction =0;
+	ind=nombreDeVariabeleglobale+1;
+	//nb_variable_local_deja_decalare=0 ; 
+	//nbParametre =0; 
+}
+
+
+void setTailleTypeRetourFonction(int taille)
+{
+	taille_type_retour_fonction=taille ; 
+}
+
+int getTailleTypeRetourFonction()
+{
+	return taille_type_retour_fonction ; 
+}
+
+/*void IncrementeNbVariableLocalDeClare()
+{
+	nb_variable_local_deja_decalare++;
+}
+
+int getNbVariableLocalDeClare()
+{
+	return nb_variable_local_deja_decalare ;
+}
+
+void IncrementeNBParametre()
+{
+	nbParametre++;
+}
+
+int getNbParametre()
+{
+	return nbParametre ;
+}*/

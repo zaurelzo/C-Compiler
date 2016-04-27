@@ -51,39 +51,55 @@
 Input: DeclarationGlobale ;
 
 
-DeclarationGlobale : Declaration  {setNombredevariableglobale();} DeclarationGlobale  |  AffectationGlobale ;
-AffectationGlobale : Affectation AffectationGlobale | PrototypeAndImplementationGlobalAndMain  ;
+DeclarationGlobale : 
+	Declaration 
+	{
+		setNombredevariableglobale();
+	} DeclarationGlobale  
+	|  AffectationGlobale ;
+
+
+AffectationGlobale : 
+	Affectation  AffectationGlobale 
+	| PrototypeAndImplementationGlobalAndMain  ;
 
 
 
 PrototypeAndImplementationGlobalAndMain  : 
 	Prototype 
 	{
+		
 		if (ADD_PROTOTYPE_ASM()==-1)
 		{
 			yyerror("ERROR WHEN ADD PROTOTYPE\n");
 		} 
+		 initParametreForNewfunction() ;
 	} PrototypeAndImplementationGlobalAndMain
-	| ImplementationFonction PrototypeAndImplementationGlobalAndMain
+	
+	| ImplementationFonction 
+		{
+			initParametreForNewfunction() ;
+		} PrototypeAndImplementationGlobalAndMain
 	
 	| {
 			//debug 
 			//print_TABLE_DES_FONCTION() ;
-			//printf("***value nombre variable globale : %d\n",getNombredevariableglobale()); 
+			changeMode();//on passe en mode fonction
+			initParametreForNewfunction();
+			setTailleTypeRetourFonction(0);
+			//printf("++++++++indice : %d and mode : %s\n",ind,mode);
 		} Main ;
 
 
 Declaration : 
 	tINT tID 
 	{ 
-		if ( ajouter_Var($2,1,0,0)==-1 )  
+		
+		if ( declaration_asm($2,1) ==-1 )  
 		{
 			yyerror("ERROR WHEN DECLARATION OF ") ;
 			yyerror($2);yyerror("\n");
-		}/* else
-		{	
-			printTabVar();
-		} */
+		}
 	}  SuiteDeclarations  
 							
 							
@@ -111,17 +127,22 @@ SuiteDeclarations :
 	 tPOINTVIR
 	| tVIR tID 
 	{ 
-		if ( ajouter_Var($2,1,0,0)==-1 )  
+		if ( declaration_asm($2,1) ==-1 )  
 		{
-			yyerror("ERROR WHEN DECLARATION OF");
-			yyerror($2);yyerror("\n");	
-		} 
+			yyerror("ERROR WHEN DECLARATION OF ") ;
+			yyerror($2);yyerror("\n");
+		}
 	} SuiteDeclarations ; 
 		
 									
 
 							
-Main: tMAIN tPO  tPF Body ;
+Main: 
+	tMAIN 
+	{
+		
+		
+	} tPO  tPF Body ;
 
 Body : 
 	tAO SuiteBody Return tAF 
@@ -313,12 +334,16 @@ Prototype :
 	tINT tID tPO Params tPF tPOINTVIR
 	{
 		setTypeRetour(1);
+		changeMode();//on passe en mode fonction
+		setTailleTypeRetourFonction(1);//on fixe le faite que l'on est un type retour ou pas
 		setIDprototypeOrImplementationFunction($2);
 	} ;
 
 ImplementationFonction : 
 	tINT tID tPO Params tPF
 	{
+		changeMode();//on passe en mode fonction
+		setTailleTypeRetourFonction(1);//on fixe le faite que l'on est un type retour ou pas
 		setIDprototypeOrImplementationFunction($2);
 		if (ADD_IMPLEMENTATION_FUNCTION_ASM(getPcValue())==-1)
 		{
@@ -333,6 +358,13 @@ ImplementationFonction :
 Params : 
 	tINT tID 
 	{
+		//IncrementeNBParametre();//on est entrain de compter le nombre de parametre de la fonction
+		if ( declaration_asm($2,1) ==-1 )  
+		{
+			yyerror("ERROR WHEN DECLARATION OF ") ;
+			yyerror($2);yyerror("\n");
+		}
+		
 		if (ajouter_parametre(1,0,$2)==-1 )
 		{
 			yyerror("ERROR : PARAMETER %s IS ALREADY DECLARED",$2);
@@ -343,6 +375,12 @@ Params :
 SuiteParams : 
 	tVIR tINT tID
 	{
+		if ( declaration_asm($3,1) ==-1 )  
+		{
+			yyerror("ERROR WHEN DECLARATION OF ") ;
+			yyerror($3);yyerror("\n");
+		}
+		
 		if (ajouter_parametre(1,0,$3) ==-1)
 		{
 			yyerror("ERROR : PARAMETER %s IS ALREADY DECLARED",$3);

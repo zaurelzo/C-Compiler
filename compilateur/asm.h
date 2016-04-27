@@ -9,7 +9,7 @@
 
 
 
-
+int declaration_asm(char * nom_var,int type_de_la_var) ;
 int declaration_affectation_asm( char * nom_var,int constante ,int dollar_relative_ou_absolue , int dollar_addr);
 int affection_asm( char * nom_var ,int dollar_relative_ou_absolue , int dollar_addr) ;
 int print_asm(int addr );
