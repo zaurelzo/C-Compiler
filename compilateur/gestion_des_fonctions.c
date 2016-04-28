@@ -2,8 +2,12 @@
 
  int indiceNombreDefonctionDeclare =0 ; 
 int indTableDesParametres = 0 ;
+int indTableDesParametresDappel=0;
 
- int numeroParametresEncoursDAnalyse = -1;
+int adresseDuReturn = -1 ;
+
+
+
 
 //@return 
 int ajouter_Prototype(char * nom_fonction , int type_retour, parametres * p , int nombres_paramatres) 
@@ -141,7 +145,7 @@ int ajouter_parametre(int type_du_parametre , int profondeur ,char * nom_du_para
 	}
 
 	Tab_parametres[indTableDesParametres].type_du_parametre =type_du_parametre;
-	strcpy(Tab_parametres[i].nom,nom_du_parametre);
+	strcpy(Tab_parametres[indTableDesParametres].nom,nom_du_parametre);
 	//Tab_parametres[indTableDesParametres].profondeur= profondeur ; //à predre en compte plus tard 
 	indTableDesParametres++;
 	return 0 ;
@@ -191,37 +195,136 @@ char * getIDprototypeOrImplementationFunction()
 	return nom_fonction ; 
 }
 
-void setTypeRetour(int type_retour)
+void setTypeRetour(int typeretour)
 {
-	type_retour = type_retour ; 
+	type_retour = typeretour ; 
 } 
 int getTypeRetour()
 {
 	return type_retour ;
 }
 
-int  incrementeNumeroParametresEncoursDAnalyse()  
+void setAdresseDuReturn(int adresse)
 {
- 	numeroParametresEncoursDAnalyse++;
- 	return  numeroParametresEncoursDAnalyse ;
+	adresseDuReturn = adresse;
+} 
+
+int getAdresseDuReturn ()
+{
+	return adresseDuReturn ; 
 }
 
-void NumeroParametresEncoursDAnalyse()
+
+void ajouter_parametreAPPEL(int type_du_parametre )
 {
-	 numeroParametresEncoursDAnalyse=0;
+	
+
+	Tab_parametresDappel[indTableDesParametresDappel].type_du_parametre =type_du_parametre;
+	indTableDesParametresDappel++;
+	//return 0 ;
 }
 
-int checkAppelFonctionParametreConforme(char * nom_fonction , int numParametre,int type , int profondeur) 
+
+void  getTab_parametresAPPEL(parametres * t ) 
 {
-	int i ; 
-	for (i = 0; i <indiceNombreDefonctionDeclare ; ++i)
+	int i ;
+	for ( i = 0; i < indTableDesParametresDappel; ++i)
 	{
-		if (strcmp(nom_fonction, Tableau_des_fonctions[i].nom_fonction)==0  && Tableau_des_fonctions[i].Tab_parametres[numParametre].type_du_parametre ==type)
-		{	
-			//s'occuper de la profondeur plus tard 
-			return 0 ;
+		t[i].type_du_parametre = Tab_parametresDappel[i].type_du_parametre ;
+	}
+}
+
+int getNombredeParametresAPPEL()
+{
+	return indTableDesParametresDappel;
+}
+void initNombreDeParametresAPPEL() 
+{
+	indTableDesParametresDappel=0;
+}
+
+void printParametresDappel( parametres *  t,int nbParamAppel)
+{
+
+	int i ;
+	printf("=================PARAMAETRES D'APPEL ===============\n" );
+	for ( i = 0; i < nbParamAppel; ++i)
+	{
+		printf("type param APPEL %d : %d \n",i,t[i].type_du_parametre );
+
+		//T[i].profondeur = Tab_parametres[i].profondeur; //à prendre en compte plus tard 
+	}
+}
+
+
+void  creerLabel(int indiceDansTableDesFonctions , char * nom_label )
+{
+	char num[10];
+	sprintf(num, "%d", indiceDansTableDesFonctions);
+	
+	strcpy(nom_label,"labelFonctions_");
+	strcat(nom_label,num);
+	
+}
+
+
+int checkAppelFonctionParametreConforme(char * nom_fonction , parametres * p , int nombreDeParametre, char * labelPotentiel) 
+{
+	int i,ji , indFonctCandidate=0;
+	int tabFonctCandidate[indiceNombreDefonctionDeclare];
+	//1er etape , on cherche toutes fonctions candidates : ie : meme nom , meme nombre de parametres
+	for ( i = 0; i < indiceNombreDefonctionDeclare; ++i)
+	{
+		if (strcmp(nom_fonction,Tableau_des_fonctions[i].nom_fonction)==0 && Tableau_des_fonctions[i].nombres_paramatres==nombreDeParametre)
+		{
+			tabFonctCandidate[indFonctCandidate]=i;
+			indFonctCandidate++;
 		}
 	}
-	return -1 ; 
+
+	//printf("Nombre de fonctions Candidates : %d And indice tab fonctions : %d\n",indFonctCandidate, tabFonctCandidate[indFonctCandidate-1]);
+
+	int find = 0 ; //false 
+	int adrrImplementation=-1; 
+	i=0;
+
+	//pour toute les fonctions candidates 
+	while ( i < indFonctCandidate && find==0) 
+	{
+		int cpt_nb_paramCorrect = 0 ;  
+		//lors de la declaration des parametres d'appel , on est sur que leur nom sont differents car on le verifie 
+		for (ji =0 ;ji < nombreDeParametre;ji++)
+		{
+				if (p[ji].type_du_parametre == Tableau_des_fonctions[ tabFonctCandidate[i]].Tab_parametres[ji].type_du_parametre)
+				{
+					cpt_nb_paramCorrect++;//on passe à la fonction candidate suivante 
+				}
+			
+		}
+
+		if (cpt_nb_paramCorrect==nombreDeParametre)
+		{
+			//printf("==========nombre de paramc correct : %d \n",cpt_nb_paramCorrect);
+			find=1 ;//true 
+			if (Tableau_des_fonctions[tabFonctCandidate[i]].adresse_implementation==-1)
+			{
+				creerLabel(tabFonctCandidate[i], labelPotentiel);
+				adrrImplementation=-2 ; //fonction pas encore implémenté, mais possede un prototype
+			} else 
+			{
+				adrrImplementation =  Tableau_des_fonctions[tabFonctCandidate[i]].adresse_implementation;
+				type_retour=Tableau_des_fonctions[tabFonctCandidate[i]].retour; //on en profite pour recuperer la type du resultat retourné par cette fonction 
+
+				 //printf("=================== %d\n",Tableau_des_fonctions[tabFonctCandidate[i]].retour );
+			}
+		}else 
+		{
+			//printf("==========nombre de paramc pas  correct : %d  et nombre de parametre : %d\n",cpt_nb_paramCorrect,nombreDeParametre);
+			i++; 
+		}
+	}
+
+	return adrrImplementation ;
 }
+
 

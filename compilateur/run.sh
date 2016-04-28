@@ -6,8 +6,8 @@ gcc main.c tab_label.c tab_symb.c deuxieme_passe.c gestion_des_fonctions.c
 #cat fichier_asm_binaire
 echo "================================fichier assembleur============="
 cat fichier_asm
-echo "====================fichier_test============================"
-cat fichier_test
+#echo "====================fichier_test============================"
+#cat fichier_test
 #echo "==============fichier TABLE DES LABEL==================================================="
 #cat fichier_table_des_labels
 #echo "====================fichier asm sans label "

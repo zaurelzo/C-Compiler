@@ -1,8 +1,20 @@
 
-int alpha =2 ;
-int fonctsansparam();
-int fonct2(int a , int b ); 
-int autrefonctSansParam();
+
+int ifact(int n );
+
+int gi(int a, int b );
+
+int fact(int n )
+{ 
+	if(n==0)
+	{
+		return 1 ;
+	}else 
+	{
+		return n*fact(n-1) ;;
+	}
+}
+
 main()
-{
+{ 	
 }

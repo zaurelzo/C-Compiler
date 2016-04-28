@@ -45,7 +45,7 @@ int ajouter_Var(char *nom_var,int type ,int initialiser ,int constante )
 
 
 /*relative_ou_absolue : 0 relative , 1 :absolue*/
-int recherchet(char * nom_var , int * relative_ou_absolue )
+int recherchet(char * nom_var , int * relative_ou_absolue ,int * typage_var )
 {
 	int i =0 ;
 	//int retour =-1 ; 
@@ -56,9 +56,13 @@ int recherchet(char * nom_var , int * relative_ou_absolue )
 		if ( (strcmp(Array[i].nom_var,nom_var)==0 ))
 		{
 			if (i <=nombreDeVariabeleglobale)
+			{
 				*relative_ou_absolue= 1 ;
-			else 
+			}else 
+			{
 				*relative_ou_absolue = 0; 
+			}
+			*typage_var=Array[i].type ;
 			retour=  i ;
 		} 
 	}
@@ -69,7 +73,14 @@ int recherchet(char * nom_var , int * relative_ou_absolue )
 	}else
 	{
 		//if(strcmp(nom_var,"a")==0) printf("ret : %d / nbglo %d \n",retour,nombreDeVariabeleglobale);
-		return retour - nombreDeVariabeleglobale -1 + getTailleTypeRetourFonction();
+		if (retour - nombreDeVariabeleglobale -1 + getTailleTypeRetourFonction()<0)
+		{
+			return -1 ;
+		}else 
+		{
+			return retour - nombreDeVariabeleglobale -1 + getTailleTypeRetourFonction();
+		}
+		
 	}
 	
 }
@@ -85,12 +96,13 @@ void printTabVar()
 	}
 }
 
-int  empilert(int value ,int type ,int abs_ou_rel )
+int  empilert(int value ,int type ,int abs_ou_rel,int typage_var )
 {
 	char buf[32];
 	sprintf(buf,"%d",value);
 	strcpy(Array[indPile].nom_var,buf);
-	Array[indPile].type=type;
+	Array[indPile].type_push=type;
+	Array[indPile].type=typage_var;
 	Array[indPile].abs_rel=abs_ou_rel ;
 	indPile--;  
 	return indPile+1 ; 
@@ -101,13 +113,14 @@ int empiler(int value , int type  ) {return 0 ;} // pour debug à effacer
 
 int depiler(int *  type_val_depile ) {return 0 ;} // pour debug à effacer 
 
-int depilert(int *  type_val_depile , int *  abs_ou_rel )
+int depilert(int *  type_val_depile , int *  abs_ou_rel ,int * type_var )
 {
 	 //* adresse = indPile; 
 	if(indPile<=ADRESSE_DEBUTPILE) 
 	{
 			indPile++;
-			*type_val_depile= Array[indPile].type; 
+			*type_val_depile= Array[indPile].type_push;
+			*type_var =  Array[indPile].type;
 			*abs_ou_rel=Array[indPile].abs_rel;
 			//printf("adr ou l'on cherche type:%d\n",indPile);
 	return atoi(Array[indPile].nom_var);

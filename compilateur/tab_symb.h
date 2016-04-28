@@ -23,10 +23,11 @@ extern nombreDeVariabeleglobale  ;
 
 struct Noeud_symbol {
 	char nom_var[TAILLE];
-	int type;
+	int type; //typage variable
 	int initialiser;
 	int constante ; 
 	int abs_rel;
+	int type_push ; //sert juste à savoir si la valeur empilé est une adresse ou une valeur
 	//int global ; // 0 global , 1 pas global 
 };
 
@@ -57,7 +58,7 @@ constante = 0 pas constante , 1 si contante
 int ajouter_Var(char *nom_var,int type ,int initialiser ,int constante ) ;
 
 
-int recherchet(char * nom_var , int * relative_ou_absolue ) ;
+int recherchet(char * nom_var , int * relative_ou_absolue ,int * typage_var  ) ;
 
  int recherche(char * nom_var); // pour debug à effacer apres 
 
@@ -71,13 +72,13 @@ La base de la pile en la fin de la table des symbol
 int empiler(int value , int type  ); //pour debug à effacer apres 
 
 
-int empilert(int value , int type , int abs_ou_rel ); 
+int  empilert(int value ,int type ,int abs_ou_rel,int typage_var ); 
 
 /*par1: type  de la valeur depilée , 0 :constante , 1 : @ d'une var existante 
 @retour : valeur depile , -1 si l'on ne peut pas dépiler(ie : on est début de la pile ) */
 int depiler(int *  type_val_depile ) ;
 
-int depilert(int *  type_val_depile , int *  abs_ou_rel ) ;
+int depilert(int *  type_val_depile , int *  abs_ou_rel ,int * type_var ) ;
 
 void printTabVar(); 
 

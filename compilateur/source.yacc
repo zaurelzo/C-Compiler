@@ -17,7 +17,7 @@
 	{
 		int adresse; 
 		int relative_ou_absolue;
-		int type ; 
+		int typage_var ; 
 	 } adresseDesVariables ;
 }
 
@@ -105,7 +105,7 @@ Declaration :
 							
 	|tCONST tINT tID tEGAL Expression tPOINTVIR 
 		{ 
-			if (declaration_affectation_asm( $3 ,1 ,$5.relative_ou_absolue, $5.adresse)==-1)
+			if (declaration_affectation_asm( $3 ,1 ,$5.relative_ou_absolue, $5.adresse,1)==-1)
 			{
 				yyerror("ERROR WHEN CONSTANT DECLARATION AFFECTATION,VARIABLE %s IS NOT EXIST :",$3) ;
 				yyerror("\n");	
@@ -115,7 +115,7 @@ Declaration :
 		
 	|tINT tID tEGAL Expression tPOINTVIR
 		{ 
-			if (declaration_affectation_asm( $2 ,0 ,$4.relative_ou_absolue, $4.adresse)==-1)
+			if (declaration_affectation_asm( $2 ,0 ,$4.relative_ou_absolue, $4.adresse,1)==-1)
 			{
 				yyerror("ERROR WHEN DECLARATION AFFECTATION,VAR %s NOT EXIST :",$2) ;
 				yyerror("\n");	
@@ -145,7 +145,7 @@ Main:
 	} tPO  tPF Body ;
 
 Body : 
-	tAO SuiteBody Return tAF 
+	tAO SuiteBody  tAF 
 	{
 		//generer_fichier_table_des_symboles();
 		generer_fichier_tab_label();
@@ -157,6 +157,7 @@ SuiteBody :  Declaration SuiteBody
 			|Print SuiteBody 
 			|If SuiteBody
 			|While SuiteBody
+			|Return SuiteBody
 			|;
 			
 Affectation : 
@@ -175,41 +176,48 @@ Affectation :
 Print : 
 	tPRINT tPO Expression tPF tPOINTVIR 
 	{
-		print_asm($3.relative_ou_absolue);
+		print_asm( $3.adresse, $3.relative_ou_absolue);
 	} ; 
 									
 									
 Expression : 
 	tNOMBREDEC 
 	{ 
-		printf("AFC @%d %d\n",empilert($1,0,1) ,$1);
+		printf("AFC @%d %d\n",empilert($1,0,1,1) ,$1);
 		incrementerPC();
 		$$.adresse=getAdressePile()+1;
-		$$.relative_ou_absolue=1 ; // absolue   
+		$$.relative_ou_absolue=1 ; // absolue 
+		$$.typage_var=1;  
 	}
 												
 	|tID 
 	{ 
 		int addr ;
 		int abs_rel;
-		if ((  addr =recherchet($1,&abs_rel))==-1)
+		int typage_var;
+		if ((  addr =recherchet($1,&abs_rel,&typage_var))==-1)
 		{
 			yyerror("ERROR WHEN SEARCH VARIABLE %s\n",$1) ;
 		}else 
 		{				
-			empilert(addr,1,abs_rel);
-			//printf("AFC %d %d\n",empiler(addr,1) ,addr);
-			//incrementerPC();
+			empilert(addr,1,abs_rel,typage_var);
 			$$.adresse= addr;
-			$$.relative_ou_absolue=abs_rel ; // absolue 
+			$$.relative_ou_absolue=abs_rel ; // absolue
+			$$.typage_var=typage_var;  
 		} 
 	}
 				
-	|AppelFonctions /*{return } à faire */
+	|AppelFonctions 
+	{
+		APPEL_FONCTION_IN_EXPRESSION_ASM();
+		$$.adresse=$1.adresse;
+		$$.relative_ou_absolue =$1.relative_ou_absolue;
+		$$.typage_var=$1.typage_var;
+	}
 				
   | Expression tADD Expression 
   	{
-   		if (operation_arithmetique_asm("ADD", &($$.adresse),&($$.relative_ou_absolue))==-1)
+   		if (operation_arithmetique_asm("ADD", &($$.adresse),&($$.relative_ou_absolue),&($$.typage_var) )==-1)
    		{
    			yyerror("ERROR WHEN POP OPERANDS\n");
    		}
@@ -219,7 +227,7 @@ Expression :
  
   | Expression tSUB Expression 
   	{
-   		if (operation_arithmetique_asm("SUB", &($$.adresse),&($$.relative_ou_absolue))==-1)
+   		if (operation_arithmetique_asm("SUB", &($$.adresse),&($$.relative_ou_absolue),&($$.typage_var))==-1)
    		{
    			yyerror("ERROR WHEN POP OPERANDS\n");
    		}
@@ -228,7 +236,7 @@ Expression :
   
   | Expression tMUL Expression
   	{
-   		if (operation_arithmetique_asm("MUL", &($$.adresse),&($$.relative_ou_absolue))==-1)
+   		if (operation_arithmetique_asm("MUL", &($$.adresse),&($$.relative_ou_absolue),&($$.typage_var))==-1)
    		{
    			yyerror("ERROR WHEN POP OPERANDS\n");
    		}
@@ -237,7 +245,7 @@ Expression :
   															
   | Expression tDIV Expression 
   	{
-   		if (operation_arithmetique_asm("ADD", &($$.adresse),&($$.relative_ou_absolue))==-1)
+   		if (operation_arithmetique_asm("ADD", &($$.adresse),&($$.relative_ou_absolue),&($$.typage_var))==-1)
    		{
    			yyerror("ERROR WHEN POP OPERANDS\n");
    		}
@@ -246,7 +254,7 @@ Expression :
   
   | tSUB Expression %prec NEG  
 		{
-			nombre_negatif_asm(&($$.adresse),&($$.relative_ou_absolue));																	
+			nombre_negatif_asm(&($$.adresse),&($$.relative_ou_absolue),&($$.typage_var));																	
 		}
  	
 	| tPO Expression tPF   
@@ -301,12 +309,12 @@ While :
 Cond: 
 	Expression Comparateur Expression 
 	{
-		CONDITION_ASM($2, &($$.adresse),&($$.relative_ou_absolue) , $1.adresse,$1.adresse);
+		CONDITION_ASM($2, &($$.adresse),&($$.relative_ou_absolue),&($$.typage_var) , $1.adresse,$3.adresse);
 	}
 	|Expression {$$=$1;}
 	|Cond tOR Cond 
 	{
-		int retour = empilert(-1,1,1);
+		int retour = empilert(-1,1,1,1);//c'est @ qui nous interesse , pas ce que l'on empile
 		$$.adresse=retour;
 		$$.relative_ou_absolue=1; 
 		printf("OR @%d @%d @%d\n", retour,$1.adresse,$3.adresse);
@@ -314,7 +322,7 @@ Cond:
 	}
 	|Cond tAND Cond
 	{
-		int retour = empilert(-1,1,1);
+		int retour = empilert(-1,1,1,1);//c'est @ qui nous interesse , pas ce que l'on empile
 		$$.adresse=retour;
 		$$.relative_ou_absolue=1;
 		printf("AND %d %d %d\n", retour,$1.adresse,$3.adresse);
@@ -342,6 +350,7 @@ Prototype :
 ImplementationFonction : 
 	tINT tID tPO Params tPF
 	{
+		setTypeRetour(1);
 		changeMode();//on passe en mode fonction
 		setTailleTypeRetourFonction(1);//on fixe le faite que l'on est un type retour ou pas
 		setIDprototypeOrImplementationFunction($2);
@@ -361,7 +370,7 @@ Params :
 		//IncrementeNBParametre();//on est entrain de compter le nombre de parametre de la fonction
 		if ( declaration_asm($2,1) ==-1 )  
 		{
-			yyerror("ERROR WHEN DECLARATION OF ") ;
+			yyerror("ERROR WHEN DECLARATION PARAMETER ") ;
 			yyerror($2);yyerror("\n");
 		}
 		
@@ -377,7 +386,7 @@ SuiteParams :
 	{
 		if ( declaration_asm($3,1) ==-1 )  
 		{
-			yyerror("ERROR WHEN DECLARATION OF ") ;
+			yyerror("ERROR WHEN DECLARATION PARAMETER ") ;
 			yyerror($3);yyerror("\n");
 		}
 		
@@ -397,14 +406,21 @@ AppelFonctions :
 	}
 	ParamAppel tPF tPOINTVIR
 	{
-		//dans ce cas-ci , on s'en fou de ce que l'on renvoit
-		$$.adresse=4;
-		$$.relative_ou_absolue=1;
+		if (VERIFICATION_AND_CALL_GENERATION_ASM()==-1)
+		{
+			yyerror("ERROR WHEN CALL FUNCTION");
+			yyerror(getIDprototypeOrImplementationFunction());yyerror("\n");
+		}
+				
+		$$.adresse=getAdresseDuReturn();
+		$$.relative_ou_absolue=1;//l'@ du return sera toujours une @ absolue puisqu'on la demande dans la pile 
+		$$.typage_var= getTypeRetour() ;
 	};
 
 ParamAppel : 
 	Expression 
-	{		 
+	{
+		ajouter_parametreAPPEL($1.typage_var);		 
 		CALL_PARAMETERS_ASM($1.adresse, $1.relative_ou_absolue);
 	} SuiteParamAppel
 	|;
@@ -412,18 +428,23 @@ ParamAppel :
 SuiteParamAppel : 
 	tVIR Expression
 	{
+		ajouter_parametreAPPEL($2.typage_var);	
 		CALL_PARAMETERS_ASM($2.adresse, $2.relative_ou_absolue);
 	} SuiteParamAppel
 	|;
 						
-Return : tRETURN Expression tPOINTVIR
-				|;
+Return : 
+	tRETURN Expression
+	{
+		RETURN_ASM ($2.adresse, $2.relative_ou_absolue); 
+	} tPOINTVIR ;
+	 
 			
 %%
 
 
 int yyerror(char *s) {
-  printf("%s %s",KRED,s);
+  printf("%s %s\n",KRED,s);
   exit(1);
 }
 

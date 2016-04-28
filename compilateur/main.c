@@ -6,47 +6,68 @@
 #include "gestion_des_fonctions.h"
 //#include "asm.h"
 int main()
-{	parametres  p1 = {1,0};
+{	parametres  p1 = {"a",1,0};
+	parametres p2={"b",2,0};
 	parametres  tab_param[2] = {p1,p1};
-
-	//printf("===%d\n",ajouter_Prototype("fonction_test", 0, tab_param, 2) );
-	//printf("===%d\n",ajouter_Prototype("fonction_test", 0, tab_param, 2) );
+	parametres  tab_param2[2] = {p1,p2};
+	
 	if (ajouter_Prototype("fonction_test", 1, tab_param, 2)==0)
 	{
-		printf("YES :) \n") ;
+		printf("AJOUT PROTOTYPE FONCTION TEST  \n") ;
 	}else 
 	{
-		printf("==PAS YES :( \n");
+		printf("ECHEC AJOUT PROTOTYPE FONCTION TEST \n");
 	}
 
-	if (ajouter_parametre(1 , 0 , "a") ==-1)
+	if (ajouter_Prototype("fonction_test2", 1, tab_param2, 2)==0)
 	{
-		printf("PARAMETRE EXISTE\n") ;
+		printf("AJOUT PROTOTYPE FONCTION TEST2  \n") ;
 	}else 
 	{
-		printf("N'EXISTE PAS \n");
+		printf("ECHEC AJOUT PROTOTYPE FONCTION TEST2 \n");
 	}
-	if (ajouter_parametre(1 , 0 , "c") ==-1)
-	{
-		printf("PARAMETRE EXISTE\n") ;
-	}else
-	{
-		printf("N'EXISTE PAS \n");
-	}
-	/*parametres  t[getNombredeParametres()] ;
-	
-	getTab_parametres(t) ;
 
-	printf("%d\n",getNombredeParametres() );
-	if (ajouter_Prototype("fonction_tes", 1, t, 2)==0)
+
+	if (ajouter_Prototype("fonction", 1, tab_param2, 2)==0)
 	{
-		printf("YES :) \n") ;
+		printf("AJOUT PROTOTYPE FONCTION \n");
 	}else 
 	{
-		printf("==PAS YES :( \n");
-	}*/
+		printf("ECHEC AJOUT PROTOTYPE FONCTION  \n");
+	}
 
-	
+	if (ajouter_implementations("fonction" , 1, tab_param2, 22 , 2)==0)
+	{
+		printf("AJOUT IMPLEMENTATION FONCTION \n");
+	} else
+	{
+		printf("ECHEC AJOUT IMPLEMENTATION FONCTION\n");
+	}
+
+	//preparation appel de fonction
+	initNombreDeParametresAPPEL() ;
+	 ajouter_parametreAPPEL(1);
+	 ajouter_parametreAPPEL(2);
+	 
+	 parametres t[getNombredeParametresAPPEL()];
+	 getTab_parametresAPPEL(t);
+
+	 char  labelPotentiel[100];
+
+	 //printf("nombre de parametre d'appel: %d \n",getNombredeParametresAPPEL() );
+	 //printParametresDappel(  t,getNombredeParametresAPPEL()) ;
+
+	 int retour = checkAppelFonctionParametreConforme("fonction_test2", t, getNombredeParametresAPPEL(), labelPotentiel) ;
+	 if( retour ==-2)
+	 {
+	 	printf("LABEL :%s \n", labelPotentiel);
+	 }else if (retour ==-1)
+	 {
+	 	printf("fonction non existante \n");
+	 }else 
+	 {
+	 	printf("SUCCÉS LORS DE L'APPEL DE LA FONCTION , adresse implementation : %d \n",retour );
+	 }
 	
 	return 0;
 }

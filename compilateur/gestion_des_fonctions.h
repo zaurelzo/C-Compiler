@@ -14,7 +14,7 @@
 /*==============================VARIABLES *===========================*/ 
 
 extern int indiceNombreDefonctionDeclare ;
-extern int numeroParametresEncoursDAnalyse; 
+//extern int numeroParametresEncoursDAnalyse; 
 
 struct parametres
 {
@@ -47,8 +47,14 @@ parametres Tab_parametres[NOMBRES_PARAMATRES];
 // nom de la fonction 
 char nom_fonction[TAILLE_NOM_FONCTION] ;
 //type retour ; 
-int type_retour;
+int type_retour; //type de la valeur retourné par la fonction appelé, par défaut, on dit que les fonctions renvoie un int 
+extern int adresseDuReturn ; //s'il y'a un type return , on stocke l'adresse du resultat dans cette variable , cette adresse sera toujours absolue! 
 
+
+
+/*construction des parametres d'appel*/
+extern int indTableDesParametresDappel;
+parametres Tab_parametresDappel[NOMBRES_PARAMATRES]; 
 /*====================================END VARIABLES ================================*/
 
 
@@ -80,16 +86,27 @@ void setIDprototypeOrImplementationFunction(char * name );
 char * getIDprototypeOrImplementationFunction() ;
 
 
-void setTypeRetour(int type_retour); 
+void setTypeRetour(int typeretour); 
 int getTypeRetour(); 
 
-/*GESTION APPEL FONCTION*/
+void setAdresseDuReturn(int adresse); 
+int getAdresseDuReturn (); 
 
-int incrementeNumeroParametresEncoursDAnalyse() ;
-void initNumeroParametresEncoursDAnalyse() ;
 
-//renvoie -1 si le numero du parametre appelé est pas du bon type , 0 sinon 
-int checkAppelFonctionParametreConforme(char * nom_fonction , int numParametre,int type , int profondeur) ;
+//int getTypeDuReturn () ; 
+
+/*GESTION PARAMETRES D'APPEL*/
+void ajouter_parametreAPPEL(int type_du_parametre );
+void  getTab_parametresAPPEL(parametres * t ) ;
+int getNombredeParametresAPPEL();
+void initNombreDeParametresAPPEL() ;
+void printParametresDappel( parametres *  t,int nbParamAppel);
+
+
+//renvoie -1 si le numero du parametre appelé n'est pas du bon type , -2 si la fonction a un prototype mais quelle n'est pas encore implémenté ,  sinon l'@ de l'implementation de la fonction
+int checkAppelFonctionParametreConforme(char * nom_fonction , parametres * p , int nombreDeParametre, char * labelPotentiel) ;
+
+void  creerLabel(int indiceDansTableDesFonctions , char * nom_label ) ;
 /*===============================END FONCTIONS================================================*/
 
 #endif
