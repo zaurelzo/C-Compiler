@@ -378,14 +378,14 @@ int ADD_IMPLEMENTATION_FUNCTION_ASM(int addr_implementation)
 
 }
 
-void PUSH_ADDR_RETOUR_AND_PC_ASM(int taille_element_retour)
+void PUSH_PC_ASM()
 {
-	int adrResult=getAdresseRetour(taille_element_retour); 
-	 setAdresseDuReturn(adrResult);
+	/*int adrResult=getAdresseRetour(taille_element_retour); 
+	 setAdresseDuReturn(adrResult);*/
 	printf("\x1B[37mPUSH PC\n");
 	incrementerPC();
-	printf("\x1B[37mPUSH %d\n",adrResult);
-	incrementerPC();
+	/*printf("\x1B[37mPUSH %d\n",adrResult);
+	incrementerPC();*/
 }
 
 /*empiler les parametres d'appel */
@@ -416,6 +416,7 @@ int VERIFICATION_AND_CALL_GENERATION_ASM()
 
 	if (retour==-2)
 	{
+		//empilert(0,1,0,1);//on empile l'adresse du résultat qui sera toujours 0 (@ relatif)
 		printf("\x1B[37mCALL %s\n",labelPotentiel);
 		return 0 ; 
 	}else if (retour==-1)
@@ -423,6 +424,7 @@ int VERIFICATION_AND_CALL_GENERATION_ASM()
 		return -1 ;//erreur fonction appelé non existante 
 	}else 
 	{
+		//empilert(0,1,0,1);//on empile l'adresse du résultat qui sera toujours 0 (@ relatif)
 		printf("\x1B[37mCALL %d\n",retour);
 		initNombreDeParametresAPPEL() ; //on reinitialise pour l'appel suivant 
 		
@@ -433,23 +435,25 @@ int VERIFICATION_AND_CALL_GENERATION_ASM()
 
 
 
-void RETURN_ASM (int dollar_addr, int dollar_relative_ou_absolue) 
+void RETURN_ASM (int dollar_addr, int dollar_relative_ou_absolue,int dollar_typage_result) 
 {
 
 	if (dollar_relative_ou_absolue==0) //relatif 
-	{	
-		printf("\x1B[37mRET @@%d\n",dollar_addr);	
+	{
+		printf("\x1B[37mCOP @@0 @@%d\n",dollar_addr);
 	}else //absolue
 	{
-		printf("\x1B[37mRET @%d\n",dollar_addr);
+		printf("\x1B[37mCOP @@0 @%d\n",dollar_addr);
 	}
 
+	printf("\x1B[37mRET\n");
+	incrementerPC();
 	incrementerPC();
 }
 
-void APPEL_FONCTION_IN_EXPRESSION_ASM()
+/*void APPEL_FONCTION_IN_EXPRESSION_ASM()
 {
 		//on empile l'@du return , on en a besoin pour les cas ou on des choses du type return n* facto(n-1) par exemple
 		printf("\x1B[37mAFC @%d %d\n",empilert(getAdresseDuReturn(),0,1,getTypeRetour()),getAdresseDuReturn());
 		incrementerPC();
-}
+}*/

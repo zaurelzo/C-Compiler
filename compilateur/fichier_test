@@ -5,14 +5,9 @@ int ifact(int n );
 int gi(int a, int b );
 
 int fact(int n )
-{ 
-	if(n==0)
-	{
-		return 1 ;
-	}else 
-	{
-		return n*fact(n-1) ;;
-	}
+{
+	return 25*fact(n-421) ;; 
+	
 }
 
 main()

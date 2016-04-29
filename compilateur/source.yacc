@@ -183,7 +183,7 @@ Print :
 Expression : 
 	tNOMBREDEC 
 	{ 
-		printf("AFC @%d %d\n",empilert($1,0,1,1) ,$1);
+		printf("-AFC @%d %d\n",empilert($1,0,1,1) ,$1);
 		incrementerPC();
 		$$.adresse=getAdressePile()+1;
 		$$.relative_ou_absolue=1 ; // absolue 
@@ -209,9 +209,9 @@ Expression :
 				
 	|AppelFonctions 
 	{
-		APPEL_FONCTION_IN_EXPRESSION_ASM();
-		$$.adresse=$1.adresse;
-		$$.relative_ou_absolue =$1.relative_ou_absolue;
+		//APPEL_FONCTION_IN_EXPRESSION_ASM();
+		$$.adresse=$1.adresse;//le résulat se trouve toujours à l'adresse 0!
+		$$.relative_ou_absolue =$1.relative_ou_absolue; //qui est toujours une valeur relative
 		$$.typage_var=$1.typage_var;
 	}
 				
@@ -402,7 +402,7 @@ AppelFonctions :
 	{
 		//on fixe l'id de la fonction appelée 
 		setIDprototypeOrImplementationFunction($1);
-		 PUSH_ADDR_RETOUR_AND_PC_ASM(1);
+		 PUSH_PC_ASM();
 	}
 	ParamAppel tPF tPOINTVIR
 	{
@@ -411,9 +411,9 @@ AppelFonctions :
 			yyerror("ERROR WHEN CALL FUNCTION");
 			yyerror(getIDprototypeOrImplementationFunction());yyerror("\n");
 		}
-				
-		$$.adresse=getAdresseDuReturn();
-		$$.relative_ou_absolue=1;//l'@ du return sera toujours une @ absolue puisqu'on la demande dans la pile 
+		empilert(0,1,0,1);//on empile l'adresse du résultat qui sera toujours 0 (@ relatif)		
+		$$.adresse=0;
+		$$.relative_ou_absolue=0;//l'@ du return sera toujours une @ relative et aura la valeur 0  
 		$$.typage_var= getTypeRetour() ;
 	};
 
@@ -434,9 +434,9 @@ SuiteParamAppel :
 	|;
 						
 Return : 
-	tRETURN Expression
+	tRETURN /*{ empilert(0,1,0,1); }*/ Expression
 	{
-		RETURN_ASM ($2.adresse, $2.relative_ou_absolue); 
+		RETURN_ASM ($2.adresse, $2.relative_ou_absolue,$2.typage_var); 
 	} tPOINTVIR ;
 	 
 			

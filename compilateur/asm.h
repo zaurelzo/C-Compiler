@@ -45,14 +45,13 @@ int  ADD_PROTOTYPE_ASM() ;
 
 int ADD_IMPLEMENTATION_FUNCTION_ASM(int addr_implementation);
 
-void PUSH_ADDR_RETOUR_AND_PC_ASM(int taille_element_retour);
+void PUSH_PC_ASM();
 
 void CALL_PARAMETERS_ASM(int dollar_addr , int dollar_relative_ou_absolue); 
 
 int  VERIFICATION_AND_CALL_GENERATION_ASM();
 
-void RETURN_ASM (int dollar_addr, int dollar_relative_ou_absolue)  ;
-
-void APPEL_FONCTION_IN_EXPRESSION_ASM();
+void RETURN_ASM (int dollar_addr, int dollar_relative_ou_absolue,int dollar_typage_result) ;
+//void APPEL_FONCTION_IN_EXPRESSION_ASM();
 
 #endif 
