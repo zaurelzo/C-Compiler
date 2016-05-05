@@ -67,7 +67,7 @@ int recherchet(char * nom_var , int * relative_ou_absolue ,int * typage_var  ) ;
 La base de la pile en la fin de la table des symbol
 
  type : 0 : la valeur empilé est une constante ,
-	1: la valeur empilé est l'@ d'une varible qui est existe ! 
+	1: la valeur empilé est l'@ d'une variale qui est existe ! 
 	@retour : l'@ ou on a empilé 
 	*/ 
 int empiler(int value , int type  ); //pour debug à effacer apres 

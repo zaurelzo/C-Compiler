@@ -51,12 +51,12 @@ int declaration_affectation_asm( char * nom_var,int constante ,int dollar_relati
 			{
 				dollar_addr +=getTailleTypeRetourFonction() ;
 			}*/
-			printf( "COP @@%d @%d \n",var,dollar_addr);
+			printf( "COP @%d @@%d \n",var,dollar_addr);
 
 		} else if  (dollar_relative_ou_absolue==1 && abs_rel==0)
 		{
 			
-			printf( "COP @%d @@%d \n",var,dollar_addr);
+			printf( "COP @@%d @%d \n",var,dollar_addr);
 		} else if  (dollar_relative_ou_absolue==1 && abs_rel==1)
 		{
 			printf( "COP @%d @%d \n",var,dollar_addr);

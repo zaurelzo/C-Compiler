@@ -87,7 +87,7 @@ PrototypeAndImplementationGlobalAndMain  :
 			changeMode();//on passe en mode fonction
 			initParametreForNewfunction();
 			setTailleTypeRetourFonction(0);
-			//printf("++++++++indice : %d and mode : %s\n",ind,mode);
+			//printf("++++++++nb globale : %d and ind %d ",getNombredevariableglobale(),ind);
 		} Main ;
 
 
@@ -153,7 +153,7 @@ Body :
 			
 SuiteBody :  Declaration SuiteBody
 			|Affectation  SuiteBody
-			|AppelFonctions SuiteBody
+			|AppelFonctions tPOINTVIR SuiteBody
 			|Print SuiteBody 
 			|If SuiteBody
 			|While SuiteBody
@@ -404,7 +404,7 @@ AppelFonctions :
 		setIDprototypeOrImplementationFunction($1);
 		 //PUSH_PC_ASM();
 	}
-	ParamAppel tPF tPOINTVIR
+	ParamAppel tPF 
 	{
 		if (VERIFICATION_AND_CALL_GENERATION_ASM()==-1)
 		{
@@ -444,7 +444,7 @@ Return :
 
 
 int yyerror(char *s) {
-  printf("%s %s\n",KRED,s);
+  printf("%s\n",s);
   exit(1);
 }
 
