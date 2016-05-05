@@ -54,4 +54,6 @@ int  VERIFICATION_AND_CALL_GENERATION_ASM();
 void RETURN_ASM (int dollar_addr, int dollar_relative_ou_absolue,int dollar_typage_result) ;
 //void APPEL_FONCTION_IN_EXPRESSION_ASM();
 
+void PushResultFunction();
+
 #endif 

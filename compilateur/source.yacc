@@ -183,7 +183,7 @@ Print :
 Expression : 
 	tNOMBREDEC 
 	{ 
-		printf("-AFC @%d %d\n",empilert($1,0,1,1) ,$1);
+		printf("AFC @%d %d\n",empilert($1,0,1,1) ,$1);
 		incrementerPC();
 		$$.adresse=getAdressePile()+1;
 		$$.relative_ou_absolue=1 ; // absolue 
@@ -402,7 +402,7 @@ AppelFonctions :
 	{
 		//on fixe l'id de la fonction appelée 
 		setIDprototypeOrImplementationFunction($1);
-		 PUSH_PC_ASM();
+		 //PUSH_PC_ASM();
 	}
 	ParamAppel tPF tPOINTVIR
 	{
@@ -411,8 +411,8 @@ AppelFonctions :
 			yyerror("ERROR WHEN CALL FUNCTION");
 			yyerror(getIDprototypeOrImplementationFunction());yyerror("\n");
 		}
-		empilert(0,1,0,1);//on empile l'adresse du résultat qui sera toujours 0 (@ relatif)		
-		$$.adresse=0;
+		PushResultFunction();//on empile l'adresse du résultat qui sera toujours 0 (@ relatif)		
+		$$.adresse=Registre_retour_fonctions;
 		$$.relative_ou_absolue=0;//l'@ du return sera toujours une @ relative et aura la valeur 0  
 		$$.typage_var= getTypeRetour() ;
 	};

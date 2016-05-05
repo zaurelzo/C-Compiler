@@ -73,12 +73,12 @@ int recherchet(char * nom_var , int * relative_ou_absolue ,int * typage_var )
 	}else
 	{
 		//if(strcmp(nom_var,"a")==0) printf("ret : %d / nbglo %d \n",retour,nombreDeVariabeleglobale);
-		if (retour - nombreDeVariabeleglobale -1 + getTailleTypeRetourFonction()<0)
+		if (retour - nombreDeVariabeleglobale -1 /*+ getTailleTypeRetourFonction()*/<0)
 		{
 			return -1 ;
 		}else 
 		{
-			return retour - nombreDeVariabeleglobale -1 + getTailleTypeRetourFonction();
+			return retour - nombreDeVariabeleglobale -1 /*+ getTailleTypeRetourFonction()*/;
 		}
 		
 	}
@@ -139,7 +139,10 @@ int obtenirAdressDeuxiemeOperande()
 	return indPile-1;
 }
 
-
+void incrementerIndicePile()
+{
+	indPile--; 
+}
 
 void modifierChampInitialiserVariable(char * nom_var)
 {

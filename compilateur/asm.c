@@ -43,7 +43,7 @@ int declaration_affectation_asm( char * nom_var,int constante ,int dollar_relati
 			{
 				dollar_addr +=getTailleTypeRetourFonction() ;
 			}*/
-			printf( "\x1B[37mCOP @@%d @@%d \n",var,dollar_addr);
+			printf( "COP @@%d @@%d \n",var,dollar_addr);
 
 		} else if  (dollar_relative_ou_absolue==0 && abs_rel==1)
 		{
@@ -51,15 +51,15 @@ int declaration_affectation_asm( char * nom_var,int constante ,int dollar_relati
 			{
 				dollar_addr +=getTailleTypeRetourFonction() ;
 			}*/
-			printf( "\x1B[37mCOP @@%d @%d \n",var,dollar_addr);
+			printf( "COP @@%d @%d \n",var,dollar_addr);
 
 		} else if  (dollar_relative_ou_absolue==1 && abs_rel==0)
 		{
 			
-			printf( "\x1B[37mCOP @%d @@%d \n",var,dollar_addr);
+			printf( "COP @%d @@%d \n",var,dollar_addr);
 		} else if  (dollar_relative_ou_absolue==1 && abs_rel==1)
 		{
-			printf( "\x1B[37mCOP @%d @%d \n",var,dollar_addr);
+			printf( "COP @%d @%d \n",var,dollar_addr);
 		}
 		incrementerPC();
 		viderPile();
@@ -91,20 +91,20 @@ int affection_asm( char * nom_var ,int dollar_relative_ou_absolue , int dollar_a
 			{
 				dollar_addr +=getTailleTypeRetourFonction() ;
 			}*/
-			printf( "\x1B[37mCOP @@%d @@%d \n",var,dollar_addr);
+			printf( "COP @@%d @@%d \n",var,dollar_addr);
 		}else if  (dollar_relative_ou_absolue==0 && abs_rel==1)
 		{	
 			/*if (strcmp(getMode(),"fonction")==0)
 			{
 				dollar_addr +=getTailleTypeRetourFonction() ;
 			}*/
-			printf( "\x1B[37mCOP @%d @@%d \n",var,dollar_addr);
+			printf( "COP @%d @@%d \n",var,dollar_addr);
 		}else if  (dollar_relative_ou_absolue==1 && abs_rel==0)
 		{
-			printf( "\x1B[37mCOP @@%d @%d \n",var,dollar_addr);
+			printf( "COP @@%d @%d \n",var,dollar_addr);
 		}else if  (dollar_relative_ou_absolue==1 && abs_rel==1)
 		{
-			printf( "\x1B[37mCOP @%d @%d \n",var,dollar_addr);
+			printf( "COP @%d @%d \n",var,dollar_addr);
 		}																											
 		incrementerPC();
 		viderPile();
@@ -116,9 +116,9 @@ int affection_asm( char * nom_var ,int dollar_relative_ou_absolue , int dollar_a
 int print_asm( int dollar_addr , int dollar_relative_ou_absolue )
 {
 	if(dollar_relative_ou_absolue==0)
-		printf("\x1B[37mPRI @@%d\n", dollar_addr );
+		printf("PRI @@%d\n", dollar_addr );
 	else 
-		printf("\x1B[37mPRI @%d\n", dollar_addr );
+		printf("PRI @%d\n", dollar_addr );
 																							
 	incrementerPC();
 	viderPile();
@@ -156,16 +156,16 @@ int operation_arithmetique_asm(char * operation , int * dollar_addr, int * dolla
 
 			if (abs_rel1==0 && abs_rel2==0)
 			{
-				printf("\x1B[37m%s @%d @@%d @@%d\n",operation,getAdressePile(),valeurOp2,valeurOp1);
+				printf("%s @%d @@%d @@%d\n",operation,getAdressePile(),valeurOp2,valeurOp1);
 			}else if (abs_rel1==0 && abs_rel2==1)
 			{
-				printf("\x1B[37m%s @%d @%d @@%d\n",operation,getAdressePile(),valeurOp2,valeurOp1); 	
+				printf("%s @%d @%d @@%d\n",operation,getAdressePile(),valeurOp2,valeurOp1); 	
 			}else if (abs_rel1==1 && abs_rel2==0)
 			{
-				printf("\x1B[37m%s @%d @@%d @%d\n",operation,getAdressePile(),valeurOp2,valeurOp1); 	
+				printf("%s @%d @@%d @%d\n",operation,getAdressePile(),valeurOp2,valeurOp1); 	
 			}else if (abs_rel1==1 && abs_rel2==1)
 			{
-				printf("\x1B[37m%s @%d @%d @%d\n",operation,getAdressePile(),valeurOp2,valeurOp1); 	
+				printf("%s @%d @%d @%d\n",operation,getAdressePile(),valeurOp2,valeurOp1); 	
 			}
 
 			empilert(getAdressePile(),1,1,typage_Op1) ;
@@ -175,13 +175,13 @@ int operation_arithmetique_asm(char * operation , int * dollar_addr, int * dolla
 			//printf("++++++++++++++++++++++++ %d %d \n",abs_rel1,abs_rel2);
 			int NouvAdrOp2= obtenirAdressDeuxiemeOperande();
 			if (abs_rel1==0 && abs_rel2==0)
-				printf("\x1B[37m%s @%d @@%d @@%d\n",operation,getAdressePile(),valeurOp1,NouvAdrOp2);
+				printf("%s @%d @@%d @@%d\n",operation,getAdressePile(),valeurOp1,NouvAdrOp2);
 			else if (abs_rel1==0 && abs_rel2==1)
-				printf("\x1B[37m%s @%d @@%d @%d\n",operation,getAdressePile(),valeurOp1,NouvAdrOp2);
+				printf("%s @%d @@%d @%d\n",operation,getAdressePile(),valeurOp1,NouvAdrOp2);
 			else if (abs_rel1==1 && abs_rel2==0)
-				printf("\x1B[37m%s @%d @%d @@%d\n",operation,getAdressePile(),valeurOp1,NouvAdrOp2);
+				printf("%s @%d @%d @@%d\n",operation,getAdressePile(),valeurOp1,NouvAdrOp2);
 			else if (abs_rel1==1 && abs_rel2==1)
-				printf("\x1B[37m%s @%d @%d @%d\n",operation,getAdressePile(),valeurOp1,NouvAdrOp2);
+				printf("%s @%d @%d @%d\n",operation,getAdressePile(),valeurOp1,NouvAdrOp2);
 		
 			empilert(getAdressePile(),1,1,typage_Op1) ;
 		}else if( typeOp1==0 && typeOp2==1) //si 1er est une constante et 2iem est une var
@@ -190,13 +190,13 @@ int operation_arithmetique_asm(char * operation , int * dollar_addr, int * dolla
 			int NouvAdrOp1=obtenirAdressePremierOperande(); 
 			
 			if (abs_rel1==0 && abs_rel2==0)
-				printf("\x1B[37m%s @%d @@%d @@%d\n",operation,getAdressePile(),NouvAdrOp1,valeurOp2);
+				printf("%s @%d @@%d @@%d\n",operation,getAdressePile(),NouvAdrOp1,valeurOp2);
 			if (abs_rel1==0 && abs_rel2==1)
-				printf("\x1B[37m%s @%d @@%d @%d\n",operation,getAdressePile(),NouvAdrOp1,valeurOp2);
+				printf("%s @%d @@%d @%d\n",operation,getAdressePile(),NouvAdrOp1,valeurOp2);
 			if (abs_rel1==1 && abs_rel2==0)
-				printf("\x1B[37m%s @%d @%d @@%d\n",operation,getAdressePile(),NouvAdrOp1,valeurOp2);
+				printf("%s @%d @%d @@%d\n",operation,getAdressePile(),NouvAdrOp1,valeurOp2);
 			if (abs_rel1==1 && abs_rel2==1)
-				printf("\x1B[37m%s @%d @%d @%d\n",operation,getAdressePile(),NouvAdrOp1,valeurOp2);
+				printf("%s @%d @%d @%d\n",operation,getAdressePile(),NouvAdrOp1,valeurOp2);
 				
 			empilert(getAdressePile(),1,1,typage_Op1) ;
 			
@@ -207,13 +207,13 @@ int operation_arithmetique_asm(char * operation , int * dollar_addr, int * dolla
 			int NouvAdrOp2 = obtenirAdressDeuxiemeOperande();
 			
 			if (abs_rel1==0 && abs_rel2==0)
-				printf("\x1B[37m%s @%d @@%d @@%d\n",operation,getAdressePile(),NouvAdrOp1,NouvAdrOp2);
+				printf("%s @%d @@%d @@%d\n",operation,getAdressePile(),NouvAdrOp1,NouvAdrOp2);
 			else if (abs_rel1==0 && abs_rel2==1)
-				 printf("\x1B[37m%s @%d @@%d @%d\n",operation,getAdressePile(),NouvAdrOp1,NouvAdrOp2);
+				 printf("%s @%d @@%d @%d\n",operation,getAdressePile(),NouvAdrOp1,NouvAdrOp2);
 			else if (abs_rel1==1 && abs_rel2==0)
-				 printf("\x1B[37m%s @%d @%d @@%d\n",operation,getAdressePile(),NouvAdrOp1,NouvAdrOp2);
+				 printf("%s @%d @%d @@%d\n",operation,getAdressePile(),NouvAdrOp1,NouvAdrOp2);
 			else if (abs_rel1==1 && abs_rel2==1)
-				 printf("\x1B[37m%s @%d @%d @%d\n",operation,getAdressePile(),NouvAdrOp1,NouvAdrOp2);
+				 printf("%s @%d @%d @%d\n",operation,getAdressePile(),NouvAdrOp1,NouvAdrOp2);
 		
 			empilert(getAdressePile(),1,1,typage_Op1) ;
 		}
@@ -230,14 +230,14 @@ void nombre_negatif_asm(int * dollar_addr,int * dollar_relative_ou_absolue,int *
 	if (typeOp==0)//si constante
 	{
 		if (abs_rel==0)
-			printf("\x1B[37mAFC @@%d -%d\n",empilert(-valeurOp,0,abs_rel,typage_var),valeurOp);
+			printf("AFC @@%d -%d\n",empilert(-valeurOp,0,abs_rel,typage_var),valeurOp);
 		else 
-			printf("\x1B[37mAFC @%d -%d\n",empilert(-valeurOp,0,abs_rel,typage_var),valeurOp);
+			printf("AFC @%d -%d\n",empilert(-valeurOp,0,abs_rel,typage_var),valeurOp);
 		incrementerPC();
 	}/*else  //si variable (TODO)
 	{
 		int new_addr = empilert(valeurOp,0,abs_rel);
-		printf("\x1B[37mAFC @%d -%d\n",empilert(valeurOp,0,abs_rel,),1);
+		printf("AFC @%d -%d\n",empilert(valeurOp,0,abs_rel,),1);
 	}*/
 
 	*dollar_addr=getAdressePile()+1;
@@ -250,7 +250,7 @@ void JMF_IF_ASM(int addr_condition)
 {
 	viderPile();
 	char * label =  ajouter_label();
-	printf("\x1B[37mJMF @%d %s\n",addr_condition,label); //condition se trouve toujours à une adresse au format fixe 
+	printf("JMF @%d %s\n",addr_condition,label); //condition se trouve toujours à une adresse au format fixe 
 	incrementerPC();
 	empilerPremierLabelIF(label); 
 }
@@ -258,7 +258,7 @@ void JMF_IF_ASM(int addr_condition)
 void JMP_IF_ASM()
 {
 	char * label =  ajouter_label();
-	printf("\x1B[37mJMP %s\n",label);
+	printf("JMP %s\n",label);
 	incrementerPC();
 	empilerDeuxiemeLabelIF(label);
 }
@@ -300,15 +300,15 @@ void CONDITION_ASM(char * comparateur, int * dollar_addr , int * dollar_relative
 	 * dollar_typage_result = 1;
 	if(strcmp(comparateur,"==")==0)
 	{
-		printf("\x1B[37mEQU @%d @%d @%d\n", retour,addr_exp1,addr_exp2);
+		printf("EQU @%d @%d @%d\n", retour,addr_exp1,addr_exp2);
 		incrementerPC();
 	}else if(strcmp(comparateur,"<")==0)
 	{
-		printf("\x1B[37mINF @%d @%d @%d\n", retour,addr_exp1,addr_exp2);
+		printf("INF @%d @%d @%d\n", retour,addr_exp1,addr_exp2);
 		incrementerPC();
 	}else if(strcmp(comparateur,">")==0)
 	{
-		printf("\x1B[37mSUP @%d @%d @%d\n", retour,addr_exp1,addr_exp2);
+		printf("SUP @%d @%d @%d\n", retour,addr_exp1,addr_exp2);
 		incrementerPC();
 	}
 } 
@@ -326,7 +326,7 @@ void JMF_WHILE_ASM(int dollar_addr)
 {
 	viderPile();
 	char * label =  ajouter_label();
-	printf("\x1B[37mJMF @%d %s\n",dollar_addr,label);
+	printf("JMF @%d %s\n",dollar_addr,label);
 	incrementerPC();
 	empilerDeuxiemeLabelWhile(label); 	
 }
@@ -335,7 +335,7 @@ void JMP_WHILE_ASM()
 {
 	char  label[TAILLE] ; 
 	depilerPremierLabelWhile(label);
-	printf("\x1B[37mJMP %s\n", label);
+	printf("JMP %s\n", label);
 	incrementerPC();
 }
 
@@ -382,24 +382,26 @@ void PUSH_PC_ASM()
 {
 	/*int adrResult=getAdresseRetour(taille_element_retour); 
 	 setAdresseDuReturn(adrResult);*/
-	printf("\x1B[37mPUSH PC\n");
+	printf("PUSH PC\n");
 	incrementerPC();
-	/*printf("\x1B[37mPUSH %d\n",adrResult);
+	/*printf("PUSH %d\n",adrResult);
 	incrementerPC();*/
 }
 
 /*empiler les parametres d'appel */
 void CALL_PARAMETERS_ASM(int dollar_addr , int dollar_relative_ou_absolue)
 {
-	
+	int type,abs_rel,typage;
+
 	if (dollar_relative_ou_absolue==0) //relatif 
 	{	
-		printf("\x1B[37mPUSHA @@%d\n",dollar_addr);	
+		printf("PUSHA @@%d\n",dollar_addr);	
 	}else //absolue
 	{
-		printf("\x1B[37mPUSHA @%d\n",dollar_addr);
+		printf("PUSHA @%d\n",dollar_addr);
 	}
 	incrementerPC();
+	depilert(&type,&abs_rel,&typage);
 }
 
 int VERIFICATION_AND_CALL_GENERATION_ASM()
@@ -417,7 +419,8 @@ int VERIFICATION_AND_CALL_GENERATION_ASM()
 	if (retour==-2)
 	{
 		//empilert(0,1,0,1);//on empile l'adresse du résultat qui sera toujours 0 (@ relatif)
-		printf("\x1B[37mCALL %s\n",labelPotentiel);
+		printf("CALL %s\n",labelPotentiel);
+		incrementerPC();
 		return 0 ; 
 	}else if (retour==-1)
 	{
@@ -425,7 +428,8 @@ int VERIFICATION_AND_CALL_GENERATION_ASM()
 	}else 
 	{
 		//empilert(0,1,0,1);//on empile l'adresse du résultat qui sera toujours 0 (@ relatif)
-		printf("\x1B[37mCALL %d\n",retour);
+		printf("CALL %d\n",retour);
+		incrementerPC();
 		initNombreDeParametresAPPEL() ; //on reinitialise pour l'appel suivant 
 		
 		return 0 ;
@@ -440,13 +444,13 @@ void RETURN_ASM (int dollar_addr, int dollar_relative_ou_absolue,int dollar_typa
 
 	if (dollar_relative_ou_absolue==0) //relatif 
 	{
-		printf("\x1B[37mCOP @@0 @@%d\n",dollar_addr);
+		printf("COP @%d @@%d\n",Registre_retour_fonctions,dollar_addr);
 	}else //absolue
 	{
-		printf("\x1B[37mCOP @@0 @%d\n",dollar_addr);
+		printf("COP @%d @%d\n",Registre_retour_fonctions,dollar_addr);
 	}
 
-	printf("\x1B[37mRET\n");
+	printf("RET\n");
 	incrementerPC();
 	incrementerPC();
 }
@@ -454,6 +458,13 @@ void RETURN_ASM (int dollar_addr, int dollar_relative_ou_absolue,int dollar_typa
 /*void APPEL_FONCTION_IN_EXPRESSION_ASM()
 {
 		//on empile l'@du return , on en a besoin pour les cas ou on des choses du type return n* facto(n-1) par exemple
-		printf("\x1B[37mAFC @%d %d\n",empilert(getAdresseDuReturn(),0,1,getTypeRetour()),getAdresseDuReturn());
+		printf("AFC @%d %d\n",empilert(getAdresseDuReturn(),0,1,getTypeRetour()),getAdresseDuReturn());
 		incrementerPC();
 }*/
+
+void PushResultFunction()
+{
+	int addr =  empilert(0,0,0,1);//on empile l'adresse du résultat qui sera toujours 0 (@ relatif)	
+	printf("COP @%d @%d\n",addr,Registre_retour_fonctions);
+	incrementerPC();
+}

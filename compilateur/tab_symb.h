@@ -11,7 +11,8 @@
 
 #define TAILLE_TAB_SYMBOL 1000
 
-#define ADRESSE_DEBUTPILE TAILLE_TAB_SYMBOL-1
+#define ADRESSE_DEBUTPILE TAILLE_TAB_SYMBOL-2 //998 , 999 étant le registre de retour des fonctions
+#define Registre_retour_fonctions TAILLE_TAB_SYMBOL-1
 
 /*==============================VARIABLES *===========================*/ 
 
@@ -88,6 +89,7 @@ int obtenirAdressePremierOperande();
 
 int obtenirAdressDeuxiemeOperande();
 
+void incrementerIndicePile();
 
 /*permet d'indiquer que la var est maintenant initialiser */
 void modifierChampInitialiserVariable(char * nom_var); 

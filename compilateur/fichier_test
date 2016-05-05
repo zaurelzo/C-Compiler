@@ -4,12 +4,16 @@ int ifact(int n );
 
 int gi(int a, int b );
 
-int fact(int n )
+int fib(int n )
 {
-	return 25*fact(n-421) ;; 
-	
+	if (n<2)
+	{
+		return n;
+	}else 
+	{
+		return fib(n-1);+fib(n-2);; 
+	}
 }
-
 main()
 { 	
 }
