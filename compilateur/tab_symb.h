@@ -20,7 +20,7 @@ extern int ind ;
 
 extern int indPile;
 extern int profondeur ;
-extern nombreDeVariabeleglobale  ;
+extern int nombreDeVariabeleglobale  ;
 
 struct Noeud_symbol {
 	char nom_var[TAILLE];

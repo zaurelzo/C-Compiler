@@ -107,6 +107,8 @@ void printParametresDappel( parametres *  t,int nbParamAppel);
 int checkAppelFonctionParametreConforme(char * nom_fonction , parametres * p , int nombreDeParametre, char * labelPotentiel) ;
 
 void  creerLabel(int indiceDansTableDesFonctions , char * nom_label ) ;
+
+void genererTableDesFonctions();
 /*===============================END FONCTIONS================================================*/
 
 #endif

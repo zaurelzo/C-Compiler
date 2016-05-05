@@ -1,0 +1,20 @@
+#!/bin/bash
+clear
+if [ $# -ne 2 ]
+then 
+	echo "Usage : hakunaMatata fichier_test.c fichier_sorti"
+	exit 1 
+fi
+
+./compilateur < $1 > $2  
+#echo "=========================fichier binaire"
+#cat fichier_asm_binaire
+#echo "================================fichier assembleur============="
+cat $2
+#echo "====================fichier_test============================"
+#cat fichier_test
+#echo "==============fichier TABLE DES LABEL==================================================="
+#cat fichier_table_des_labels
+#echo "====================fichier asm sans label "
+#cat fichier_ass_correct
+

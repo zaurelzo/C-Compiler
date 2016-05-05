@@ -328,3 +328,19 @@ int checkAppelFonctionParametreConforme(char * nom_fonction , parametres * p , i
 }
 
 
+void genererTableDesFonctions()
+{
+	FILE* fichier = NULL;
+ 	int i ;
+    fichier = fopen("fichier_table_des_fonctions", "w+");
+ 
+    if (fichier != NULL)
+    {
+    	//printf("******indice : %d"indiceLabel)
+    	for ( i = 0; i < indiceNombreDefonctionDeclare ; ++i)
+    	{
+    		fprintf(fichier,"%d\n",Tableau_des_fonctions[i].adresse_implementation );
+    	}
+    	 fclose(fichier);
+	}
+}

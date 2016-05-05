@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include "tab_symb.h"
 #include "tab_label.h"
+#include "deuxieme_passe.h"
 #include "asm.h"
 #include "gestion_des_fonctions.h"
 %}
@@ -149,6 +150,7 @@ Body :
 	{
 		//generer_fichier_table_des_symboles();
 		generer_fichier_tab_label();
+		genererTableDesFonctions();
 	} ;
 			
 SuiteBody :  Declaration SuiteBody
@@ -411,6 +413,7 @@ AppelFonctions :
 			yyerror("ERROR WHEN CALL FUNCTION");
 			yyerror(getIDprototypeOrImplementationFunction());yyerror("\n");
 		}
+		initNombreDeParametresAPPEL() ; 
 		PushResultFunction();//on empile l'adresse du résultat qui sera toujours 0 (@ relatif)		
 		$$.adresse=Registre_retour_fonctions;
 		$$.relative_ou_absolue=0;//l'@ du return sera toujours une @ relative et aura la valeur 0  
@@ -448,6 +451,6 @@ int yyerror(char *s) {
   exit(1);
 }
 
-int main(void) {
+int main(int argc, char ** argv) {
   yyparse();
 }

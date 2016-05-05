@@ -413,7 +413,7 @@ int VERIFICATION_AND_CALL_GENERATION_ASM()
 
 	//printParametresDappel(  t,getNombredeParametresAPPEL());
 	//print_TABLE_DES_FONCTION() ;
-
+	//printf("----------------NOMBRE PARAME APPEL : %d\n",getNombredeParametresAPPEL());
 	int retour = checkAppelFonctionParametreConforme( getIDprototypeOrImplementationFunction(), t , getNombredeParametresAPPEL(), labelPotentiel) ;
 
 	if (retour==-2)
