@@ -1,6 +1,6 @@
 #!//bin/bash
 clear
-./executable < fichier_test > fichier_asm
+./executable < fichier_test2 > fichier_asm
 gcc main.c tab_label.c tab_symb.c deuxieme_passe.c gestion_des_fonctions.c 
 #echo "=========================fichier binaire"
 #cat fichier_asm_binaire

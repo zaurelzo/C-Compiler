@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-//#include "tab_symb.h"
+#include "tab_symb.h"
 //#include "tab_label.h"
 //#include "deuxieme_passe.h"
 #include "gestion_des_fonctions.h"
