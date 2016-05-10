@@ -4,7 +4,15 @@
  //int PC =0 ;
 int nb_Instruction_Programme = 0 ;
 
-int traiter_ligne(char * chaine , int *tab_retour)
+int debutMain=23 ; // TODO mettre 0 ici , puis fixer lors de la lecture du fichier 
+int ebp =0; 
+int esp =0;
+int savEbp=0;
+
+int indTabDebugInfo=-1; 
+
+
+int traiter_ligne(char * chaine , char ** tab_retour)
 {
 	int cpt = 0;
 	char * token ; 
@@ -12,7 +20,8 @@ int traiter_ligne(char * chaine , int *tab_retour)
 	 //strtok permet de decouper la chaine en tokens séparés par le delimitateur espace
 	while(token!=NULL)
 	{
-		tab_retour[cpt]=atoi(token);
+		tab_retour[cpt]=malloc(sizeof(char)*TAILLE);
+		strcpy(tab_retour[cpt],token);
 		//printf("token %s\n",token );
 		token =strtok(NULL," ");
 		cpt++;
@@ -20,39 +29,87 @@ int traiter_ligne(char * chaine , int *tab_retour)
 	return cpt ; 
 }
 
-void charger_Programme_dans_Ram(char * name_fichier)
+int extractNumber(char * stringTOanalyse,int * absOrRelat)
+{
+	char nb[30];
+	if (stringTOanalyse[0]=='@' && stringTOanalyse[1]=='@')
+	{
+		*absOrRelat=0 ;//relative 
+		strcpy(nb,&(stringTOanalyse[2]));		
+	}	
+	else
+	{
+		*absOrRelat=1 ;//absolue 
+		strcpy(nb,&(stringTOanalyse[1]));	
+	} 
+	
+	return atoi(nb);
+}
+
+void charger_Programme_dans_Ram(const char * name_fichier)
 {
 	FILE* fichier = NULL;
  	int codeOP, resultat , retour , op1,op2; 
     fichier = fopen(name_fichier, "r");
     char line[40];
-    int tableau_retour[4];
-
+    char * tableau_retour[5];
+    int abs_or_rel ; 
  	if (fichier!=NULL)
  	{
- 	
+ 		//printf("fopen ===\n");
  		while(fgets(line,40,fichier)!=NULL)
  		{
- 			retour = traiter_ligne(line ,tableau_retour);
- 			//printf("----------------------\n");
+ 			//printf("%s",line);
+ 			retour = traiter_ligne(line ,(char **)tableau_retour);
+ 			//printf("---------------------- %d \n",retour);
  			Tableau_Ram[nb_Instruction_Programme].format_instruction=retour;
  			if (retour==4)
  			{
- 				Tableau_Ram[nb_Instruction_Programme].code_operation=tableau_retour[0] ;
- 				Tableau_Ram[nb_Instruction_Programme].result=tableau_retour[1];
- 				Tableau_Ram[nb_Instruction_Programme].operande1= tableau_retour[2];
- 				Tableau_Ram[nb_Instruction_Programme].operande2=tableau_retour[3];
+
+ 				strcpy(Tableau_Ram[nb_Instruction_Programme].code_operation,tableau_retour[0]) ;
+ 				
+ 				Tableau_Ram[nb_Instruction_Programme].result= extractNumber(tableau_retour[1],&abs_or_rel);
+ 				Tableau_Ram[nb_Instruction_Programme].abs_relResult=abs_or_rel;
+
+ 				Tableau_Ram[nb_Instruction_Programme].operande1= extractNumber(tableau_retour[2],&abs_or_rel);
+ 				Tableau_Ram[nb_Instruction_Programme].abs_relOP1=abs_or_rel;
+ 				
+ 				Tableau_Ram[nb_Instruction_Programme].operande2=extractNumber(tableau_retour[3],& abs_or_rel);
+ 				Tableau_Ram[nb_Instruction_Programme].abs_relOP2=abs_or_rel;
  			}else if (retour==3)
  			{
- 				//printf("----------------%d\n", tableau_retour[0]);
- 				Tableau_Ram[nb_Instruction_Programme].code_operation=tableau_retour[0] ;
- 				Tableau_Ram[nb_Instruction_Programme].result=tableau_retour[1];
- 				Tableau_Ram[nb_Instruction_Programme].operande1=tableau_retour[2];
+ 				strcpy(Tableau_Ram[nb_Instruction_Programme].code_operation,tableau_retour[0]);
+ 				
+ 				Tableau_Ram[nb_Instruction_Programme].result= extractNumber(tableau_retour[1],&abs_or_rel);
+ 				Tableau_Ram[nb_Instruction_Programme].abs_relResult=abs_or_rel;
 
+ 				if (strcmp(tableau_retour[0],"AFC")==0) //AFC @RES NB
+ 				{
+ 					tableau_retour[2][strlen(tableau_retour[2])-1]='\0';
+ 					Tableau_Ram[nb_Instruction_Programme].operande1= atoi(tableau_retour[2]);
+ 				}else //COP @NB1 @NB2
+ 				{
+ 					Tableau_Ram[nb_Instruction_Programme].operande1= extractNumber(tableau_retour[2],&abs_or_rel);
+ 					Tableau_Ram[nb_Instruction_Programme].abs_relOP1=abs_or_rel;
+ 				}
+ 				
  			}else if (retour==2)
  			{
- 				Tableau_Ram[nb_Instruction_Programme].code_operation=tableau_retour[0] ;
- 				Tableau_Ram[nb_Instruction_Programme].result=tableau_retour[1];
+ 				strcpy(Tableau_Ram[nb_Instruction_Programme].code_operation,tableau_retour[0]) ;
+
+ 				if (strcmp(tableau_retour[0],"PUSH")==0) //PUSH @NB
+ 				{
+ 					Tableau_Ram[nb_Instruction_Programme].result= extractNumber(tableau_retour[1],&abs_or_rel);
+ 					Tableau_Ram[nb_Instruction_Programme].abs_relResult=abs_or_rel;
+ 				}else
+ 				{
+ 					tableau_retour[1][strlen(tableau_retour[1])-1]='\0';
+ 					Tableau_Ram[nb_Instruction_Programme].result=atoi(tableau_retour[1]);
+ 				}
+
+ 			}else if (retour==1)
+ 			{
+ 				strcpy(Tableau_Ram[nb_Instruction_Programme].code_operation,tableau_retour[0]) ;
  			}
  			nb_Instruction_Programme++;
  			/* code */
@@ -69,96 +126,703 @@ void afficher_ram()
 		//printf("*****************************%d\n",nb_Instruction_Programme );
 		if(Tableau_Ram[i].format_instruction==4)
 		{
-			printf("%d %d %d %d\n",Tableau_Ram[i].code_operation,Tableau_Ram[i].result,Tableau_Ram[i].operande1,Tableau_Ram[i].operande2);
+			printf("%s %d %d %d\n",Tableau_Ram[i].code_operation,Tableau_Ram[i].result,Tableau_Ram[i].operande1,Tableau_Ram[i].operande2);
+			//printf("Result : %d | OP1 : %d | OP2 : %d\n",Tableau_Ram[i].abs_relResult,Tableau_Ram[i].abs_relOP1 ,Tableau_Ram[i].abs_relOP2);
 		}else if(Tableau_Ram[i].format_instruction==3)
 		{
-			printf("%d %d %d\n",Tableau_Ram[i].code_operation,Tableau_Ram[i].result,Tableau_Ram[i].operande1);
+			printf("%s %d %d\n",Tableau_Ram[i].code_operation,Tableau_Ram[i].result,Tableau_Ram[i].operande1);
+			//printf("Result : %d | OP1 : %d\n",Tableau_Ram[i].abs_relResult,Tableau_Ram[i].abs_relOP1 );
 		}else if(Tableau_Ram[i].format_instruction==2)
 		{
-			printf("%d %d\n",Tableau_Ram[i].code_operation,Tableau_Ram[i].result);
+			printf("%s %d\n",Tableau_Ram[i].code_operation,Tableau_Ram[i].result);
+			//printf("Result : %d\n",Tableau_Ram[i].abs_relResult);
+		}else if (Tableau_Ram[i].format_instruction==1)
+		{
+			printf("%s",Tableau_Ram[i].code_operation);
 		}
 	}
 }
 
-void interpreter()
-{
 
-	//printf("------------%d\n",nb_Instruction_Programme);
-	int PC= 0;
-	while(PC <= nb_Instruction_Programme-1)
+void chargerDebugInformation()
+{
+	FILE* fichier = NULL;
+ 	
+    char line[40];
+    char * tab_retour[5];
+
+    int ilocal;
+    int retour ;
+
+    fichier = fopen("../compilateur/file_debug_information","r");
+    
+    if (fichier!=NULL)
+    {
+    	while(fgets(line,40,fichier)!=NULL)
+ 		{
+ 			//printf("%s",line);
+ 			retour = traiter_ligne(line ,(char **)tab_retour);
+ 			//printf("----retour ; %d\n",retour);
+ 			if (retour==3)
+ 			{
+ 				indTabDebugInfo++; 
+ 				ilocal=0;
+ 				strcpy(tab_DebugInfo[indTabDebugInfo].nom_fonction, tab_retour[0]);
+ 				tab_DebugInfo[indTabDebugInfo].nbLocales=atoi(tab_retour[2]);
+ 			}else if (retour==2)
+ 			{
+ 				strcpy(tab_DebugInfo[indTabDebugInfo].tab_nom_var[ilocal],tab_retour[0]);
+ 				tab_DebugInfo[indTabDebugInfo].adresse[ilocal]=atoi(tab_retour[1]);
+ 				ilocal++;
+ 			}
+ 		}
+    }
+
+    fclose(fichier);
+}
+
+void printTabDugInfo()
+{
+	int i,j ; 
+	for ( i = 0; i <=indTabDebugInfo ; ++i)
+	{
+		printf("%s\n",tab_DebugInfo[i].nom_fonction);
+		
+		for (j = 0; j < tab_DebugInfo[i].nbLocales; ++j)
+		{
+			printf("%s %d\n",tab_DebugInfo[i].tab_nom_var[j],tab_DebugInfo[i].adresse[j]);
+		}
+		
+	}
+}
+
+int  printVarLocal(int contexte,char *  name ) 
+{
+	int i ;
+	name[strlen(name)-1]='\0';
+	for (i = 0 ;i<tab_DebugInfo[contexte].nbLocales;i++)
+	{
+		if (strcmp(tab_DebugInfo[contexte].tab_nom_var[i],name)==0)
+		{
+			printf("%s %d\n",name,PILE_D_EXECUTION[calculIndice(i)].valeur); //on affiche la variable locale 
+			return 0 ;
+		} 
+	}
+
+	printf("ERREUR : %s n'existe pas \n",name);
+
+	return -1  ; // si erreur 
+}
+
+
+int  printVarGlobale(char * name ) 
+{
+	int i ;
+	name[strlen(name)-1]='\0';
+	if (strcmp(tab_DebugInfo[0].nom_fonction,"global")==0)
+	{
+		//printf("========nom correcte and nb locale %d and name %s \n",tab_DebugInfo[0].nbLocales,name);
+		for (i = 0; i< tab_DebugInfo[0].nbLocales;i++)
+		{
+			//printf("%s",name);
+			//printf("-----------length de tab : %d and name %d \n",strlen(tab_DebugInfo[0].tab_nom_var[i]),strlen(name));
+			if (strcmp(tab_DebugInfo[0].tab_nom_var[i],name)==0)
+			{
+				//printf("GLOBAL %s : %d\n",name,Tab_Mem_data[0].valeur);
+				return 0 ;
+			}/* else 
+			{
+				printf ("NULL");
+			}*/
+		}
+	}
+
+	printf("ERREUR : la var globale %s n'existe pas \n",name);
+	return -1  ; // si erreur 
+}
+
+
+void clean(const char *buffer, FILE *fp)
+{
+    char *p = strchr(buffer,'\n');
+    if (p != NULL)
+        *p = 0;
+    else
+    {
+        int c;
+        while ((c = fgetc(fp)) != '\n' && c != EOF);
+    }
+}
+
+void printInstructionCourante(int numInst)
+{
+	printf("INSTRUCTION COURANTE : \n");
+	if(Tableau_Ram[numInst].format_instruction==4)
+		{
+			printf("%s %d %d %d\n",Tableau_Ram[numInst].code_operation,Tableau_Ram[numInst].result,Tableau_Ram[numInst].operande1,Tableau_Ram[numInst].operande2);
+			//printf("Result : %d | OP1 : %d | OP2 : %d\n",Tableau_Ram[i].abs_relResult,Tableau_Ram[i].abs_relOP1 ,Tableau_Ram[i].abs_relOP2);
+		}else if(Tableau_Ram[numInst].format_instruction==3)
+		{
+			printf("%s %d %d\n",Tableau_Ram[numInst].code_operation,Tableau_Ram[numInst].result,Tableau_Ram[numInst].operande1);
+			//printf("Result : %d | OP1 : %d\n",Tableau_Ram[i].abs_relResult,Tableau_Ram[i].abs_relOP1 );
+		}else if(Tableau_Ram[numInst].format_instruction==2)
+		{
+			printf("%s %d\n",Tableau_Ram[numInst].code_operation,Tableau_Ram[numInst].result);
+			//printf("Result : %d\n",Tableau_Ram[i].abs_relResult);
+		}else if (Tableau_Ram[numInst].format_instruction==1)
+		{
+			printf("%s\n",Tableau_Ram[numInst].code_operation);
+		}
+}
+
+
+int calculIndice(int adresse)
+{
+	int ecart =savEbp-ebp-1; 
+	int newaddr=adresse ;	
+	if (savEbp!=0)
+	{
+		if (adresse>=ecart)
+			newaddr=adresse+2;
+	}
+
+	return newaddr; 
+}
+
+void InitiPileExecution()
+{
+	int i; 
+	for ( i = 0; i < TAILLE_PILE_D_EXECUTION; ++i)
+	{
+		PILE_D_EXECUTION[i].addrRetour=0 ;
+		PILE_D_EXECUTION[i].ebp=0;
+	}
+}
+
+void debug(int *pc,int pc_value_if_debug,int contextCourant)
+{	
+	char * tab_retour[5];
+	char inputUser[40] ;//= "d";
+	char  copieInputUser[40];
+	int fini = 0 ;
+	strcpy(inputUser,"d");
+	
+
+	while(fini==0)
+	{
+		fgets(inputUser,sizeof(inputUser), stdin);
+		strcpy(copieInputUser,inputUser);
+		clean(inputUser,stdin);
+		if (strcmp(copieInputUser,"\n")!=0)
+		{
+			traiter_ligne(copieInputUser,tab_retour);
+			
+			
+			if (strcmp(tab_retour[0],"printvar")==0)
+			{
+				 printVarLocal(contextCourant,tab_retour[1]);
+			}else if (strcmp(tab_retour[0],"printgl")==0)
+			{
+				//printf("VARIABLE GLOBAL À CHERCHER %s",tab_retour[1]);
+				printVarGlobale(tab_retour[1]);
+			} //on passera automatique à l'instruction suivante si on a pas ce format à l'entrée
+		}else 
+		{
+			fini=1;
+		}	
+	}	
+	*pc=pc_value_if_debug;
+
+	//printf("leave loop =======\n");
+}
+
+
+//TODO
+//void printPileContextCOurant();
+
+void interpreter(int modeDebug)
+{
+	InitiPileExecution();
+	int resRes,resOp1 ,resOp2;
+	int contextCourant =indTabDebugInfo ; //on est dans le context du main
+	 char inputUser[40] = "";
+
+	
+	int PC= debutMain;
+
+	if (modeDebug)
+	{
+		printf("=================WELCOME TO debugMatata=====================\n");
+		printf("COMMANDE : printvar localVar | printgl GlobalVar | entrée\n");
+	}
+	while(PC < nb_Instruction_Programme)
 	{	
-		if(Tableau_Ram[PC].code_operation==1)//ADD
+		//TODO : RAJOUTER UNE CONDITION POUR L'OVERFLOW DE LA PILE 
+
+		if (modeDebug)
 		{
-			Tableau_Memoire_des_donnes[Tableau_Ram[PC].result].valeur= Tableau_Memoire_des_donnes[Tableau_Ram[PC].operande1].valeur+ Tableau_Memoire_des_donnes[Tableau_Ram[PC].operande2].valeur;
-			PC++;
-		} else if(Tableau_Ram[PC].code_operation==2)//MUL
+			printInstructionCourante(PC);//Instruction en cours d'éxécution 
+		}
+
+		if( strcmp (Tableau_Ram[PC].code_operation,"ADD")==0)//ADD
 		{
-			Tableau_Memoire_des_donnes[Tableau_Ram[PC].result].valeur= Tableau_Memoire_des_donnes[Tableau_Ram[PC].operande1].valeur* Tableau_Memoire_des_donnes[Tableau_Ram[PC].operande2].valeur;
-			PC++;
-		} else if(Tableau_Ram[PC].code_operation==3)//SOU
+			if (Tableau_Ram[PC].abs_relOP2==0) //l'opérande 2 est à adresse absolue
+			{
+				resOp2= PILE_D_EXECUTION[ calculIndice(Tableau_Ram[PC].operande2)].valeur ;
+			}else //l'opérande 2 est à adresse  relatif
+			{
+				resOp2=Tab_Mem_data[Tableau_Ram[PC].operande2].valeur ;
+			}
+
+			if (Tableau_Ram[PC].abs_relOP1==0) //l'opérande 1 est à adresse absolue
+			{
+				resOp1= PILE_D_EXECUTION[ calculIndice(Tableau_Ram[PC].operande1)].valeur ;
+			}else //l'opérande 1 est à adresse  relatif
+			{
+				resOp1=Tab_Mem_data[Tableau_Ram[PC].operande1].valeur ;
+			}
+
+			if (Tableau_Ram[PC].abs_relResult==0) //resultat est à adresse absolue
+			{
+				PILE_D_EXECUTION[calculIndice(Tableau_Ram[PC].result)].valeur= resOp2+resOp1 ;
+			}else //lresultat est à adresse  relatif
+			{
+				Tab_Mem_data[Tableau_Ram[PC].result].valeur=resOp2+resOp1;
+			}
+
+			if(modeDebug==0)
+			{
+				++PC;
+			}else 
+			{
+				debug(&PC,++PC,contextCourant);
+			}
+			//++PC;
+
+
+		} else if( strcmp (Tableau_Ram[PC].code_operation,"MUL")==0)//MUL
 		{
-			Tableau_Memoire_des_donnes[Tableau_Ram[PC].result].valeur= Tableau_Memoire_des_donnes[Tableau_Ram[PC].operande1].valeur- Tableau_Memoire_des_donnes[Tableau_Ram[PC].operande2].valeur;
-			PC++;
-		} else if(Tableau_Ram[PC].code_operation==4)//DIV
+			
+			if (Tableau_Ram[PC].abs_relOP2==0) //l'opérande 2 est à adresse absolue
+			{
+				resOp2= PILE_D_EXECUTION[ calculIndice(Tableau_Ram[PC].operande2)].valeur ;
+			}else //l'opérande 2 est à adresse  relatif
+			{
+				resOp2=Tab_Mem_data[Tableau_Ram[PC].operande2].valeur ;
+			}
+
+			if (Tableau_Ram[PC].abs_relOP1==0) //l'opérande 1 est à adresse absolue
+			{
+				resOp1= PILE_D_EXECUTION[ calculIndice(Tableau_Ram[PC].operande1)].valeur ;
+			}else //l'opérande 1 est à adresse  relatif
+			{
+				resOp1=Tab_Mem_data[Tableau_Ram[PC].operande1].valeur ;
+			}
+
+			if (Tableau_Ram[PC].abs_relResult==0) //resultat est à adresse absolue
+			{
+				PILE_D_EXECUTION[calculIndice(Tableau_Ram[PC].result)].valeur= resOp2+resOp1 ;
+			}else //lresultat est à adresse  relatif
+			{
+				Tab_Mem_data[Tableau_Ram[PC].result].valeur=resOp2*resOp1;
+			}
+
+
+
+			if(modeDebug==0)
+			{
+				++PC;
+			}else 
+			{
+				debug(&PC,++PC,contextCourant);
+			}
+			//++PC;
+
+
+		} else if( strcmp (Tableau_Ram[PC].code_operation,"SOU")==0)//SOU
 		{
-			Tableau_Memoire_des_donnes[Tableau_Ram[PC].result].valeur= Tableau_Memoire_des_donnes[Tableau_Ram[PC].operande1].valeur/ Tableau_Memoire_des_donnes[Tableau_Ram[PC].operande2].valeur;
-			PC++;
-		} else if(Tableau_Ram[PC].code_operation==5)//COPIE
+			
+			if (Tableau_Ram[PC].abs_relOP2==0) //l'opérande 2 est à adresse absolue
+			{
+				resOp2= PILE_D_EXECUTION[ calculIndice(Tableau_Ram[PC].operande2)].valeur ;
+			}else //l'opérande 2 est à adresse  relatif
+			{
+				resOp2=Tab_Mem_data[Tableau_Ram[PC].operande2].valeur ;
+			}
+
+			if (Tableau_Ram[PC].abs_relOP1==0) //l'opérande 1 est à adresse absolue
+			{
+				resOp1= PILE_D_EXECUTION[ calculIndice(Tableau_Ram[PC].operande1)].valeur ;
+			}else //l'opérande 1 est à adresse  relatif
+			{
+				resOp1=Tab_Mem_data[Tableau_Ram[PC].operande1].valeur ;
+			}
+
+			if (Tableau_Ram[PC].abs_relResult==0) //resultat est à adresse absolue
+			{
+				PILE_D_EXECUTION[calculIndice(Tableau_Ram[PC].result)].valeur= resOp2+resOp1 ;
+			}else //lresultat est à adresse  relatif
+			{
+				Tab_Mem_data[Tableau_Ram[PC].result].valeur=resOp1- resOp2;
+			}
+
+
+			if(modeDebug==0)
+			{
+				++PC;
+			}else 
+			{
+				debug(&PC,++PC,contextCourant);
+			}
+			//++PC;
+
+
+		} else if( strcmp (Tableau_Ram[PC].code_operation,"DIV")==0)//DIV
 		{
-			Tableau_Memoire_des_donnes[Tableau_Ram[PC].result].valeur=Tableau_Memoire_des_donnes[Tableau_Ram[PC].operande1].valeur;
-			PC++;
-		} else if(Tableau_Ram[PC].code_operation==6)//AFC
+			
+			if (Tableau_Ram[PC].abs_relOP2==0) //l'opérande 2 est à adresse absolue
+			{
+				resOp2= PILE_D_EXECUTION[ calculIndice(Tableau_Ram[PC].operande2)].valeur ;
+			}else //l'opérande 2 est à adresse  relatif
+			{
+				resOp2=Tab_Mem_data[Tableau_Ram[PC].operande2].valeur ;
+			}
+
+			if (Tableau_Ram[PC].abs_relOP1==0) //l'opérande 1 est à adresse absolue
+			{
+				resOp1= PILE_D_EXECUTION[ calculIndice(Tableau_Ram[PC].operande1)].valeur ;
+			}else //l'opérande 1 est à adresse  relatif
+			{
+				resOp1=Tab_Mem_data[Tableau_Ram[PC].operande1].valeur ;
+			}
+
+			if (Tableau_Ram[PC].abs_relResult==0) //resultat est à adresse absolue
+			{
+				PILE_D_EXECUTION[calculIndice(Tableau_Ram[PC].result)].valeur= resOp2+resOp1 ;
+			}else //lresultat est à adresse  relatif
+			{
+				Tab_Mem_data[Tableau_Ram[PC].result].valeur=resOp1/resOp2;
+			}
+
+
+
+			if(modeDebug==0)
+			{
+				++PC;
+			}else 
+			{
+				debug(&PC,++PC,contextCourant);
+			}
+			//++PC;
+
+
+		} else if( strcmp (Tableau_Ram[PC].code_operation,"COP")==0)////COPIE
 		{
-			//printf("........................................%d\n",Tableau_Ram[PC].result);
-			Tableau_Memoire_des_donnes[Tableau_Ram[PC].result].valeur=Tableau_Ram[PC].operande1;
-			PC++;
-		} else if(Tableau_Ram[PC].code_operation==7)//SAUT INCONDITIONNEL 
+			if (Tableau_Ram[PC].abs_relOP1==0) //l'opérande 1 est à adresse absolue
+			{
+				resOp1= PILE_D_EXECUTION[ calculIndice(Tableau_Ram[PC].operande1)].valeur ;
+			}else //l'opérande 1 est à adresse  relatif
+			{
+				resOp1=Tab_Mem_data[Tableau_Ram[PC].operande1].valeur ;
+			}
+
+			if (Tableau_Ram[PC].abs_relResult==0) //resultat est à adresse absolue
+			{
+				PILE_D_EXECUTION[calculIndice(Tableau_Ram[PC].result)].valeur= resOp1 ;
+			}else //lresultat est à adresse  relatif
+			{
+				Tab_Mem_data[Tableau_Ram[PC].result].valeur=resOp1;
+			}
+
+			if(modeDebug==0)
+			{
+				++PC;
+			}else 
+			{
+				debug(&PC,++PC,contextCourant);
+			}
+
+
+			//++PC;
+		} else if( strcmp (Tableau_Ram[PC].code_operation,"AFC")==0)//AFC
 		{
-			PC=Tableau_Ram[PC].result;
-		} else if(Tableau_Ram[PC].code_operation==8)//saut si la condition est fausse  
+			if (Tableau_Ram[PC].abs_relResult==0) //resultat est à adresse absolue
+			{
+				PILE_D_EXECUTION[calculIndice(Tableau_Ram[PC].result)].valeur= Tableau_Ram[PC].operande1 ;
+			}else //lresultat est à adresse  relatif
+			{
+				Tab_Mem_data[Tableau_Ram[PC].result].valeur=Tableau_Ram[PC].operande1;
+			}
+
+			//Tab_Mem_data[Tableau_Ram[PC].result].valeur=Tableau_Ram[PC].operande1;
+
+
+			if(modeDebug==0)
+			{
+				++PC;
+			}else 
+			{
+				debug(&PC,++PC,contextCourant);
+			}
+			//++PC;
+
+
+		} else if( strcmp (Tableau_Ram[PC].code_operation,"JMP")==0)//SAUT INCONDITIONNEL 
 		{
-			if (Tableau_Memoire_des_donnes[Tableau_Ram[PC].result].valeur==0)
-				{
+
+
+			if(modeDebug==0)
+			{
+				PC=Tableau_Ram[PC].result;
+			}else 
+			{
+				debug(&PC,Tableau_Ram[PC].result,contextCourant);
+			}
+			//PC=Tableau_Ram[PC].result;
+
+		} else if( strcmp (Tableau_Ram[PC].code_operation,"JMF")==0)//saut si la condition est fausse  
+		{
+			if (Tableau_Ram[PC].abs_relResult==0) //resultat est à adresse absolue
+			{
+				resRes= PILE_D_EXECUTION[ calculIndice(Tableau_Ram[PC].result)].valeur;
+			}else //lresultat est à adresse  relatif
+			{
+				resRes=   Tab_Mem_data[Tableau_Ram[PC].result].valeur;
+			}
+
+			if (resRes==0)
+			{
 					//printf("==========////%d\n", Tableau_Ram[PC].operande1);
+				if(modeDebug==0)
+				{
 					PC =Tableau_Ram[PC].operande1;
 				}else 
 				{
-					//printf("%d==========d\n",PC);
-					PC++;
+					debug(&PC,Tableau_Ram[PC].operande1,contextCourant);
 				}
-		} else if(Tableau_Ram[PC].code_operation==9)//Inferieur  
-		{
-			if (Tableau_Memoire_des_donnes[Tableau_Ram[PC].operande1].valeur<Tableau_Memoire_des_donnes[Tableau_Ram[PC].operande2].valeur)
-				Tableau_Memoire_des_donnes[Tableau_Ram[PC].result].valeur=1;
-			else 
-				Tableau_Memoire_des_donnes[Tableau_Ram[PC].result].valeur=0 ;
-			PC++;
-		} else if(Tableau_Ram[PC].code_operation==10)//superieur  
-		{
-			if (Tableau_Memoire_des_donnes[Tableau_Ram[PC].operande1].valeur>Tableau_Memoire_des_donnes[Tableau_Ram[PC].operande2].valeur)
-				Tableau_Memoire_des_donnes[Tableau_Ram[PC].result].valeur=1;
-			else 
-				Tableau_Memoire_des_donnes[Tableau_Ram[PC].result].valeur=0 ;
-			PC++;
-		} else if(Tableau_Ram[PC].code_operation==11)//egal 
-		{
-			if (Tableau_Memoire_des_donnes[Tableau_Ram[PC].operande1].valeur==Tableau_Memoire_des_donnes[Tableau_Ram[PC].operande2].valeur)
-				{
-					//printf("vrai============%d\n",PC);
-					Tableau_Memoire_des_donnes[Tableau_Ram[PC].result].valeur=1; 
-				}
-			else 
-			{	
-				Tableau_Memoire_des_donnes[Tableau_Ram[PC].result].valeur=0 ;
-			}
-			PC++;
-			//printf("////////////////%d\n",Tableau_Ram[PC].code_operation);
-		}else if(Tableau_Ram[PC].code_operation==12)//PRINTER 
-		{
-			printf("%d\n",Tableau_Memoire_des_donnes[Tableau_Ram[PC].result].valeur);
-			PC++;
-		} 
 
+				//PC =Tableau_Ram[PC].operande1;
+			}else 
+			{
+				if(modeDebug==0)
+				{
+					++PC;
+				}else 
+				{
+					debug(&PC,++PC,contextCourant);
+				}
+				//++PC;
+			}
+
+		} else if( strcmp (Tableau_Ram[PC].code_operation,"INF")==0)//Inferieur //TODO changer la fonction asm qui génére le inf pour inclure le fait que les expressions à comparer peuvent etre absolue ou relative 
+		{
+			if (Tableau_Ram[PC].abs_relOP2==0) //l'opérande 2 est à adresse absolue
+			{
+				resOp2= PILE_D_EXECUTION[ calculIndice(Tableau_Ram[PC].operande2)].valeur ;
+			}else //l'opérande 2 est à adresse  relatif
+			{
+				resOp2=Tab_Mem_data[Tableau_Ram[PC].operande2].valeur ;
+			}
+
+			if (Tableau_Ram[PC].abs_relOP1==0) //l'opérande 1 est à adresse absolue
+			{
+				resOp1= PILE_D_EXECUTION[ calculIndice(Tableau_Ram[PC].operande1)].valeur ;
+			}else //l'opérande 1 est à adresse  relatif
+			{
+				resOp1=Tab_Mem_data[Tableau_Ram[PC].operande1].valeur ;
+			}
+
+
+			int reslComp;
+
+			if (resOp1<resOp2)
+				reslComp=1;
+			else 
+				reslComp=0 ;
+
+			if (Tableau_Ram[PC].abs_relResult==0) //resultat est à adresse absolue
+			{
+				PILE_D_EXECUTION[calculIndice(Tableau_Ram[PC].result)].valeur= reslComp;
+
+			}else //lresultat est à adresse  relatif
+			{
+				Tab_Mem_data[Tableau_Ram[PC].result].valeur=reslComp;
+				
+			}
+
+
+				if(modeDebug==0)
+				{
+					++PC;
+				}else 
+				{
+					debug(&PC,++PC,contextCourant);
+				}
+
+			/*if (Tab_Mem_data[Tableau_Ram[PC].operande1].valeur<Tab_Mem_data[Tableau_Ram[PC].operande2].valeur)
+				Tab_Mem_data[Tableau_Ram[PC].result].valeur=1;
+			else 
+				Tab_Mem_data[Tableau_Ram[PC].result].valeur=0 ;*/
+			//++PC;
+		} else if( strcmp (Tableau_Ram[PC].code_operation,"SUP")==0)//Inferieur //TODO changer la fonction asm qui génére le inf pour inclure le fait que les expressions à comparer peuvent etre absolue ou relative 
+		{
+			if (Tableau_Ram[PC].abs_relOP2==0) //l'opérande 2 est à adresse absolue
+			{
+				resOp2= PILE_D_EXECUTION[ calculIndice(Tableau_Ram[PC].operande2)].valeur ;
+			}else //l'opérande 2 est à adresse  relatif
+			{
+				resOp2=Tab_Mem_data[Tableau_Ram[PC].operande2].valeur ;
+			}
+
+			if (Tableau_Ram[PC].abs_relOP1==0) //l'opérande 1 est à adresse absolue
+			{
+				resOp1= PILE_D_EXECUTION[ calculIndice(Tableau_Ram[PC].operande1)].valeur ;
+			}else //l'opérande 1 est à adresse  relatif
+			{
+				resOp1=Tab_Mem_data[Tableau_Ram[PC].operande1].valeur ;
+			}
+
+
+			int reslComp;
+
+			if (resOp1>resOp2)
+				reslComp=1;
+			else 
+				reslComp=0 ;
+
+			if (Tableau_Ram[PC].abs_relResult==0) //resultat est à adresse absolue
+			{
+				PILE_D_EXECUTION[calculIndice(Tableau_Ram[PC].result)].valeur= reslComp;
+				
+			}else //lresultat est à adresse  relatif
+			{
+				Tab_Mem_data[Tableau_Ram[PC].result].valeur=reslComp;
+				
+			}
+
+
+				if(modeDebug==0)
+				{
+					++PC;
+				}else 
+				{
+					debug(&PC,++PC,contextCourant);
+				}
+		
+			//++PC;
+		}else if( strcmp (Tableau_Ram[PC].code_operation,"EQU")==0)//Inferieur //TODO changer la fonction asm qui génére le inf pour inclure le fait que les expressions à comparer peuvent etre absolue ou relative 
+		{
+			if (Tableau_Ram[PC].abs_relOP2==0) //l'opérande 2 est à adresse absolue
+			{
+				resOp2= PILE_D_EXECUTION[ calculIndice(Tableau_Ram[PC].operande2)].valeur ;
+			}else //l'opérande 2 est à adresse  relatif
+			{
+				resOp2=Tab_Mem_data[Tableau_Ram[PC].operande2].valeur ;
+			}
+
+			if (Tableau_Ram[PC].abs_relOP1==0) //l'opérande 1 est à adresse absolue
+			{
+				resOp1= PILE_D_EXECUTION[ calculIndice(Tableau_Ram[PC].operande1)].valeur ;
+			}else //l'opérande 1 est à adresse  relatif
+			{
+				resOp1=Tab_Mem_data[Tableau_Ram[PC].operande1].valeur ;
+			}
+
+
+			int reslComp;
+
+			if (resOp1==resOp2)
+				reslComp=1;
+			else 
+				reslComp=0 ;
+
+			if (Tableau_Ram[PC].abs_relResult==0) //resultat est à adresse absolue
+			{
+				PILE_D_EXECUTION[calculIndice(Tableau_Ram[PC].result)].valeur= reslComp;
+				
+			}else //lresultat est à adresse  relatif
+			{
+				Tab_Mem_data[Tableau_Ram[PC].result].valeur=reslComp;
+				
+
+			}
+
+
+				if(modeDebug==0)
+				{
+					++PC;
+				}else 
+				{
+					debug(&PC,++PC,contextCourant);
+				}
+			//++PC;
+
+
+		}else  if( strcmp (Tableau_Ram[PC].code_operation,"PRI")==0) //Print 
+		{
+			if (Tableau_Ram[PC].abs_relResult==0) //resultat est à adresse absolue
+			{
+				resRes=PILE_D_EXECUTION[calculIndice(Tableau_Ram[PC].result)].valeur;
+				
+			}else //lresultat est à adresse  relatif
+			{
+				resRes=Tab_Mem_data[Tableau_Ram[PC].result].valeur;
+			}
+			printf("%d\n",resRes);
+
+				if(modeDebug==0)
+				{
+					++PC;
+				}else 
+				{
+					debug(&PC,++PC,contextCourant);
+				}
+			//++PC;
+		} else  if( strcmp (Tableau_Ram[PC].code_operation,"PUSH")==0) //PUSH
+		{
+			if (Tableau_Ram[PC].abs_relResult==0) //resultat est à adresse absolue
+			{
+				resRes=PILE_D_EXECUTION[calculIndice(Tableau_Ram[PC].result)].valeur;
+			}else //lresultat est à adresse  relatif
+			{
+				resRes=Tab_Mem_data[Tableau_Ram[PC].result].valeur;
+			}
+
+			PILE_D_EXECUTION[esp].valeur=resRes; //on push le resultat
+			esp++;
+
+			if(modeDebug==0)
+			{
+				++PC;
+			}else 
+			{
+				debug(&PC,++PC,contextCourant);
+			}
+			//++PC;
+
+		} else  if( strcmp (Tableau_Ram[PC].code_operation,"CALL")==0) 
+		{
+			PILE_D_EXECUTION[esp].valeur=PC+1;//on empile la valeur retour
+			PILE_D_EXECUTION[esp].addrRetour=1; 
+			esp++;
+			savEbp=esp; //on sauvegard l'endroit on se trouve l'adresse Retour
+
+			//TODO : PROBLEME : il faut connaitre le nombre de variable locale pour pouvoir déplacer ebp,on ne le connait pas, il faut trouver un moyen de le dire dans l'assembleur , instruction APB AVANT LE CALL
+			//un truc du type ebp = ebp + nombre de push + nombre de variable local
+
+			PILE_D_EXECUTION[esp].valeur=ebp; //on empile ebp
+			PILE_D_EXECUTION[esp].ebp=1;//on save oldEbp
+			esp++;
+
+			PC=Tableau_Ram[PC].result;//on saute à la fonction
+
+		} else  if( strcmp (Tableau_Ram[PC].code_operation,"RET")==0) //on restaure le contexte 
+		{
+			//à vérifier 
+			esp=ebp;
+			PC=PILE_D_EXECUTION[savEbp-1].valeur ;
+			ebp= PILE_D_EXECUTION[savEbp-1].valeur ;
+		} 
 
 	}
 }

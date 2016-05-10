@@ -15,7 +15,7 @@ int declaration_affectation_asm( char * nom_var,int constante ,int dollar_relati
 
 int affection_asm( char * nom_var ,int dollar_relative_ou_absolue , int dollar_addr) ;
 
-int print_asm( int dollar_addr , int dollar_relative_ou_absolue ) ;
+void print_asm( int dollar_addr , int dollar_relative_ou_absolue ) ;
 
 int operation_arithmetique_asm(char * operation , int * dollar_addr, int * dollar_relative_ou_absolue, int * dollar_typage_result );
 

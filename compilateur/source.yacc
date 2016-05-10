@@ -229,7 +229,7 @@ Expression :
  
   | Expression tSUB Expression 
   	{
-   		if (operation_arithmetique_asm("SUB", &($$.adresse),&($$.relative_ou_absolue),&($$.typage_var))==-1)
+   		if (operation_arithmetique_asm("SOU", &($$.adresse),&($$.relative_ou_absolue),&($$.typage_var))==-1)
    		{
    			yyerror("ERROR WHEN POP OPERANDS\n");
    		}
@@ -416,7 +416,7 @@ AppelFonctions :
 		initNombreDeParametresAPPEL() ; 
 		PushResultFunction();//on empile l'adresse du résultat qui sera toujours 0 (@ relatif)		
 		$$.adresse=Registre_retour_fonctions;
-		$$.relative_ou_absolue=0;//l'@ du return sera toujours une @ relative et aura la valeur 0  
+		$$.relative_ou_absolue=1;//l'@ du return sera toujours une @ relative et aura la valeur 0  
 		$$.typage_var= getTypeRetour() ;
 	};
 

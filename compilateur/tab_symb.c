@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "tab_symb.h"
+#include "gestion_des_fonctions.h"
 
 
 int ind = 0; 
@@ -272,6 +273,12 @@ int getTailleTypeRetourFonction()
 	return taille_type_retour_fonction ; 
 }
 
+
+int getNombreDeVariableLocales()
+{
+	return ind - nombreDeVariabeleglobale+1;
+}
+
 /*void IncrementeNbVariableLocalDeClare()
 {
 	nb_variable_local_deja_decalare++;
@@ -291,3 +298,35 @@ int getNbParametre()
 {
 	return nbParametre ;
 }*/
+
+
+//global_or_local =1veut dire que l'on écrit les variables globales dans le fichier 
+void WriteDebugInformationAboutFunction(int global_or_local)
+{
+	FILE* fichier = NULL;
+    fichier = fopen("file_debug_information", "a+"); //à vérifier 
+   int i ; 
+ 	if (fichier!=NULL)
+ 	{
+ 		if(global_or_local==1)
+ 		{
+ 			if (nombreDeVariabeleglobale!=-1)//si on a des globales 
+ 			{
+ 				fprintf(fichier,"global : %d\n",nombreDeVariabeleglobale+1); //on indique que c'est les variables globales et on note leur nombres
+ 				for ( i = 0; i <= nombreDeVariabeleglobale; ++i)
+ 				{
+ 					fprintf(fichier,"%s %d\n",Array[i].nom_var,i); //nom adresse
+ 				}
+ 			}
+ 		}else //on écrit les locales
+ 		{
+ 			fprintf(fichier,"%s : %d\n", getIDprototypeOrImplementationFunction(),ind - nombreDeVariabeleglobale+1 );//nom_fonction nombres de variables locales 
+ 			for ( i = nombreDeVariabeleglobale+1; i < ind; ++i)
+ 			{
+ 				fprintf(fichier,"%s %d\n",Array[i].nom_var,i - nombreDeVariabeleglobale-1  ); //nom adresse
+ 			}
+ 		} 
+ 	}
+
+ 	fclose(fichier);
+}

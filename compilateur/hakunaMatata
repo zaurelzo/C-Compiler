@@ -1,20 +1,30 @@
 #!/bin/bash
+
+#TODO : AJOUTER hakunaMata au PATH, comme ça on l'appel de n'importe où :)
+	#GENERER le fichier de sori dans le meme repertoire que là ou on appelle hakunaMata
+
+
 clear
 if [ $# -ne 2 ]
 then 
 	echo "Usage : hakunaMatata fichier_test.c fichier_sorti"
 	exit 1 
 fi
+a='_'
+c=$2$a #on crée un fichier intermédiaire qui contient des labels 
+./compilateur < $1 > $c
+if test $? != 0  #s'il y a une erreur lors de la compilation , on effectue pas la deuxieme passe
+then
+	echo $c
+	exit 1
+fi 
 
-./compilateur < $1 > $2  
-#echo "=========================fichier binaire"
-#cat fichier_asm_binaire
-#echo "================================fichier assembleur============="
-cat $2
-#echo "====================fichier_test============================"
-#cat fichier_test
-#echo "==============fichier TABLE DES LABEL==================================================="
-#cat fichier_table_des_labels
-#echo "====================fichier asm sans label "
-#cat fichier_ass_correct
+#pas d'erreur lors de compilation du fichier
+cat $c
 
+#on prépare l'exe pour la deuxieme passe 
+#gcc main.c deuxieme_passe.c gestion_des_fonctions.c tab_label.c tab_symb.c -o deux_passe
+
+#./deux_passe $c $2 #on fait la deuxieme passe avec entrée le fichier avec labels, en sortie le fichier sans labels
+#"echo "===================fichier sans la labels======================="
+#"echo $2

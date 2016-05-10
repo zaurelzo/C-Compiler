@@ -43,7 +43,7 @@ int declaration_affectation_asm( char * nom_var,int constante ,int dollar_relati
 			{
 				dollar_addr +=getTailleTypeRetourFonction() ;
 			}*/
-			printf( "COP @@%d @@%d \n",var,dollar_addr);
+			printf( "COP @@%d @@%d\n",var,dollar_addr);
 
 		} else if  (dollar_relative_ou_absolue==0 && abs_rel==1)
 		{
@@ -51,15 +51,15 @@ int declaration_affectation_asm( char * nom_var,int constante ,int dollar_relati
 			{
 				dollar_addr +=getTailleTypeRetourFonction() ;
 			}*/
-			printf( "COP @%d @@%d \n",var,dollar_addr);
+			printf( "COP @%d @@%d\n",var,dollar_addr);
 
 		} else if  (dollar_relative_ou_absolue==1 && abs_rel==0)
 		{
 			
-			printf( "COP @@%d @%d \n",var,dollar_addr);
+			printf( "COP @@%d @%d\n",var,dollar_addr);
 		} else if  (dollar_relative_ou_absolue==1 && abs_rel==1)
 		{
-			printf( "COP @%d @%d \n",var,dollar_addr);
+			printf( "COP @%d @%d\n",var,dollar_addr);
 		}
 		incrementerPC();
 		viderPile();
@@ -91,20 +91,20 @@ int affection_asm( char * nom_var ,int dollar_relative_ou_absolue , int dollar_a
 			{
 				dollar_addr +=getTailleTypeRetourFonction() ;
 			}*/
-			printf( "COP @@%d @@%d \n",var,dollar_addr);
+			printf( "COP @@%d @@%d\n",var,dollar_addr);
 		}else if  (dollar_relative_ou_absolue==0 && abs_rel==1)
 		{	
 			/*if (strcmp(getMode(),"fonction")==0)
 			{
 				dollar_addr +=getTailleTypeRetourFonction() ;
 			}*/
-			printf( "COP @%d @@%d \n",var,dollar_addr);
+			printf( "COP @%d @@%d\n",var,dollar_addr);
 		}else if  (dollar_relative_ou_absolue==1 && abs_rel==0)
 		{
-			printf( "COP @@%d @%d \n",var,dollar_addr);
+			printf( "COP @@%d @%d\n",var,dollar_addr);
 		}else if  (dollar_relative_ou_absolue==1 && abs_rel==1)
 		{
-			printf( "COP @%d @%d \n",var,dollar_addr);
+			printf( "COP @%d @%d\n",var,dollar_addr);
 		}																											
 		incrementerPC();
 		viderPile();
@@ -113,7 +113,7 @@ int affection_asm( char * nom_var ,int dollar_relative_ou_absolue , int dollar_a
 	return 0 ;
 }
 
-int print_asm( int dollar_addr , int dollar_relative_ou_absolue )
+void print_asm( int dollar_addr , int dollar_relative_ou_absolue )
 {
 	if(dollar_relative_ou_absolue==0)
 		printf("PRI @@%d\n", dollar_addr );
@@ -395,10 +395,10 @@ void CALL_PARAMETERS_ASM(int dollar_addr , int dollar_relative_ou_absolue)
 
 	if (dollar_relative_ou_absolue==0) //relatif 
 	{	
-		printf("PUSHA @@%d\n",dollar_addr);	
+		printf("PUSH @@%d\n",dollar_addr);	
 	}else //absolue
 	{
-		printf("PUSHA @%d\n",dollar_addr);
+		printf("PUSH @%d\n",dollar_addr);
 	}
 	incrementerPC();
 	depilert(&type,&abs_rel,&typage);

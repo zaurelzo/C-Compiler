@@ -128,11 +128,17 @@ void initParametreForNewfunction() ;
 void setTailleTypeRetourFonction(int taille) ;
 int getTailleTypeRetourFonction();
 
+int getNombreDeVariableLocales();
+
+
+
 /*void IncrementeNbVariableLocalDeClare() ;
 int getNbVariableLocalDeClare() ; 
 
 void IncrementeNBParametre();
 int getNbParametre() ;*/
+
+void WriteDebugInformationAboutFunction(int global_or_local);
 /*===============================END FONCTIONS================================================*/
 
 

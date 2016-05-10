@@ -10,8 +10,6 @@
 int recreer_tableLabel(char * fichier_table_label, Noeud_label * tab_label);
 int recreerTableFonctions(char * fichier_table_des_fonctions,Noeud_Fonctions * tab_fonctions);
 int  traiter_ligne_du_fichier(char * line, char ** tabToken);
-void  traiter_ligne(char * line, Noeud_label l ) ;
-void remplacer_label(char * nom_fichier_ass, Noeud_label * tab_label, int nbelement_tabLabel);
-
-
+void remplacer_label(const char * fichier_avec_labels, const char * fichier_sans_labels, Noeud_label * tab_label, Noeud_Fonctions * tab_fonctions , int nbelement_tabLabel);
+int getIndiceIntableFonctions(char * labelFonctions ) ;
 #endif

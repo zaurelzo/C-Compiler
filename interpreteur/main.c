@@ -5,10 +5,24 @@
 int main(int argc, char const *argv[])
 {
 
-	//TODO : permettre le passage en parametre du fichier a interprété 
+	if (argc!=2)
+	{
+		printf("Usage: ./interpreteur fichier\n");
+		exit(1);
+	}
 
-	charger_Programme_dans_Ram("../compilateur/fichier_asm_binaire");
+	charger_Programme_dans_Ram(argv[1]);
 	//afficher_ram();
-	interpreter();
+	
+	chargerDebugInformation(); 
+	printTabDugInfo();
+	//printf("=============================\n");
+	interpreter(1);
+	
+
+	/*char inputUser[40] = "";
+
+	fgets(inputUser,sizeof(inputUser), stdin);
+	print("%s",inputUser);*/
 	return 0;
 }

@@ -1,21 +1,5 @@
 #include "deuxieme_passe.h"
 
-/*int  traiter_ligne(char * line, char * * l )
-{
-	
-	char * token ;
-	int cp   
-	//printf("Valuer de token 1 :"); 			
-	token =strtok(line," ");
-	//printf("Valuer de token :  %s", token); 			
-	while(token!=NULL)			
-	{
-		strcpy(l.nomLabel, token);
-		token=strtok(NULL," ");			
-		l.num_instruction=atoi(token);
-	} 
-	
-}*/
 
 
 int recreer_tableLabel(char * fichier_table_label, Noeud_label * tab_label)
@@ -42,6 +26,37 @@ int recreer_tableLabel(char * fichier_table_label, Noeud_label * tab_label)
 	return i--;
 }
 
+
+int recreerTableFonctions(char * fichier_table_des_fonctions,Noeud_Fonctions * tab_fonctions)
+{	
+	int i=0;	
+	FILE * fichier;
+	char line[40];
+	//Noeud_label l ;
+	char *  tabToken[100] ; 
+	
+	fichier=fopen(fichier_table_des_fonctions, "r");
+	if(fichier!=NULL)
+	{		
+		while(fgets(line, 40, fichier)!=NULL)
+		{ 		
+			traiter_ligne_du_fichier(line , tabToken);		
+			tab_fonctions[i].adresse_implementation=atoi(tabToken[0]);
+			//printf("======%d\n", tab_fonctions[i].adresse_implementation);
+			i++;		
+		}
+	}
+	return i--;
+}
+
+int getIndiceIntableFonctions(char * labelFonctions ) 
+{
+	char nb[100];
+	strcpy(nb,&(labelFonctions[15]));
+	nb[strlen(nb-1)]='\0';
+	return atoi(nb);
+}
+
 int  traiter_ligne_du_fichier(char * line, char ** tabToken)
 {
 	Noeud_label Noeud_courant;
@@ -62,7 +77,7 @@ int  traiter_ligne_du_fichier(char * line, char ** tabToken)
 	return cpt;
 }
 
-void remplacer_label(char * nom_fichier_ass, Noeud_label * tab_label, int nbelement_tabLabel)
+void remplacer_label(const char * fichier_avec_labels, const char * fichier_sans_labels, Noeud_label * tab_label, Noeud_Fonctions * tab_fonctions , int nbelement_tabLabel)
 {
 	int i, num,retour,k;	
 	FILE * fichier=NULL;
@@ -74,96 +89,102 @@ void remplacer_label(char * nom_fichier_ass, Noeud_label * tab_label, int nbelem
 	char  element_ligne[TAILLE];
 	char * tabToken[5];
 
-	fichier=fopen(nom_fichier_ass, "r");
-	fichier_retour=fopen("fichier_ass_correct", "w+");
-	fichier_retourbis = fopen("fichier_asm_binaire", "w+");
+	fichier=fopen(fichier_avec_labels, "r");
+	fichier_retourbis=fopen(fichier_sans_labels, "w+");
 
-	if(nom_fichier_ass!=NULL)
+	//debug 
+	//printf("with labels : %s | without labels : %s \n",fichier_avec_labels , fichier_sans_labels) ;
+	
+	if (fichier_retourbis==NULL && fichier ==NULL)
 	{
-		while(fgets(line, 40, fichier)!=NULL)
-		{
-				strcpy(elementcourant,line) ; 
-				retour = traiter_ligne_du_fichier(line,tabToken);
+		printf("ERROR WHEN OPEN FILES \n");
+		exit(1);
+	}
 
-				/************************ecriture du fichier binaire *********************/
+	while(fgets(line, 40, fichier)!=NULL)
+	{
+			strcpy(elementcourant,line) ; 
+			retour = traiter_ligne_du_fichier(line,tabToken);
+			/*if( strcmp(tabToken [0],"RET")==0)
+			{
+				printf("RETOUR :%d and line :%s",retour,elementcourant);
+			}*/
 
-				if( strcmp(tabToken [0],"ADD") ==0) fprintf(fichier_retourbis,"1 %s %s %s",tabToken[1],tabToken[2],tabToken[3]);
-								
-					else if( strcmp(tabToken [0],"MUL")==0) fprintf(fichier_retourbis,"2 %s %s %s",tabToken[1],tabToken[2],tabToken[3]);
-								
+			//************************ecriture dans le fichier de sorti *********************
 
-					else if( strcmp(tabToken [0],"SOU")==0) fprintf(fichier_retourbis,"3 %s %s %s",tabToken[1],tabToken[2],tabToken[3]);
-								
-					else if( strcmp(tabToken [0],"DIV")==0) fprintf(fichier_retourbis,"4 %s %s %s",tabToken[1],tabToken[2],tabToken[3]);
-								
-					else if( strcmp(tabToken [0],"COP")==0) fprintf(fichier_retourbis,"5 %s %s\n",tabToken[1],tabToken[2]);
-								 
-					else if( strcmp(tabToken [0],"AFC")==0)fprintf(fichier_retourbis,"6 %s %s",tabToken[1],tabToken[2]);
-								
+			if( strcmp(tabToken [0],"ADD") ==0) fprintf(fichier_retourbis,"%s %s %s %s",tabToken[0],tabToken[1],tabToken[2],tabToken[3]);
+							
+			else if( strcmp(tabToken [0],"MUL")==0) fprintf(fichier_retourbis,"%s %s %s %s",tabToken[0],tabToken[1],tabToken[2],tabToken[3]);
+							
 
-					
-				else 	if( strcmp(tabToken [0],"INF")==0) fprintf(fichier_retourbis,"9 %s %s %s",tabToken[1],tabToken[2],tabToken[3]);
-
-				else	if( strcmp(tabToken [0],"SUP")==0) fprintf(fichier_retourbis,"10 %s %s %s",tabToken[1],tabToken[2],tabToken[3]);
-				else if( strcmp(tabToken [0],"EQU")==0) fprintf(fichier_retourbis,"11 %s %s %s",tabToken[1],tabToken[2],tabToken[3]);
-
-				else if( strcmp(tabToken [0],"PRI")==0) fprintf(fichier_retourbis,"12 %s",tabToken[1]);
-
-				else	if( strcmp(tabToken [0],"OR")==0) fprintf(fichier_retourbis,"13 %s %s %s",tabToken[1],tabToken[2],tabToken[3]);
-				else if( strcmp(tabToken [0],"AND")==0) fprintf(fichier_retourbis,"14 %s %s %s",tabToken[1],tabToken[2],tabToken[3]);
-								
-				
-
-				/************************************************************************/
-
-
-				//printf("////////////////////////////%s : %d \n", line,retour );
-				//Dans le cas où la ligne commence par un JMF ou JMP				
-				if(strcmp(tabToken[0], "JMP")==0 )
-				{
-					/*for (k = 0; k < retour; ++k)
-										{
-											printf("+++++++++++++++%s",tabToken[k]);
-										}*/					
-					fputs(tabToken[0], fichier_retour);	
+			else if( strcmp(tabToken [0],"SOU")==0) fprintf(fichier_retourbis,"%s %s %s %s",tabToken[0],tabToken[1],tabToken[2],tabToken[3]);
+							
+			else if( strcmp(tabToken [0],"DIV")==0) fprintf(fichier_retourbis,"%s %s %s %s",tabToken[0],tabToken[1],tabToken[2],tabToken[3]);
+							
+			else if( strcmp(tabToken [0],"COP")==0) fprintf(fichier_retourbis,"%s %s %s",tabToken[0],tabToken[1],tabToken[2]);
+							 
+			else if( strcmp(tabToken [0],"AFC")==0)fprintf(fichier_retourbis,"%s %s %s",tabToken[0],tabToken[1],tabToken[2]);
 										
-					num= getNumeroInstruction (tabToken[1] , tab_label, nbelement_tabLabel);
-					sprintf(element_ligne, " %d\n",num);
-						
-					fputs(element_ligne, fichier_retour);
+			else if( strcmp(tabToken [0],"INF")==0) fprintf(fichier_retourbis,"%s %s %s %s",tabToken[0],tabToken[1],tabToken[2],tabToken[3]);
 
-					fprintf(fichier_retourbis,"7 %s",element_ligne);
-				
-				}
-				else if ( strcmp(tabToken[0], "JMF")==0)
-				{
-					/*for (k = 0; k < retour; ++k)
-										{
-											printf("+++++++++++++++%s",tabToken[k]);
-										}*/
-										
-					fputs(tabToken[0], fichier_retour);	
-					fputs(" ",fichier_retour); 
-
-										
-					fputs(tabToken[1], fichier_retour);	
-										
-					num=getNumeroInstruction(tabToken[2] ,tab_label, nbelement_tabLabel);
-					sprintf(element_ligne, " %d\n",num);
-					
-				
-					fputs(element_ligne, fichier_retour);
-					fprintf(fichier_retourbis,"8 %s %s",tabToken[1],element_ligne);
-				
-				}
-				else
-				{
-					
-					fprintf(fichier_retour,"%s" ,elementcourant);
-					//fputs("\n", fichier_retour);
-				}
+			else	if( strcmp(tabToken [0],"SUP")==0) fprintf(fichier_retourbis,"%s %s %s %s",tabToken[0],tabToken[1],tabToken[2],tabToken[3]);
 			
-		}
+			else if( strcmp(tabToken [0],"EQU")==0) fprintf(fichier_retourbis,"%s %s %s %s",tabToken[0],tabToken[1],tabToken[2],tabToken[3]);
+
+			else if( strcmp(tabToken [0],"PRI")==0) fprintf(fichier_retourbis,"%s %s",tabToken[0],tabToken[1]);
+
+			else	if( strcmp(tabToken [0],"OR")==0) fprintf(fichier_retourbis,"%s %s %s %s",tabToken[0],tabToken[1],tabToken[2],tabToken[3]);
+			
+			else if( strcmp(tabToken [0],"AND")==0) fprintf(fichier_retourbis,"%s %s %s %s",tabToken[0],tabToken[1],tabToken[2],tabToken[3]);
+
+			else if( strcmp(tabToken [0],"RET\n")==0) fprintf(fichier_retourbis,"%s",tabToken[0]);
+
+			else if( strcmp(tabToken [0],"PUSH")==0) fprintf(fichier_retourbis,"%s %s",tabToken[0],tabToken[1]);
+
+										
+
+			//************************************************************************
+			if(strcmp(tabToken[0], "JMP")==0 )
+			{			
+				fputs(tabToken[0], fichier_retourbis);						
+				num= getNumeroInstruction (tabToken[1] , tab_label, nbelement_tabLabel);
+				sprintf(element_ligne, " %d\n",num);	
+				fputs(element_ligne, fichier_retourbis);
+			
+			} else if ( strcmp(tabToken[0], "JMF")==0)
+			{						
+				fputs(tabToken[0], fichier_retourbis);	
+				fputs(" ",fichier_retourbis); 					
+				fputs(tabToken[1], fichier_retourbis);	
+									
+				num=getNumeroInstruction(tabToken[2] ,tab_label, nbelement_tabLabel);
+				sprintf(element_ligne, " %d\n",num);			
+				fputs(element_ligne, fichier_retourbis);
+			
+			}else if ( strcmp(tabToken[0], "CALL")==0) //à finir 
+			{
+				fputs(tabToken[0], fichier_retourbis);
+				fputs(" ",fichier_retourbis);
+				
+				if (strlen(tabToken[1])>14)
+				{
+					
+					int inds =getIndiceIntableFonctions(tabToken[1] );
+					sprintf(element_ligne, " %d\n",tab_fonctions[inds].adresse_implementation);			
+					fputs(element_ligne, fichier_retourbis);
+					
+				}else
+				{
+					fputs(tabToken[1], fichier_retourbis);
+				}
+			}
+			/*else
+			{
+				
+				fprintf(fichier_retour,"%s" ,elementcourant);
+				
+			}*/
+		
 	}
 
 }
