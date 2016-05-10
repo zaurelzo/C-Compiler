@@ -1,0 +1,3 @@
+au run, on est dans le context du main 
+printvar var : afficher la valeur d'une var du contexte courant 
+printgl global : afficher la valeur d'une var globale

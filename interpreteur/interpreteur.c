@@ -4,7 +4,7 @@
  //int PC =0 ;
 int nb_Instruction_Programme = 0 ;
 
-int debutMain=23 ; // TODO mettre 0 ici , puis fixer lors de la lecture du fichier 
+int debutMain=0 ; // TODO mettre 0 ici , puis fixer lors de la lecture du fichier 
 int ebp =0; 
 int esp =0;
 int savEbp=0;
@@ -109,7 +109,14 @@ void charger_Programme_dans_Ram(const char * name_fichier)
 
  			}else if (retour==1)
  			{
- 				strcpy(Tableau_Ram[nb_Instruction_Programme].code_operation,tableau_retour[0]) ;
+				if(strcmp(tableau_retour[0], "MAIN\n")==0)
+				{
+					debutMain=nb_Instruction_Programme;
+				}
+				else
+				{
+ 					strcpy(Tableau_Ram[nb_Instruction_Programme].code_operation,tableau_retour[0]) ;
+				}
  			}
  			nb_Instruction_Programme++;
  			/* code */
@@ -217,23 +224,26 @@ int  printVarLocal(int contexte,char *  name )
 
 int  printVarGlobale(char * name ) 
 {
-	int i ;
+	int i, j ;
 	name[strlen(name)-1]='\0';
-	if (strcmp(tab_DebugInfo[0].nom_fonction,"global")==0)
+	for (j = 0 ;j<indTabDebugInfo;j++)
 	{
-		//printf("========nom correcte and nb locale %d and name %s \n",tab_DebugInfo[0].nbLocales,name);
-		for (i = 0; i< tab_DebugInfo[0].nbLocales;i++)
+		if (strcmp(tab_DebugInfo[j].nom_fonction,"global")==0)
 		{
-			//printf("%s",name);
-			//printf("-----------length de tab : %d and name %d \n",strlen(tab_DebugInfo[0].tab_nom_var[i]),strlen(name));
-			if (strcmp(tab_DebugInfo[0].tab_nom_var[i],name)==0)
+			//printf("========nom correcte and nb locale %d and name %s \n",tab_DebugInfo[0].nbLocales,name);
+			for (i = 0; i< tab_DebugInfo[j].nbLocales;i++)
 			{
-				//printf("GLOBAL %s : %d\n",name,Tab_Mem_data[0].valeur);
-				return 0 ;
-			}/* else 
-			{
-				printf ("NULL");
-			}*/
+				//printf("%s",name);
+				//printf("-----------length de tab : %d and name %d \n",strlen(tab_DebugInfo[0].tab_nom_var[i]),strlen(name));
+				if (strcmp(tab_DebugInfo[j].tab_nom_var[i],name)==0)
+				{
+					//printf("GLOBAL %s : %d\n",name,Tab_Mem_data[0].valeur);
+					return 0 ;
+				}/* else 
+				{
+					printf ("NULL");
+				}*/
+			}
 		}
 	}
 

@@ -12,6 +12,7 @@ then
 fi
 a='_'
 c=$2$a #on crée un fichier intermédiaire qui contient des labels 
+rm file_debug_information 2>erreur
 ./compilateur < $1 > $c
 if test $? != 0  #s'il y a une erreur lors de la compilation , on effectue pas la deuxieme passe
 then

@@ -12,12 +12,13 @@ int main(int argc, char const *argv[])
 	}
 
 	charger_Programme_dans_Ram(argv[1]);
+	printf("Valer de debutMain :%d\n", debutMain);
 	//afficher_ram();
 	
 	chargerDebugInformation(); 
 	printTabDugInfo();
 	//printf("=============================\n");
-	interpreter(1);
+	//interpreter(1);
 	
 
 	/*char inputUser[40] = "";

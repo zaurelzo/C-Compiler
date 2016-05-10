@@ -90,11 +90,15 @@ PrototypeAndImplementationGlobalAndMain  :
 	
 	| ImplementationFonction 
 		{
+			WriteDebugInformationAboutFunction(0);
 			initParametreForNewfunction() ;
 		} PrototypeAndImplementationGlobalAndMain
 	
 	| {
 			//debug 
+			
+			WriteDebugInformationAboutFunction(1);
+			setIDprototypeOrImplementationFunction("Main");
 			//print_TABLE_DES_FONCTION() ;
 			changeMode();//on passe en mode fonction
 			initParametreForNewfunction();
@@ -155,9 +159,9 @@ SuiteDeclarations :
 Main: 
 	tMAIN 
 	{
+		printf("MAIN\n");	
 		
-		
-	} tPO  tPF Body ;
+	} tPO  tPF Body{WriteDebugInformationAboutFunction(0);} ;
 
 Body : 
 	tAO SuiteBody  tAF 
@@ -250,18 +254,18 @@ Expression :
 			yyerror("ERROR WHEN SEARCH VARIABLE %s\n",$1) ;
 		}else 
 		{				
-			if(get_initialiser_var(addr+getNombredevariableglobale()+1)==0)
+			/*if(get_initialiser_var(addr+getNombredevariableglobale()+1)==0)
 			{
 				yyerror("Problème %s n'est pas initialisée\n", $1);
-			}
-			else
-			{
+			}*/
+			//else
+			//{
 				empilert(addr,1,abs_rel,typage_var);
 				$$.adresse= addr;
 				$$.relative_ou_absolue=abs_rel ; // absolue
 				$$.typage_var=typage_var; 
 				
-			} 
+			//} 
 		} 
 	}
 	|tNULL{$$.adresse=NULL_2;
@@ -563,7 +567,7 @@ While :
 Cond: 
 	Expression Comparateur Expression 
 	{
-		CONDITION_ASM($2, &($$.adresse),&($$.relative_ou_absolue),&($$.typage_var) , $1.adresse,$3.adresse);
+		CONDITION_ASM($2, &($$.adresse),&($$.relative_ou_absolue),&($$.typage_var) , $1.adresse,$3.adresse, $1.relative_ou_absolue, $3.relative_ou_absolue);
 	}
 	|Expression {$$=$1;}
 	|Cond tOR Cond 

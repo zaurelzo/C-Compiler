@@ -490,7 +490,7 @@ void WriteDebugInformationAboutFunction(int global_or_local)
  			}
  		}else //on écrit les locales
  		{
- 			fprintf(fichier,"%s : %d\n", getIDprototypeOrImplementationFunction(),ind - nombreDeVariabeleglobale+1 );//nom_fonction nombres de variables locales 
+ 			fprintf(fichier,"%s : %d\n", getIDprototypeOrImplementationFunction(),ind - (nombreDeVariabeleglobale+1) );//nom_fonction nombres de variables locales 
  			for ( i = nombreDeVariabeleglobale+1; i < ind; ++i)
  			{
  				fprintf(fichier,"%s %d\n",Array[i].nom_var,i - nombreDeVariabeleglobale-1  ); //nom adresse

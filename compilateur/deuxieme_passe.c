@@ -103,8 +103,9 @@ void remplacer_label(const char * fichier_avec_labels, const char * fichier_sans
 
 	while(fgets(line, 40, fichier)!=NULL)
 	{
-			strcpy(elementcourant,line) ; 
+			strcpy(elementcourant,line) ; //printf("Ligne %s\n", line);
 			retour = traiter_ligne_du_fichier(line,tabToken);
+			//printf("valeur de retour %d \n", retour);
 			/*if( strcmp(tabToken [0],"RET")==0)
 			{
 				printf("RETOUR :%d and line :%s",retour,elementcourant);
@@ -138,6 +139,8 @@ void remplacer_label(const char * fichier_avec_labels, const char * fichier_sans
 			else if( strcmp(tabToken [0],"AND")==0) fprintf(fichier_retourbis,"%s %s %s %s",tabToken[0],tabToken[1],tabToken[2],tabToken[3]);
 
 			else if( strcmp(tabToken [0],"RET\n")==0) fprintf(fichier_retourbis,"%s",tabToken[0]);
+
+			else if( strcmp(tabToken [0],"MAIN\n")==0) fprintf(fichier_retourbis,"%s",tabToken[0]);
 
 			else if( strcmp(tabToken [0],"PUSH")==0) fprintf(fichier_retourbis,"%s %s",tabToken[0],tabToken[1]);
 

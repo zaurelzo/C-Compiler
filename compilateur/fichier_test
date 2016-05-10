@@ -2,7 +2,7 @@ int glb=55;
 
 int ifact(int n,int p );
 
-int gi(int a, int b );
+
 
 int fib(int n )
 {

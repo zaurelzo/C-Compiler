@@ -31,7 +31,7 @@ void ELSE_SECOND_LABEL_ASM();
 
 void IF_WITHOUT_ELSE_ASM() ;
 
-void CONDITION_ASM(char * comparateur, int * dollar_addr , int * dollar_relative_ou_absolue, int * dollar_typage_result ,int addr_exp1,int addr_exp2);
+void CONDITION_ASM(char * comparateur, int * dollar_addr , int * dollar_relative_ou_absolue, int * dollar_typage_result ,int addr_exp1,int addr_exp2, int abs_rel1, int abs_rel2 );
 
 void WHILE_FIRST_LABEL_ASM();
 

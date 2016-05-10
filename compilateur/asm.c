@@ -44,7 +44,7 @@ int declaration_affectation_asm( char * nom_var,int constante ,int dollar_relati
 				{
 					dollar_addr +=getTailleTypeRetourFonction() ;
 				}*/
-				printf( "COP @@%d @@%d \n",var,dollar_addr);
+				printf( "COP @@%d @@%d\n",var,dollar_addr);
 
 			} else if  (dollar_relative_ou_absolue==0 && abs_rel==1)
 			{
@@ -52,19 +52,19 @@ int declaration_affectation_asm( char * nom_var,int constante ,int dollar_relati
 				{
 					dollar_addr +=getTailleTypeRetourFonction() ;
 				}*/
-				printf( "COP @%d @@%d \n",var,dollar_addr);
+				printf( "COP @%d @@%d\n",var,dollar_addr);
 
 			} else if  (dollar_relative_ou_absolue==1 && abs_rel==0)
 			{
 			
-				printf( "COP @@%d @%d \n",var,dollar_addr);
+				printf( "COP @@%d @%d\n",var,dollar_addr);
 			} else if  (dollar_relative_ou_absolue==1 && abs_rel==1)
 			{
-				printf( "COP @%d @%d \n",var,dollar_addr);
+				printf( "COP @%d @%d\n",var,dollar_addr);
 			}
 		}else
 		{
-			printf( "COP @%d @%d \n",var,dollar_addr);
+			printf( "COP @%d @%d\n",var,dollar_addr);
 		}
 		incrementerPC();
 		viderPile();
@@ -143,7 +143,7 @@ int operation_arithmetique_asm(char * operation , int * dollar_addr, int * dolla
 
 	int valeurOp2 = depilert(&typeOp2,&abs_rel2,&typage_Op2);
 	int valeurOp1= depilert(&typeOp1,&abs_rel1,&typage_Op1);
-	printf("======typage_Op1 : %d | typage_Op2 : %d\n",typage_Op1,typage_Op2);
+	//printf("======typage_Op1 : %d | typage_Op2 : %d\n",typage_Op1,typage_Op2);
 
 	
 		if (typage_Op2 != typage_Op1) //si les types des opérandes sont différents
@@ -307,7 +307,7 @@ void IF_WITHOUT_ELSE_ASM()
 
 //avec les conditions, tout est en adressage fixe car on les empile 
 
-void CONDITION_ASM(char * comparateur, int * dollar_addr , int * dollar_relative_ou_absolue, int * dollar_typage_result ,int addr_exp1,int addr_exp2)
+void CONDITION_ASM(char * comparateur, int * dollar_addr , int * dollar_relative_ou_absolue, int * dollar_typage_result ,int addr_exp1,int addr_exp2, int abs_rel1, int abs_rel2 )
 {
 	int retour =empilert(-1,1,1,1);
 	*dollar_addr=retour;
@@ -315,15 +315,52 @@ void CONDITION_ASM(char * comparateur, int * dollar_addr , int * dollar_relative
 	 * dollar_typage_result = 1;
 	if(strcmp(comparateur,"==")==0)
 	{
-		printf("EQU @%d @%d @%d\n", retour,addr_exp1,addr_exp2);
+		if (abs_rel1==0 && abs_rel2==0)
+		{	
+			printf("EQU @%d @@%d @@%d\n", retour,addr_exp1,addr_exp2);
+		} else if  (abs_rel1==0 && abs_rel2==1)
+		{
+			printf("EQU @%d @@%d @%d\n", retour,addr_exp1,addr_exp2);
+		} else if  (abs_rel1==1 && abs_rel2==0)
+		{
+			printf("EQU @%d @%d @@%d\n", retour,addr_exp1,addr_exp2);
+		} else if  (abs_rel1==1 && abs_rel2==1)
+		{
+			printf("EQU @%d @%d @%d\n", retour,addr_exp1,addr_exp2);
+		}
 		incrementerPC();
+
 	}else if(strcmp(comparateur,"<")==0)
 	{
-		printf("INF @%d @%d @%d\n", retour,addr_exp1,addr_exp2);
+		if (abs_rel1==0 && abs_rel2==0)
+		{	
+			printf("INF @%d @@%d @@%d\n", retour,addr_exp1,addr_exp2);
+		} else if  (abs_rel1==0 && abs_rel2==1)
+		{
+			printf("INF @%d @@%d @%d\n", retour,addr_exp1,addr_exp2);
+		} else if  (abs_rel1==1 && abs_rel2==0)
+		{
+			printf("INF @%d @%d @@%d\n", retour,addr_exp1,addr_exp2);
+		} else if  (abs_rel1==1 && abs_rel2==1)
+		{
+			printf("INF @%d @%d @%d\n", retour,addr_exp1,addr_exp2);
+		}
 		incrementerPC();
 	}else if(strcmp(comparateur,">")==0)
 	{
-		printf("SUP @%d @%d @%d\n", retour,addr_exp1,addr_exp2);
+		if (abs_rel1==0 && abs_rel2==0)
+		{	
+			printf("SUP @%d @@%d @@%d\n", retour,addr_exp1,addr_exp2);
+		} else if  (abs_rel1==0 && abs_rel2==1)
+		{
+			printf("SUP @%d @@%d @%d\n", retour,addr_exp1,addr_exp2);
+		} else if  (abs_rel1==1 && abs_rel2==0)
+		{
+			printf("SUP @%d @%d @@%d\n", retour,addr_exp1,addr_exp2);
+		} else if  (abs_rel1==1 && abs_rel2==1)
+		{
+			printf("SUP @%d @%d @%d\n", retour,addr_exp1,addr_exp2);
+		}
 		incrementerPC();
 	}
 } 
