@@ -3,6 +3,7 @@
 #include "tab_label.h"
 
 
+
 int declaration_asm(char * nom_var,int type_de_la_var) 
 {
 	
@@ -21,7 +22,7 @@ int declaration_asm(char * nom_var,int type_de_la_var)
 
 int declaration_affectation_asm( char * nom_var,int constante ,int dollar_relative_ou_absolue , int dollar_addr,int type_de_la_var)
 {
-	if (ajouter_Var(nom_var,type_de_la_var,1,constante )==-1)
+	if (ajouter_Var(nom_var,type_de_la_var,0,constante )==-1)
 	{
 		return -1 ; //pas reussi 
 	}else 
@@ -29,41 +30,48 @@ int declaration_affectation_asm( char * nom_var,int constante ,int dollar_relati
 		int abs_rel ;
 		int typage_var;
 		int var = recherchet(nom_var,&abs_rel,&typage_var); 
-		
+		int decGlob= getDeclaGlobale();
 		/*if (strcmp(getMode(),"fonction")==0) 
 		{
 			//printf("------------%d\n",getTailleTypeRetourFonction());	
 			var += getTailleTypeRetourFonction() ; //si on un type retour
 			
 		}*/
+		if(decGlob==0){
+			if (dollar_relative_ou_absolue==0 && abs_rel==0)
+			{	
+				/*if (strcmp(getMode(),"fonction")==0)
+				{
+					dollar_addr +=getTailleTypeRetourFonction() ;
+				}*/
+				printf( "COP @@%d @@%d \n",var,dollar_addr);
 
-		if (dollar_relative_ou_absolue==0 && abs_rel==0)
-		{	
-			/*if (strcmp(getMode(),"fonction")==0)
+			} else if  (dollar_relative_ou_absolue==0 && abs_rel==1)
 			{
-				dollar_addr +=getTailleTypeRetourFonction() ;
-			}*/
-			printf( "COP @@%d @@%d\n",var,dollar_addr);
+				/*if (strcmp(getMode(),"fonction")==0)
+				{
+					dollar_addr +=getTailleTypeRetourFonction() ;
+				}*/
+				printf( "COP @%d @@%d \n",var,dollar_addr);
 
-		} else if  (dollar_relative_ou_absolue==0 && abs_rel==1)
-		{
-			/*if (strcmp(getMode(),"fonction")==0)
+			} else if  (dollar_relative_ou_absolue==1 && abs_rel==0)
 			{
-				dollar_addr +=getTailleTypeRetourFonction() ;
-			}*/
-			printf( "COP @%d @@%d\n",var,dollar_addr);
-
-		} else if  (dollar_relative_ou_absolue==1 && abs_rel==0)
-		{
 			
-			printf( "COP @@%d @%d\n",var,dollar_addr);
-		} else if  (dollar_relative_ou_absolue==1 && abs_rel==1)
+				printf( "COP @@%d @%d \n",var,dollar_addr);
+			} else if  (dollar_relative_ou_absolue==1 && abs_rel==1)
+			{
+				printf( "COP @%d @%d \n",var,dollar_addr);
+			}
+		}else
 		{
-			printf( "COP @%d @%d\n",var,dollar_addr);
+			printf( "COP @%d @%d \n",var,dollar_addr);
 		}
 		incrementerPC();
 		viderPile();
-		modifierChampInitialiserVariable(nom_var);
+		if(dollar_addr!=NULL_2)
+		{
+			modifierChampInitialiserVariable(nom_var);	
+		}
 
 	return 0 ;
 	}
@@ -74,7 +82,7 @@ int affection_asm( char * nom_var ,int dollar_relative_ou_absolue , int dollar_a
 
 	int var ;
 	int abs_rel ; 
-	int typage_var;																							
+	int typage_var;												
 	if ((  var =recherchet(nom_var,&abs_rel,&typage_var))==-1)
 	{
 		return -1 ;
@@ -108,7 +116,10 @@ int affection_asm( char * nom_var ,int dollar_relative_ou_absolue , int dollar_a
 		}																											
 		incrementerPC();
 		viderPile();
-		modifierChampInitialiserVariable(nom_var);									
+		if(dollar_addr!=NULL_2)
+		{
+			modifierChampInitialiserVariable(nom_var);	
+		}								
 	}
 	return 0 ;
 }
@@ -132,93 +143,97 @@ int operation_arithmetique_asm(char * operation , int * dollar_addr, int * dolla
 
 	int valeurOp2 = depilert(&typeOp2,&abs_rel2,&typage_Op2);
 	int valeurOp1= depilert(&typeOp1,&abs_rel1,&typage_Op1);
+	printf("======typage_Op1 : %d | typage_Op2 : %d\n",typage_Op1,typage_Op2);
+
 	
-	//printf("======typage 1 : %d | typage 2 : %d\n",typage_Op1,typage_Op2);
-
-	if (typage_Op2 != typage_Op1) //si les types des opérandes sont différents
-	{
-		return -1;
-	}
-
-	if (valeurOp2==-1 || valeurOp1==-1 )
-	{
-		//printf("ERREUR indicePile :%d\n",indPile );
-		return -1 ; // erreur depilement des opérandes 
-	}else 
-	{
-		*dollar_addr= getAdressePile();
-		incrementerPC();
-		*dollar_relative_ou_absolue=1;
-		*dollar_typage_result = typage_Op1; 
-		
-		if (typeOp1==1 && typeOp2==1)//si 1er et 2iem opérande est une variable 
+		if (typage_Op2 != typage_Op1) //si les types des opérandes sont différents
 		{
-
-			if (abs_rel1==0 && abs_rel2==0)
-			{
-				printf("%s @%d @@%d @@%d\n",operation,getAdressePile(),valeurOp2,valeurOp1);
-			}else if (abs_rel1==0 && abs_rel2==1)
-			{
-				printf("%s @%d @%d @@%d\n",operation,getAdressePile(),valeurOp2,valeurOp1); 	
-			}else if (abs_rel1==1 && abs_rel2==0)
-			{
-				printf("%s @%d @@%d @%d\n",operation,getAdressePile(),valeurOp2,valeurOp1); 	
-			}else if (abs_rel1==1 && abs_rel2==1)
-			{
-				printf("%s @%d @%d @%d\n",operation,getAdressePile(),valeurOp2,valeurOp1); 	
-			}
-
-			empilert(getAdressePile(),1,1,typage_Op1) ;
-			
-		}else if( typeOp1==1 && typeOp2==0) //si 1er est une var et 2iem est une constante
-		{
-			//printf("++++++++++++++++++++++++ %d %d \n",abs_rel1,abs_rel2);
-			int NouvAdrOp2= obtenirAdressDeuxiemeOperande();
-			if (abs_rel1==0 && abs_rel2==0)
-				printf("%s @%d @@%d @@%d\n",operation,getAdressePile(),valeurOp1,NouvAdrOp2);
-			else if (abs_rel1==0 && abs_rel2==1)
-				printf("%s @%d @@%d @%d\n",operation,getAdressePile(),valeurOp1,NouvAdrOp2);
-			else if (abs_rel1==1 && abs_rel2==0)
-				printf("%s @%d @%d @@%d\n",operation,getAdressePile(),valeurOp1,NouvAdrOp2);
-			else if (abs_rel1==1 && abs_rel2==1)
-				printf("%s @%d @%d @%d\n",operation,getAdressePile(),valeurOp1,NouvAdrOp2);
-		
-			empilert(getAdressePile(),1,1,typage_Op1) ;
-		}else if( typeOp1==0 && typeOp2==1) //si 1er est une constante et 2iem est une var
-		{
-			
-			int NouvAdrOp1=obtenirAdressePremierOperande(); 
-			
-			if (abs_rel1==0 && abs_rel2==0)
-				printf("%s @%d @@%d @@%d\n",operation,getAdressePile(),NouvAdrOp1,valeurOp2);
-			if (abs_rel1==0 && abs_rel2==1)
-				printf("%s @%d @@%d @%d\n",operation,getAdressePile(),NouvAdrOp1,valeurOp2);
-			if (abs_rel1==1 && abs_rel2==0)
-				printf("%s @%d @%d @@%d\n",operation,getAdressePile(),NouvAdrOp1,valeurOp2);
-			if (abs_rel1==1 && abs_rel2==1)
-				printf("%s @%d @%d @%d\n",operation,getAdressePile(),NouvAdrOp1,valeurOp2);
-				
-			empilert(getAdressePile(),1,1,typage_Op1) ;
-			
-		}else if( typeOp1==0 && typeOp2==0) //si 1er est une constante et 2iem est une constante
-		{
-			//printf("++++++++++++++++++++++++ %d %d \n",abs_rel1,abs_rel2);
-			int NouvAdrOp1=obtenirAdressePremierOperande(); 	
-			int NouvAdrOp2 = obtenirAdressDeuxiemeOperande();
-			
-			if (abs_rel1==0 && abs_rel2==0)
-				printf("%s @%d @@%d @@%d\n",operation,getAdressePile(),NouvAdrOp1,NouvAdrOp2);
-			else if (abs_rel1==0 && abs_rel2==1)
-				 printf("%s @%d @@%d @%d\n",operation,getAdressePile(),NouvAdrOp1,NouvAdrOp2);
-			else if (abs_rel1==1 && abs_rel2==0)
-				 printf("%s @%d @%d @@%d\n",operation,getAdressePile(),NouvAdrOp1,NouvAdrOp2);
-			else if (abs_rel1==1 && abs_rel2==1)
-				 printf("%s @%d @%d @%d\n",operation,getAdressePile(),NouvAdrOp1,NouvAdrOp2);
-		
-			empilert(getAdressePile(),1,1,typage_Op1) ;
+			return -2;
 		}
-		return 0 ;
-	}
+		if(typage_Op1>1 && typage_Op2>1)
+		{
+			return -3;
+		}
+		if (valeurOp2==-1 || valeurOp1==-1 )
+		{
+			//printf("ERREUR indicePile :%d\n",indPile );
+			return -1 ; // erreur depilement des opérandes 
+		}else 
+		{
+			*dollar_addr= getAdressePile();
+			incrementerPC();
+			*dollar_relative_ou_absolue=1;
+			*dollar_typage_result = typage_Op1; 
+		
+			if (typeOp1==1 && typeOp2==1)//si 1er et 2iem opérande est une variable 
+			{
+
+				if (abs_rel1==0 && abs_rel2==0)
+				{
+					printf("%s @%d @@%d @@%d\n",operation,getAdressePile(),valeurOp2,valeurOp1);
+				}else if (abs_rel1==0 && abs_rel2==1)
+				{
+					printf("%s @%d @%d @@%d\n",operation,getAdressePile(),valeurOp2,valeurOp1); 	
+				}else if (abs_rel1==1 && abs_rel2==0)
+				{
+					printf("%s @%d @@%d @%d\n",operation,getAdressePile(),valeurOp2,valeurOp1); 	
+				}else if (abs_rel1==1 && abs_rel2==1)
+				{
+					printf("%s @%d @%d @%d\n",operation,getAdressePile(),valeurOp2,valeurOp1); 	
+				}
+
+				empilert(getAdressePile(),1,1,typage_Op1) ;
+			
+			}else if( typeOp1==1 && typeOp2==0) //si 1er est une var et 2iem est une constante
+			{
+				//printf("++++++++++++++++++++++++ %d %d \n",abs_rel1,abs_rel2);
+				int NouvAdrOp2= obtenirAdressDeuxiemeOperande();
+				if (abs_rel1==0 && abs_rel2==0)
+					printf("%s @%d @@%d @@%d\n",operation,getAdressePile(),valeurOp1,NouvAdrOp2);
+				else if (abs_rel1==0 && abs_rel2==1)
+					printf("%s @%d @@%d @%d\n",operation,getAdressePile(),valeurOp1,NouvAdrOp2);
+				else if (abs_rel1==1 && abs_rel2==0)
+					printf("%s @%d @%d @@%d\n",operation,getAdressePile(),valeurOp1,NouvAdrOp2);
+				else if (abs_rel1==1 && abs_rel2==1)
+					printf("%s @%d @%d @%d\n",operation,getAdressePile(),valeurOp1,NouvAdrOp2);
+		
+				empilert(getAdressePile(),1,1,typage_Op1) ;
+			}else if( typeOp1==0 && typeOp2==1) //si 1er est une constante et 2iem est une var
+			{
+			
+				int NouvAdrOp1=obtenirAdressePremierOperande(); 
+			
+				if (abs_rel1==0 && abs_rel2==0)
+					printf("%s @%d @@%d @@%d\n",operation,getAdressePile(),NouvAdrOp1,valeurOp2);
+				if (abs_rel1==0 && abs_rel2==1)
+					printf("%s @%d @@%d @%d\n",operation,getAdressePile(),NouvAdrOp1,valeurOp2);
+				if (abs_rel1==1 && abs_rel2==0)
+					printf("%s @%d @%d @@%d\n",operation,getAdressePile(),NouvAdrOp1,valeurOp2);
+				if (abs_rel1==1 && abs_rel2==1)
+					printf("%s @%d @%d @%d\n",operation,getAdressePile(),NouvAdrOp1,valeurOp2);
+				
+				empilert(getAdressePile(),1,1,typage_Op1) ;
+			
+			}else if( typeOp1==0 && typeOp2==0) //si 1er est une constante et 2iem est une constante
+			{
+				//printf("++++++++++++++++++++++++ %d %d \n",abs_rel1,abs_rel2);
+				int NouvAdrOp1=obtenirAdressePremierOperande(); 	
+				int NouvAdrOp2 = obtenirAdressDeuxiemeOperande();
+			
+				if (abs_rel1==0 && abs_rel2==0)
+					printf("%s @%d @@%d @@%d\n",operation,getAdressePile(),NouvAdrOp1,NouvAdrOp2);
+				else if (abs_rel1==0 && abs_rel2==1)
+					 printf("%s @%d @@%d @%d\n",operation,getAdressePile(),NouvAdrOp1,NouvAdrOp2);
+				else if (abs_rel1==1 && abs_rel2==0)
+					 printf("%s @%d @%d @@%d\n",operation,getAdressePile(),NouvAdrOp1,NouvAdrOp2);
+				else if (abs_rel1==1 && abs_rel2==1)
+					 printf("%s @%d @%d @%d\n",operation,getAdressePile(),NouvAdrOp1,NouvAdrOp2);
+		
+				empilert(getAdressePile(),1,1,typage_Op1) ;
+			}
+			return 0 ;
+		}
+
 }
 
 void nombre_negatif_asm(int * dollar_addr,int * dollar_relative_ou_absolue,int * dollar_typage_result)
@@ -468,3 +483,6 @@ void PushResultFunction()
 	printf("COP @%d @%d\n",addr,Registre_retour_fonctions);
 	incrementerPC();
 }
+
+
+

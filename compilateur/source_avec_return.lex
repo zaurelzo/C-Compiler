@@ -24,6 +24,10 @@
 
 "else" {return tELSE;}
 
+"&" {return tETCOM;}
+
+"NULL" {return tNULL;}
+
 "==" {strcpy(yylval.comparateur,yytext);return tEGALCOMP;}
 
 "<" {strcpy(yylval.comparateur,yytext);return tINF;}
@@ -41,6 +45,10 @@
 "{" return tAO;
 
 "}" return tAF;
+
+"[" return tCO;
+
+"]" return tCF;
 
 [\*] return tMUL;
 

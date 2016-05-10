@@ -11,13 +11,24 @@ int fib(int n )
 		return n ; 
 	}else 
 	{
-		return fib(n-1)+fib(n-2);
+		return ifact(1,5)+fib(n-2);
 	}	
 
 }
 
+int ifact(int n , int p )
+{
+	print(p);
+}
+
 main()
-{ 	int a =1;
-	ifact(3,a);
-	fib(5);	
+{ 	int a =14+6;
+	if(a==0)
+	{
+		print(a);
+	}else 
+	{
+		print(2);
+	}
+ 
 }
