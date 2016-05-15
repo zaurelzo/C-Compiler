@@ -47,7 +47,7 @@ int ADD_IMPLEMENTATION_FUNCTION_ASM(int addr_implementation);
 
 void PUSH_PC_ASM();
 
-void CALL_PARAMETERS_ASM(int dollar_addr , int dollar_relative_ou_absolue); 
+void CALL_PARAMETERS_ASM(int dollar_addr , int dollar_relative_ou_absolue,int first_push); 
 
 int  VERIFICATION_AND_CALL_GENERATION_ASM();
 

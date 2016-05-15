@@ -238,12 +238,14 @@ int recherchet_spec(char * nom_var , int * relative_ou_absolue ,int * typage_var
 	{
 		
 		//if(strcmp(nom_var,"a")==0) printf("ret : %d / nbglo %d \n",retour,nombreDeVariabeleglobale);
-		if (retour <  nombreDeVariabeleglobale)
+		if (retour <=  nombreDeVariabeleglobale)
 		{
 			return retour ;
+			//printf("haere ");
 		}
 		else if(retour - nombreDeVariabeleglobale -1 /*+ getTailleTypeRetourFonction()*/<0)
 		{
+			//printf("===========\n");
 			return -1;
 		}
 		else 
@@ -1247,6 +1249,11 @@ void init_champ_tab(int addr)
 void reinit_champ_tab(int addr)
 {
 	Array[addr].tableau=0;
+}
+
+int length_table_symbole()
+{
+	return  ind - nombreDeVariabeleglobale - 1 ;
 }
 
 

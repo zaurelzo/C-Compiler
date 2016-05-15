@@ -1,5 +1,6 @@
 #include "interpreteur.h"
 
+int PC; //global pour le compteur courant d'instruction
 
  //int PC =0 ;
 int nb_Instruction_Programme = 0 ;
@@ -83,7 +84,7 @@ void charger_Programme_dans_Ram(const char * name_fichier)
  				Tableau_Ram[nb_Instruction_Programme].result= extractNumber(tableau_retour[1],&abs_or_rel);
  				Tableau_Ram[nb_Instruction_Programme].abs_relResult=abs_or_rel;
 
- 				if (strcmp(tableau_retour[0],"AFC")==0) //AFC @RES NB
+ 				if (strcmp(tableau_retour[0],"AFC")==0 || strcmp(tableau_retour[0],"JMF")==0 ) //AFC @RES NB
  				{
  					tableau_retour[2][strlen(tableau_retour[2])-1]='\0';
  					Tableau_Ram[nb_Instruction_Programme].operande1= atoi(tableau_retour[2]);
@@ -97,7 +98,7 @@ void charger_Programme_dans_Ram(const char * name_fichier)
  			{
  				strcpy(Tableau_Ram[nb_Instruction_Programme].code_operation,tableau_retour[0]) ;
 
- 				if (strcmp(tableau_retour[0],"PUSH")==0) //PUSH @NB
+ 				if (strcmp(tableau_retour[0],"PUSH")==0 || strcmp(tableau_retour[0],"PRI")==0) //PUSH @NB
  				{
  					Tableau_Ram[nb_Instruction_Programme].result= extractNumber(tableau_retour[1],&abs_or_rel);
  					Tableau_Ram[nb_Instruction_Programme].abs_relResult=abs_or_rel;
@@ -112,6 +113,7 @@ void charger_Programme_dans_Ram(const char * name_fichier)
 				if(strcmp(tableau_retour[0], "MAIN\n")==0)
 				{
 					debutMain=nb_Instruction_Programme;
+					nb_Instruction_Programme--;
 				}
 				else
 				{
@@ -266,7 +268,7 @@ void clean(const char *buffer, FILE *fp)
 
 void printInstructionCourante(int numInst)
 {
-	printf("INSTRUCTION COURANTE : \n");
+	//printf("INSTRUCTION COURANTE : %d et nb instruction :%d \n",numInst, nb_Instruction_Programme);
 	if(Tableau_Ram[numInst].format_instruction==4)
 		{
 			printf("%s %d %d %d\n",Tableau_Ram[numInst].code_operation,Tableau_Ram[numInst].result,Tableau_Ram[numInst].operande1,Tableau_Ram[numInst].operande2);
@@ -277,6 +279,7 @@ void printInstructionCourante(int numInst)
 			//printf("Result : %d | OP1 : %d\n",Tableau_Ram[i].abs_relResult,Tableau_Ram[i].abs_relOP1 );
 		}else if(Tableau_Ram[numInst].format_instruction==2)
 		{
+			//printf("HERE============\n");
 			printf("%s %d\n",Tableau_Ram[numInst].code_operation,Tableau_Ram[numInst].result);
 			//printf("Result : %d\n",Tableau_Ram[i].abs_relResult);
 		}else if (Tableau_Ram[numInst].format_instruction==1)
@@ -288,15 +291,23 @@ void printInstructionCourante(int numInst)
 
 int calculIndice(int adresse)
 {
-	int ecart =savEbp-ebp-1; 
-	int newaddr=adresse ;	
-	if (savEbp!=0)
+	//printf("pc %d | debutMain%d\n",PC ,debutMain );
+	if (debutMain>PC)
 	{
-		if (adresse>=ecart)
-			newaddr=adresse+2;
-	}
+		//printf("============ save ebp : %d ebp %d\n",savEbp,ebp);
+		int ecart =savEbp-ebp; 
+		//if (PC==0) printf("==============adresse %d et ecart %d\n",adresse,ecart );
+		int newaddr=ebp + adresse ;	
+		
+			if (adresse>=ecart)
+				newaddr=ebp + adresse+2;
 
-	return newaddr; 
+		//if (PC==0) printf(" @@@@@@@@@@@@@@@@@ newaddr : %d\n",newaddr );
+		return newaddr;
+	} else 
+	{
+		return adresse;
+	}
 }
 
 void InitiPileExecution()
@@ -357,16 +368,24 @@ void interpreter(int modeDebug)
 	int contextCourant =indTabDebugInfo ; //on est dans le context du main
 	 char inputUser[40] = "";
 
+	 int newEbp_for_call_context=0;
 	
-	int PC= debutMain;
+	 PC= debutMain;
 
 	if (modeDebug)
 	{
 		printf("=================WELCOME TO debugMatata=====================\n");
 		printf("COMMANDE : printvar localVar | printgl GlobalVar | entrée\n");
-	}
+	}/*else 
+	{
+		printf("VALEUR DU MAIN :%d | NOMBRE INSTRUCTION :%d\n",PC ,nb_Instruction_Programme );
+	}*/
 	while(PC < nb_Instruction_Programme)
 	{	
+		//printf("PC IN WHILE :%d \n",PC);
+		//printInstructionCourante(PC);
+
+
 		//TODO : RAJOUTER UNE CONDITION POUR L'OVERFLOW DE LA PILE 
 
 		if (modeDebug)
@@ -553,14 +572,44 @@ void interpreter(int modeDebug)
 			}
 
 
+
+		} else if( strcmp (Tableau_Ram[PC].code_operation,"COPA")==0)//// COPA
+		{
+			if (Tableau_Ram[PC].abs_relOP1==0) //l'opérande 1 est à adresse absolue
+			{
+				resOp1= PILE_D_EXECUTION[ calculIndice(Tableau_Ram[PC].operande1)].valeur ;
+			}else //l'opérande 1 est à adresse  relatif
+			{
+				resOp1=Tab_Mem_data[Tableau_Ram[PC].operande1].valeur ;
+			}
+
+			if (Tableau_Ram[PC].abs_relResult==0) //resultat est à adresse absolue
+			{
+				PILE_D_EXECUTION[calculIndice(Tableau_Ram[PC].result)].valeur= resOp1 ;
+			}else //lresultat est à adresse  relatif
+			{
+				Tab_Mem_data[Tableau_Ram[PC].result].valeur=resOp1;
+			}
+
+			if(modeDebug==0)
+			{
+				++PC;
+			}else 
+			{
+				debug(&PC,++PC,contextCourant);
+			}
+
 			//++PC;
 		} else if( strcmp (Tableau_Ram[PC].code_operation,"AFC")==0)//AFC
 		{
+			//printf("+++++++++++IN AFC\n");
 			if (Tableau_Ram[PC].abs_relResult==0) //resultat est à adresse absolue
 			{
+				//printf("-----afc absolue\n");
 				PILE_D_EXECUTION[calculIndice(Tableau_Ram[PC].result)].valeur= Tableau_Ram[PC].operande1 ;
 			}else //lresultat est à adresse  relatif
 			{
+				//printf("-------afc relatif \n");
 				Tab_Mem_data[Tableau_Ram[PC].result].valeur=Tableau_Ram[PC].operande1;
 			}
 
@@ -570,6 +619,7 @@ void interpreter(int modeDebug)
 			if(modeDebug==0)
 			{
 				++PC;
+				//printf("AFC DONE ==========\n");
 			}else 
 			{
 				debug(&PC,++PC,contextCourant);
@@ -605,6 +655,7 @@ void interpreter(int modeDebug)
 					//printf("==========////%d\n", Tableau_Ram[PC].operande1);
 				if(modeDebug==0)
 				{
+					//printf("===IN  JMF ;%d\n", Tableau_Ram[PC].operande1);
 					PC =Tableau_Ram[PC].operande1;
 				}else 
 				{
@@ -703,7 +754,7 @@ void interpreter(int modeDebug)
 			if (Tableau_Ram[PC].abs_relResult==0) //resultat est à adresse absolue
 			{
 				PILE_D_EXECUTION[calculIndice(Tableau_Ram[PC].result)].valeur= reslComp;
-				
+
 			}else //lresultat est à adresse  relatif
 			{
 				Tab_Mem_data[Tableau_Ram[PC].result].valeur=reslComp;
@@ -718,7 +769,11 @@ void interpreter(int modeDebug)
 				{
 					debug(&PC,++PC,contextCourant);
 				}
-		
+
+			/*if (Tab_Mem_data[Tableau_Ram[PC].operande1].valeur<Tab_Mem_data[Tableau_Ram[PC].operande2].valeur)
+				Tab_Mem_data[Tableau_Ram[PC].result].valeur=1;
+			else 
+				Tab_Mem_data[Tableau_Ram[PC].result].valeur=0 ;*/
 			//++PC;
 		}else if( strcmp (Tableau_Ram[PC].code_operation,"EQU")==0)//Inferieur //TODO changer la fonction asm qui génére le inf pour inclure le fait que les expressions à comparer peuvent etre absolue ou relative 
 		{
@@ -770,12 +825,15 @@ void interpreter(int modeDebug)
 
 		}else  if( strcmp (Tableau_Ram[PC].code_operation,"PRI")==0) //Print 
 		{
-			if (Tableau_Ram[PC].abs_relResult==0) //resultat est à adresse absolue
+			if (Tableau_Ram[PC].abs_relResult==0) //resultat est à adresse RELATIVE
 			{
+				//printf("PC : %d relative  ========== à indice %d \n",PC,Tableau_Ram[PC].result);
+
 				resRes=PILE_D_EXECUTION[calculIndice(Tableau_Ram[PC].result)].valeur;
 				
 			}else //lresultat est à adresse  relatif
 			{
+				//printf("PC %d and absoluee -------- à indice %d\n",PC,Tableau_Ram[PC].result);
 				resRes=Tab_Mem_data[Tableau_Ram[PC].result].valeur;
 			}
 			printf("%d\n",resRes);
@@ -788,8 +846,27 @@ void interpreter(int modeDebug)
 					debug(&PC,++PC,contextCourant);
 				}
 			//++PC;
+
+
+		}else  if( strcmp (Tableau_Ram[PC].code_operation,"APB")==0) //APB
+		{
+			//todo rajouter +2 quand on a appelé une nouvelle fonction
+			esp  = esp + Tableau_Ram[PC].result; //avant le push
+			printf("NEW CALL CONTEXT DU MAIN %d \n",esp );
+			if(PC>debutMain)
+				newEbp_for_call_context=esp;
+			else
+					newEbp_for_call_context=esp+2;
+
+			++PC;
+			//TODO :rajouter le debug 
+
+
+
 		} else  if( strcmp (Tableau_Ram[PC].code_operation,"PUSH")==0) //PUSH
 		{
+			//if (boolFirtPush==1)
+
 			if (Tableau_Ram[PC].abs_relResult==0) //resultat est à adresse absolue
 			{
 				resRes=PILE_D_EXECUTION[calculIndice(Tableau_Ram[PC].result)].valeur;
@@ -798,7 +875,11 @@ void interpreter(int modeDebug)
 				resRes=Tab_Mem_data[Tableau_Ram[PC].result].valeur;
 			}
 
+			//printf(")))))))))))))))))) adresse du push %d\n",esp);
+			//esp++;
 			PILE_D_EXECUTION[esp].valeur=resRes; //on push le resultat
+			
+			//printf("=============Before push : %d \n",esp);
 			esp++;
 
 			if(modeDebug==0)
@@ -810,28 +891,33 @@ void interpreter(int modeDebug)
 			}
 			//++PC;
 
-		} else  if( strcmp (Tableau_Ram[PC].code_operation,"CALL")==0) 
+		} else  if( strcmp (Tableau_Ram[PC].code_operation,"CALL")==0) //TODO CHANGER DE CONTEXT POUR LE DEBUG
 		{
 			PILE_D_EXECUTION[esp].valeur=PC+1;//on empile la valeur retour
 			PILE_D_EXECUTION[esp].addrRetour=1; 
-			esp++;
+			
 			savEbp=esp; //on sauvegard l'endroit on se trouve l'adresse Retour
-
-			//TODO : PROBLEME : il faut connaitre le nombre de variable locale pour pouvoir déplacer ebp,on ne le connait pas, il faut trouver un moyen de le dire dans l'assembleur , instruction APB AVANT LE CALL
-			//un truc du type ebp = ebp + nombre de push + nombre de variable local
+			esp++;
+			
 
 			PILE_D_EXECUTION[esp].valeur=ebp; //on empile ebp
 			PILE_D_EXECUTION[esp].ebp=1;//on save oldEbp
 			esp++;
-
+			printf("BEFORE CALL FUNCTION NUMBER %d, ebp : %d AND savEsp %d\n",Tableau_Ram[PC].result,ebp,PILE_D_EXECUTION[savEbp+1].valeur);
+			ebp=newEbp_for_call_context ;
+			//printf("-------new ebp after call : %d\n",ebp);
 			PC=Tableau_Ram[PC].result;//on saute à la fonction
-
-		} else  if( strcmp (Tableau_Ram[PC].code_operation,"RET")==0) //on restaure le contexte 
+			//printf("-----------PC : %d and ESP %d and savEbp %d \n",PC,esp,savEbp);
+			printf("AFTER CALL FUNCTION NUMBER %d, ebp : %d AND savEesp %d and esp %d\n",PC,ebp,PILE_D_EXECUTION[savEbp+1].valeur,esp);
+		} else  if( strcmp (Tableau_Ram[PC].code_operation,"RET\n")==0) //on restaure le contexte 
 		{
-			//à vérifier 
+			//printf("IN RETURN \n");
+			printf("current context : ebp %d | esp %d and save ebp %d and indice save ebp %d  \n" ,ebp, esp, PILE_D_EXECUTION[savEbp+1].valeur ,savEbp+1);
 			esp=ebp;
-			PC=PILE_D_EXECUTION[savEbp-1].valeur ;
-			ebp= PILE_D_EXECUTION[savEbp-1].valeur ;
+			PC=PILE_D_EXECUTION[savEbp].valeur ;
+			ebp= PILE_D_EXECUTION[savEbp+1].valeur ;
+			//printf("return previous  context : ebp %d | esp %d and PC : %d\n", ebp, esp,PC);
+			//printInstructionCourante(PC);
 		} 
 
 	}

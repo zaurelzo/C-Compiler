@@ -1,0 +1,17 @@
+int global=55;
+
+main()
+{  	
+	int a =150;
+	print(a);
+	int b=100+100;
+	print(b);
+	int ca =a+b;
+	if(a<b)
+	{
+		print(ca);
+	}else 
+	{
+		print(48);
+	}
+}

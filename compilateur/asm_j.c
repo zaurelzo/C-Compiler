@@ -38,10 +38,10 @@ int init_pointeur_expression_pointeur(int dollar_addr, int dollar_relative_ou_ab
 				if  (dollar_relative_ou_absolue==1 && abs_rel==0)
 				{
 			
-					printf( "COP @@%d @%d \n", addr_ptr,dollar_addr);
+					printf( "COP @@%d @%d\n", addr_ptr,dollar_addr);
 				} else if  (dollar_relative_ou_absolue==1 && abs_rel==1)
 				{
-					printf( "COP @%d @%d \n", addr_ptr,dollar_addr);
+					printf( "COP @%d @%d\n", addr_ptr,dollar_addr);
 				}
 				init_adresse_pointee(addr_ptr+getNombredevariableglobale()+1,get_adresse_pointee_bis());
 				//printf("adresse init : %d\n", get_adresse_pointee(addr_ptr+getNombredevariableglobale()+1));				
@@ -77,10 +77,10 @@ int init_pointeur_dereferencement(char * nom_deref)
 						addr1=empilert(addr,0,abs_rel_ptr,typage_var  );
 						if (abs_rel==0)
 						{
-							printf( "COP @%d @@%d \n", addr1,addr);
+							printf( "COP @%d @@%d\n", addr1,addr);
 						} else
 						{
-							printf( "COP @%d @%d \n", addr1,addr);
+							printf( "COP @%d @%d\n", addr1,addr);
 						}
 						incrementerPC();
 						init_adresse_pointee(addr1, get_adresse_pointee(addr+getNombredevariableglobale()+1));				
@@ -88,7 +88,7 @@ int init_pointeur_dereferencement(char * nom_deref)
 						//On accède à la valeur/adresse obtenue suite au déréférencement		
 						for(i=0; i<get_nivPtr(); i++)
 						{
-							printf("COPA @%d @%d \n", addr1, addr1);
+							printf("COPA @%d @%d\n", addr1, addr1);
 							incrementerPC();
 							int ad=get_adresse_pointee(addr1);
 							init_adresse_pointee(addr1, get_adresse_pointee(ad));
@@ -96,10 +96,10 @@ int init_pointeur_dereferencement(char * nom_deref)
 						//Enfin on affecte cette valeur au pointeur à gauche du =
 						if  (abs_rel_ptr==0)
 						{
-							printf( "COP @@%d @%d \n", addr_ptr,addr1);
+							printf( "COP @@%d @%d\n", addr_ptr,addr1);
 						} else
 						{
-							printf( "COP @%d @%d \n", addr_ptr,addr1);
+							printf( "COP @%d @%d\n", addr_ptr,addr1);
 						}
 						init_adresse_pointee(addr_ptr+getNombredevariableglobale()+1, get_adresse_pointee(addr1));
 						incrementerPC();
@@ -185,7 +185,7 @@ int init_pointeur_pointeur(char * nom_ptr)
 					{
 						dollar_addr +=getTailleTypeRetourFonction() ;
 					}*/
-					printf( "COP @@%d @@%d \n",addr_ptr_gauche,addr_ptr_droite);
+					printf( "COP @@%d @@%d\n",addr_ptr_gauche,addr_ptr_droite);
 
 				} else if  (abs_rel_gauche==0 && abs_rel_droite==1)
 				{
@@ -193,15 +193,15 @@ int init_pointeur_pointeur(char * nom_ptr)
 					{
 						dollar_addr +=getTailleTypeRetourFonction() ;
 					}*/
-					printf( "COP @%d @@%d \n",addr_ptr_gauche,addr_ptr_droite);
+					printf( "COP @%d @@%d\n",addr_ptr_gauche,addr_ptr_droite);
 
 				} else if  (abs_rel_gauche==1 && abs_rel_droite==0)
 				{
 			
-					printf( "COP @@%d @%d \n",addr_ptr_gauche,addr_ptr_droite);
+					printf( "COP @@%d @%d\n",addr_ptr_gauche,addr_ptr_droite);
 				} else if  (abs_rel_gauche==1 && abs_rel_droite==1)
 				{
-					printf( "COP @%d @%d \n",addr_ptr_gauche,addr_ptr_droite);
+					printf( "COP @%d @%d\n",addr_ptr_gauche,addr_ptr_droite);
 				}
 
 				init_adresse_pointee(addr_ptr_gauche+getNombredevariableglobale()+1,get_adresse_pointee(addr_ptr_droite+getNombredevariableglobale()+1));
@@ -231,10 +231,10 @@ void init_pointeur_Null()
 		addr_ptr_gauche=recherchet_spec(get_nom_pointeur(), &abs_rel_gauche, &typage_var_gauche);
 		if  (abs_rel_gauche==0)
 		{
-			printf( "COP @@%d @%d \n", addr_ptr_gauche,addr1);
+			printf( "COP @@%d @%d\n", addr_ptr_gauche,addr1);
 		} else
 		{
-			printf( "COP @%d @%d \n", addr_ptr_gauche,addr1);
+			printf( "COP @%d @%d\n", addr_ptr_gauche,addr1);
 		}		
 		init_adresse_pointee(addr_ptr_gauche+getNombredevariableglobale()+1,NULL_2);	
 		incrementerPC();
@@ -319,11 +319,11 @@ int declaration_tab(char * nom_tab)
 			// on fera pointer cette variable sur la première case du tableau (adresse get_indice())
 			if(relative_ou_absolue==0)
 			{
-				printf( "AFC @@%d %d \n", addr_tab , get_indice());
+				printf( "AFC @@%d %d\n", addr_tab , get_indice());
 			}
 			else
 			{
-				printf( "AFC @%d %d \n", addr_tab, get_indice());
+				printf( "AFC @%d %d\n", addr_tab, get_indice());
 			}
 			incrementerPC();
 			modifierChampInitialiserVariable(nom_tab);
@@ -670,20 +670,26 @@ int deb_AccesLettre(char * nom_tab, char * nom_lettre)
 
 int fin_AccesLettre(char * nom_tab, int * abs_rel, int * typage_var)
 {
-			int retour, abs_rel_1, typage_var_1;
+			int retour, abs_rel_1, typage_var_1, addrOp2;
 			char nom_premiere_case[50];
 			strcpy(nom_premiere_case, nom_tab);
 			strcat(nom_premiere_case, "0");
-			int addr=recherchet_spec(nom_premiere_case, &abs_rel_1, &typage_var_1); 		
+			int addr=recherchet_spec(nom_premiere_case, &abs_rel_1, &typage_var_1);
 			if(abs_rel_1==0)
 			{
-				printf("ADD @%d @@%d @%d\n", getAdressePile()+1, addr, getAdressePile()+1);  
+				addr=addr+getNombredevariableglobale()+1;
+			}
 			
+			printf("AFC @%d %d\n", (addrOp2=empilert(addr, 0, 1, 1)),addr) ; 
+			incrementerPC();		
+			/*if(abs_rel_1==0)
+			{
+				printf("ADD @%d @%d @%d\n", getAdressePile()+2, addrOp2, getAdressePile()+2);  
 			}
 			else
-			{
-				printf("ADD @%d @%d @%d\n", getAdressePile()+1, addr, getAdressePile()+1);  
-			}
+			{*/
+				printf("ADD @%d @%d @%d\n", getAdressePile()+2, addrOp2, getAdressePile()+2);  
+			//}
 			incrementerPC();
 			if(get_nivPtr()==get_nivPtr_var(recherche(nom_tab)))
 			{
@@ -834,7 +840,7 @@ int fin_affectation_tab(int addr_case_tab, int abs_rel, int addr_var, int abs_re
 			}	
 			else
 			{	
-				printf("Aurevoir\n");
+				//printf("Aurevoir\n");
 				if(get_lettre_acces_2()==1)
 				{
 					if (abs_rel==0 && abs_rel2==0)
@@ -916,7 +922,7 @@ int dereferencement_expr(char * nom, int * abs_rel, int * typage_var)
 			//On dit que l'on a empilé un pointeur dans la pile
 			reinit_champ_pointeur(addr1);	
 			//on stocke l'adresse du pointeur dans la pile
-			printf("AFC @%d %d \n",addr1, addr_glo);
+			printf("AFC @%d %d\n",addr1, addr_glo);
 			incrementerPC();
 			//On déréférence l'adresse stockée pour arriver au niveau souhaité			
 			for(i=0; i<get_nivPtr(); i++)
@@ -927,7 +933,7 @@ int dereferencement_expr(char * nom, int * abs_rel, int * typage_var)
 				int a, a_t, a_t2, a_t3;
 				a=depilert(&a_t, &a_t2, &a_t3);
 				addr1=empilert(addr1,1, 1, (*typage_var-get_nivPtr()));				
-				printf("COPA @%d @%d \n", addr1, addr1);
+				printf("COPA @%d @%d\n", addr1, addr1);
 				incrementerPC();
 			} 
 			//On dit que l'endroit de la pile où est stocké le pointeur est initialisé
@@ -1109,20 +1115,20 @@ int affectation_gauche_id_tab_ptrNonDeref(char * dollar_1, int addr_dollar_3, in
 									{
 										dollar_addr +=getTailleTypeRetourFonction() ;
 									}*/
-									printf( "COP @@%d @@%d \n",addr_dollar_1, addr_dollar_3);
+									printf( "COP @@%d @@%d\n",addr_dollar_1, addr_dollar_3);
 								}else if  (addr_dollar_3_rel==0 && abs_rel==1)
 								{	
 									/*if (strcmp(getMode(),"fonction")==0)
 									{
 										dollar_addr +=getTailleTypeRetourFonction() ;
 									}*/
-									printf( "COP @%d @@%d \n",addr_dollar_1, addr_dollar_3);
+									printf( "COP @%d @@%d\n",addr_dollar_1, addr_dollar_3);
 								}else if  (addr_dollar_3_rel==1 && abs_rel==0)
 								{
-									printf( "COP @@%d @%d \n",addr_dollar_1, addr_dollar_3);
+									printf( "COP @@%d @%d\n",addr_dollar_1, addr_dollar_3);
 								}else if  (addr_dollar_3_rel==1 && abs_rel==1)
 								{
-									printf( "COP @%d @%d \n",addr_dollar_1, addr_dollar_3);
+									printf( "COP @%d @%d\n",addr_dollar_1, addr_dollar_3);
 								}													
 								incrementerPC();
 								viderPile();
@@ -1170,20 +1176,20 @@ int affectation_gauche_id_tab_ptrNonDeref(char * dollar_1, int addr_dollar_3, in
 							{
 								dollar_addr +=getTailleTypeRetourFonction() ;
 							}*/
-							printf( "COP @@%d @@%d \n",addr_dollar_1, addr_dollar_3);
+							printf( "COP @@%d @@%d\n",addr_dollar_1, addr_dollar_3);
 						}else if  (addr_dollar_3_rel==0 && abs_rel==1)
 						{	
 							/*if (strcmp(getMode(),"fonction")==0)
 							{
 								dollar_addr +=getTailleTypeRetourFonction() ;
 							}*/
-							printf( "COP @%d @@%d \n",addr_dollar_1, addr_dollar_3);
+							printf( "COP @%d @@%d\n",addr_dollar_1, addr_dollar_3);
 						}else if  (addr_dollar_3_rel==1 && abs_rel==0)
 						{
-							printf( "COP @@%d @%d \n",addr_dollar_1, addr_dollar_3);
+							printf( "COP @@%d @%d\n",addr_dollar_1, addr_dollar_3);
 						}else if  (addr_dollar_3_rel==1 && abs_rel==1)
 						{
-							printf( "COP @%d @%d \n",addr_dollar_1, addr_dollar_3);
+							printf( "COP @%d @%d\n",addr_dollar_1, addr_dollar_3);
 						}
 						incrementerPC();
 						viderPile();
@@ -1246,19 +1252,19 @@ int affectation_Deref (char * dollar_1, int addr_dollar_3, int addr_dollar_3_rel
 						//printf("Bonjourrrr\n");
 						//On stocke dans la pile l'adresse du pointeur que l'on déréférence
 						addr1_pile=empilert(addr_dollar_1, 0,abs_rel, typage_var-get_nivPtr_3());
-						printf("AFC @%d %d \n", addr1_pile, addr1);
+						printf("AFC @%d %d\n", addr1_pile, addr1);
 						incrementerPC();
 						for(i=0; i<get_nivPtr_3()-1; i++)
 						{						
-							printf("COPA @%d @%d \n", addr1_pile, addr1_pile);
+							printf("COPA @%d @%d\n", addr1_pile, addr1_pile);
 							incrementerPC();
 						} 
 						if(addr_dollar_3_rel==0)
 						{
-							printf("COPB @%d @@%d \n", addr1_pile, addr3);
+							printf("COPB @%d @@%d\n", addr1_pile, addr3);
 						}else
 						{
-							printf("COPB @%d @%d \n", addr1_pile, addr3);
+							printf("COPB @%d @%d\n", addr1_pile, addr3);
 						}
 						incrementerPC();					
 					}
@@ -1270,20 +1276,20 @@ int affectation_Deref (char * dollar_1, int addr_dollar_3, int addr_dollar_3_rel
 							{
 								dollar_addr +=getTailleTypeRetourFonction() ;
 							}*/
-							printf( "COPB @@%d @@%d \n",addr_dollar_1, addr_dollar_3);
+							printf( "COPB @@%d @@%d\n",addr_dollar_1, addr_dollar_3);
 						}else if  (addr_dollar_3_rel==0 && abs_rel==1)
 						{	
 							/*if (strcmp(getMode(),"fonction")==0)
 							{
 								dollar_addr +=getTailleTypeRetourFonction() ;
 							}*/
-							printf( "COPB @%d @@%d \n",addr_dollar_1, addr_dollar_3);
+							printf( "COPB @%d @@%d\n",addr_dollar_1, addr_dollar_3);
 						}else if  (addr_dollar_3_rel==1 && abs_rel==0)
 						{
-							printf( "COPB @@%d @%d \n",addr_dollar_1, addr_dollar_3);
+							printf( "COPB @@%d @%d\n",addr_dollar_1, addr_dollar_3);
 						}else if  (addr_dollar_3_rel==1 && abs_rel==1)
 						{
-							printf( "COPB @%d @%d \n",addr_dollar_1, addr_dollar_3);
+							printf( "COPB @%d @%d\n",addr_dollar_1, addr_dollar_3);
 						}		
 						incrementerPC();
 						//on peut pas dire si la var pointée par le pointeur sera initialisée 

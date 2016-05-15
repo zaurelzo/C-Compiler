@@ -123,6 +123,12 @@ void remplacer_label(const char * fichier_avec_labels, const char * fichier_sans
 			else if( strcmp(tabToken [0],"DIV")==0) fprintf(fichier_retourbis,"%s %s %s %s",tabToken[0],tabToken[1],tabToken[2],tabToken[3]);
 							
 			else if( strcmp(tabToken [0],"COP")==0) fprintf(fichier_retourbis,"%s %s %s",tabToken[0],tabToken[1],tabToken[2]);
+
+
+			else if( strcmp(tabToken [0],"COPA")==0) fprintf(fichier_retourbis,"%s %s %s",tabToken[0],tabToken[1],tabToken[2]);
+
+
+			else if( strcmp(tabToken [0],"COPB")==0) fprintf(fichier_retourbis,"%s %s %s",tabToken[0],tabToken[1],tabToken[2]);
 							 
 			else if( strcmp(tabToken [0],"AFC")==0)fprintf(fichier_retourbis,"%s %s %s",tabToken[0],tabToken[1],tabToken[2]);
 										
@@ -143,6 +149,9 @@ void remplacer_label(const char * fichier_avec_labels, const char * fichier_sans
 			else if( strcmp(tabToken [0],"MAIN\n")==0) fprintf(fichier_retourbis,"%s",tabToken[0]);
 
 			else if( strcmp(tabToken [0],"PUSH")==0) fprintf(fichier_retourbis,"%s %s",tabToken[0],tabToken[1]);
+
+			else if( strcmp(tabToken [0],"APB")==0) fprintf(fichier_retourbis,"%s %s",tabToken[0],tabToken[1]);
+
 
 										
 

@@ -431,5 +431,7 @@ void init_champ_tab(int addr);
 
 void reinit_champ_tab(int addr);
 
+int length_table_symbole();
+
 
 #endif

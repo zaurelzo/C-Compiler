@@ -16,16 +16,17 @@ rm file_debug_information 2>erreur
 ./compilateur < $1 > $c
 if test $? != 0  #s'il y a une erreur lors de la compilation , on effectue pas la deuxieme passe
 then
-	echo $c
+	cat $c
 	exit 1
 fi 
 
 #pas d'erreur lors de compilation du fichier
-cat $c
+#cat $c
 
 #on prépare l'exe pour la deuxieme passe 
-#gcc main.c deuxieme_passe.c gestion_des_fonctions.c tab_label.c tab_symb.c -o deux_passe
+gcc main.c deuxieme_passe.c gestion_des_fonctions.c tab_label.c tab_symb.c -o deux_passe
 
-#./deux_passe $c $2 #on fait la deuxieme passe avec entrée le fichier avec labels, en sortie le fichier sans labels
+./deux_passe $c $2 #on fait la deuxieme passe avec entrée le fichier avec labels, en sortie le fichier sans labels
+cat $2
 #"echo "===================fichier sans la labels======================="
-#"echo $2
+#echo $2

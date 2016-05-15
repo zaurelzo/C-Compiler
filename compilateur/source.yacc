@@ -65,8 +65,8 @@ DeclarationGlobale :
 		
 	Declaration 
 	{
+		setDeclaGlobale();
 		setNombredevariableglobale();
-		
 	} DeclarationGlobale 
 	|  AffectationGlobale  ;
 
@@ -103,8 +103,7 @@ PrototypeAndImplementationGlobalAndMain  :
 			changeMode();//on passe en mode fonction
 			initParametreForNewfunction();
 			setTailleTypeRetourFonction(0);
-			reinitDeclaGlobale();
-			
+			//setDeclaGlobale();
 			//printf("++++++++nb globale : %d and ind %d ",getNombredevariableglobale(),ind);
 		} Main ;
 
@@ -381,7 +380,7 @@ Expression :
 		{
 			yyerror("Probleme éléments de niveau de pointeurs différents\n");
 		}   	*/	
-		int retour=operation_arithmetique_asm("SUB", &($$.adresse),&($$.relative_ou_absolue),&($$.typage_var) );
+		int retour=operation_arithmetique_asm("SOU", &($$.adresse),&($$.relative_ou_absolue),&($$.typage_var) );
 		if(retour==-1)
 //>>>>>>> 3c65610403ddc4ee5af857ed36986294dc93881a
    		{
@@ -608,6 +607,7 @@ Prototype :
 ImplementationFonction : 
 	tINT tID tPO Params tPF
 	{
+		reinitDeclaGlobale();
 		setTypeRetour(1);
 		changeMode();//on passe en mode fonction
 		setTailleTypeRetourFonction(1);//on fixe le faite que l'on est un type retour ou pas
@@ -680,15 +680,15 @@ ParamAppel :
 	Expression 
 	{
 		ajouter_parametreAPPEL($1.typage_var);		 
-		CALL_PARAMETERS_ASM($1.adresse, $1.relative_ou_absolue);
+		CALL_PARAMETERS_ASM($1.adresse, $1.relative_ou_absolue,1);
 	} SuiteParamAppel
-	|;
+	|;//TODO GERER LE CAS OU LES PARAMETRES SONT VIDES POUR AJOUTER CREER LE APB 
 
 SuiteParamAppel : 
 	tVIR Expression
 	{
 		ajouter_parametreAPPEL($2.typage_var);	
-		CALL_PARAMETERS_ASM($2.adresse, $2.relative_ou_absolue);
+		CALL_PARAMETERS_ASM($2.adresse, $2.relative_ou_absolue,0);
 	} SuiteParamAppel
 	|;
 						

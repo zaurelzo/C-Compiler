@@ -38,6 +38,7 @@ int declaration_affectation_asm( char * nom_var,int constante ,int dollar_relati
 			
 		}*/
 		if(decGlob==0){
+			//printf("++++++++++++++++++\n");
 			if (dollar_relative_ou_absolue==0 && abs_rel==0)
 			{	
 				/*if (strcmp(getMode(),"fonction")==0)
@@ -60,11 +61,14 @@ int declaration_affectation_asm( char * nom_var,int constante ,int dollar_relati
 				printf( "COP @@%d @%d\n",var,dollar_addr);
 			} else if  (dollar_relative_ou_absolue==1 && abs_rel==1)
 			{
+				printf("==================\n");
 				printf( "COP @%d @%d\n",var,dollar_addr);
 			}
 		}else
 		{
+			//printf("dfdfdfdeff\n");
 			printf( "COP @%d @%d\n",var,dollar_addr);
+			//reinitDeclaGlobale();
 		}
 		incrementerPC();
 		viderPile();
@@ -441,9 +445,15 @@ void PUSH_PC_ASM()
 }
 
 /*empiler les parametres d'appel */
-void CALL_PARAMETERS_ASM(int dollar_addr , int dollar_relative_ou_absolue)
+void CALL_PARAMETERS_ASM(int dollar_addr , int dollar_relative_ou_absolue,int first_push)
 {
 	int type,abs_rel,typage;
+
+	if (first_push)
+	{
+		printf("APB %d\n",length_table_symbole() );// pour sauvegarder les variables locales
+		incrementerPC();
+	}
 
 	if (dollar_relative_ou_absolue==0) //relatif 
 	{	
@@ -471,7 +481,10 @@ int VERIFICATION_AND_CALL_GENERATION_ASM()
 	if (retour==-2)
 	{
 		//empilert(0,1,0,1);//on empile l'adresse du résultat qui sera toujours 0 (@ relatif)
+
+		//printf("APB %d\n",length_table_symbole() );// pour sauvegarder les variables locales
 		printf("CALL %s\n",labelPotentiel);
+		//incrementerPC();
 		incrementerPC();
 		return 0 ; 
 	}else if (retour==-1)
@@ -480,7 +493,10 @@ int VERIFICATION_AND_CALL_GENERATION_ASM()
 	}else 
 	{
 		//empilert(0,1,0,1);//on empile l'adresse du résultat qui sera toujours 0 (@ relatif)
+
+		//printf("APB %d\n",length_table_symbole() );// pour sauvegarder les variables locales
 		printf("CALL %d\n",retour);
+		//incrementerPC();
 		incrementerPC();
 		initNombreDeParametresAPPEL() ; //on reinitialise pour l'appel suivant 
 		
