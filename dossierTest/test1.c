@@ -1,14 +1,30 @@
 int global;
-int hj;
-int jkl;
+
+int fonct(int a , int b )
+{
+	int h[3]={14,58,63};
+	int c =0;
+	while(c<3)
+	{
+		print(h[c]);
+		c=c+1;
+		
+	}
+
+	return 0;
+
+}
+
+
 main()
 {
-	int r=9;
-	int a =89;
-	print(a);
-	int *k=&a;
-       int **p=&k;
-	**p=r*10;
-	print(a);
-	
+	int a[3]={1,2,5};
+	int c;
+	c= fonct(2,5);
+	print(c);
+	while(c<3)
+	{
+		print(a[c]);
+		c=c+1;
+	}
 }

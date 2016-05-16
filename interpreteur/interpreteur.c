@@ -366,15 +366,22 @@ void interpreter(int modeDebug)
 	InitiPileExecution();
 	int resRes,resOp1 ,resOp2;
 	int contextCourant =indTabDebugInfo ; //on est dans le context du main
-	 char inputUser[40] = "";
 
-	 int newEbp_for_call_context=0;
+	int saveContextWhenCall=0;
+
+
+	//printf("Context Courant %d",contextCourant);
+	
+
+	char inputUser[40] = "";
+
+	int newEbp_for_call_context=0;
 	
 	 PC= debutMain;
 
 	if (modeDebug)
 	{
-		printf("=================WELCOME TO debugMatata=====================\n");
+		printf("=================	DEBUG MODE =====================\n");
 		printf("COMMANDE : printvar localVar | printgl GlobalVar | entrée\n");
 	}/*else 
 	{
@@ -382,9 +389,11 @@ void interpreter(int modeDebug)
 	}*/
 	while(PC < nb_Instruction_Programme)
 	{	
-		//printf("PC IN WHILE :%d \n",PC);
-		//printInstructionCourante(PC);
-
+		/*if (modeDebug)
+		{
+			printInstructionCourante(PC);
+		}*/
+		
 
 		//TODO : RAJOUTER UNE CONDITION POUR L'OVERFLOW DE LA PILE 
 
@@ -392,6 +401,7 @@ void interpreter(int modeDebug)
 		{
 			printInstructionCourante(PC);//Instruction en cours d'éxécution 
 		}
+
 
 		if( strcmp (Tableau_Ram[PC].code_operation,"ADD")==0)//ADD
 		{
@@ -894,8 +904,13 @@ void interpreter(int modeDebug)
 			else
 					newEbp_for_call_context=esp+2;
 
-			++PC;
-			//TODO :rajouter le debug 
+			if(modeDebug==0)
+			{
+				++PC;
+			}else 
+			{
+				debug(&PC,++PC,contextCourant);
+			}
 
 
 
@@ -911,11 +926,10 @@ void interpreter(int modeDebug)
 				resRes=Tab_Mem_data[Tableau_Ram[PC].result].valeur;
 			}
 
-			//printf(")))))))))))))))))) adresse du push %d\n",esp);
-			//esp++;
+			
 			PILE_D_EXECUTION[esp].valeur=resRes; //on push le resultat
 			
-			//printf("=============Before push : %d \n",esp);
+		
 			esp++;
 
 			if(modeDebug==0)
@@ -939,21 +953,35 @@ void interpreter(int modeDebug)
 			PILE_D_EXECUTION[esp].valeur=ebp; //on empile ebp
 			PILE_D_EXECUTION[esp].ebp=1;//on save oldEbp
 			esp++;
-			//printf("BEFORE CALL FUNCTION NUMBER %d, ebp : %d AND savEsp %d\n",Tableau_Ram[PC].result,ebp,PILE_D_EXECUTION[savEbp+1].valeur);
+			
 			ebp=newEbp_for_call_context ;
-			//printf("-------new ebp after call : %d\n",ebp);
-			PC=Tableau_Ram[PC].result;//on saute à la fonction
-			//printf("-----------PC : %d and ESP %d and savEbp %d \n",PC,esp,savEbp);
-			//printf("AFTER CALL FUNCTION NUMBER %d, ebp : %d AND savEesp %d and esp %d\n",PC,ebp,PILE_D_EXECUTION[savEbp+1].valeur,esp);
+			//PC=Tableau_Ram[PC].result;//on saute à la fonction
+
+			saveContextWhenCall =contextCourant; 
+			contextCourant = Tableau_Ram[PC].result ;
+			if(modeDebug==0)
+			{
+				PC=Tableau_Ram[PC].result;//on saute à la fonction
+			}else 
+			{
+				debug(&PC,Tableau_Ram[PC].result,contextCourant);
+			}
+			
 		} else  if( strcmp (Tableau_Ram[PC].code_operation,"RET\n")==0) //on restaure le contexte 
 		{
 			//printf("IN RETURN \n");
 			//printf("current context : ebp %d | esp %d and save ebp %d and indice save ebp %d  \n" ,ebp, esp, PILE_D_EXECUTION[savEbp+1].valeur ,savEbp+1);
 			esp=ebp;
-			PC=PILE_D_EXECUTION[savEbp].valeur ;
+			//PC=PILE_D_EXECUTION[savEbp].valeur ;
 			ebp= PILE_D_EXECUTION[savEbp+1].valeur ;
-			//printf("return previous  context : ebp %d | esp %d and PC : %d\n", ebp, esp,PC);
-			//printInstructionCourante(PC);
+			contextCourant =saveContextWhenCall ;
+			if(modeDebug==0)
+			{
+				PC=PILE_D_EXECUTION[savEbp].valeur ;
+			}else 
+			{
+				debug(&PC,PILE_D_EXECUTION[savEbp].valeur ,contextCourant);
+			}
 		} 
 
 	}
