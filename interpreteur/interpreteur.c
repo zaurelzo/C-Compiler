@@ -577,18 +577,54 @@ void interpreter(int modeDebug)
 		{
 			if (Tableau_Ram[PC].abs_relOP1==0) //l'opérande 1 est à adresse absolue
 			{
-				resOp1= PILE_D_EXECUTION[ calculIndice(Tableau_Ram[PC].operande1)].valeur ;
+				printf("ERREUR \n");
+				exit(1);
+				//resOp1= PILE_D_EXECUTION[ calculIndice(Tableau_Ram[PC].operande1)].valeur ;
 			}else //l'opérande 1 est à adresse  relatif
 			{
-				resOp1=Tab_Mem_data[Tableau_Ram[PC].operande1].valeur ;
+				//printf("here\n");
+				resOp1=PILE_D_EXECUTION[ calculIndice(Tab_Mem_data[ Tableau_Ram[PC].operande1].valeur )].valeur ;
 			}
 
 			if (Tableau_Ram[PC].abs_relResult==0) //resultat est à adresse absolue
 			{
-				PILE_D_EXECUTION[calculIndice(Tableau_Ram[PC].result)].valeur= resOp1 ;
+				//printf("EREUUR \n");
+				exit(1);
+				//PILE_D_EXECUTION[calculIndice(Tableau_Ram[PC].result)].valeur= resOp1 ;
 			}else //lresultat est à adresse  relatif
 			{
+				//printf("----------------------\n");
 				Tab_Mem_data[Tableau_Ram[PC].result].valeur=resOp1;
+			}
+
+			if(modeDebug==0)
+			{
+				++PC;
+			}else 
+			{
+				debug(&PC,++PC,contextCourant);
+			}
+
+		}else if( strcmp (Tableau_Ram[PC].code_operation,"COPB")==0)//// COPB
+		{
+			if (Tableau_Ram[PC].abs_relOP1==0) //l'opérande 1 est à adresse absolue
+			{
+				resOp1=PILE_D_EXECUTION[ calculIndice(Tableau_Ram[PC].operande1)].valeur ;
+				//resOp1= PILE_D_EXECUTION[ calculIndice(Tableau_Ram[PC].operande1)].valeur ;
+			}else //l'opérande 1 est à adresse  relatif
+			{
+				//printf("here\n");
+				resOp1=Tab_Mem_data[Tableau_Ram[PC].operande1].valeur;
+			}
+
+			if (Tableau_Ram[PC].abs_relResult==0) //resultat est à adresse absolue
+			{
+				int ad = PILE_D_EXECUTION[calculIndice(Tableau_Ram[PC].result)].valeur;
+				PILE_D_EXECUTION[  calculIndice(ad)].valeur= resOp1 ;
+			}else //lresultat est à adresse  relatif
+			{
+				int ad = Tab_Mem_data[Tableau_Ram[PC].result].valeur ;
+				PILE_D_EXECUTION[ calculIndice(ad)].valeur= resOp1 ;
 			}
 
 			if(modeDebug==0)
@@ -852,7 +888,7 @@ void interpreter(int modeDebug)
 		{
 			//todo rajouter +2 quand on a appelé une nouvelle fonction
 			esp  = esp + Tableau_Ram[PC].result; //avant le push
-			printf("NEW CALL CONTEXT DU MAIN %d \n",esp );
+			//printf("NEW CALL CONTEXT DU MAIN %d \n",esp );
 			if(PC>debutMain)
 				newEbp_for_call_context=esp;
 			else
@@ -903,16 +939,16 @@ void interpreter(int modeDebug)
 			PILE_D_EXECUTION[esp].valeur=ebp; //on empile ebp
 			PILE_D_EXECUTION[esp].ebp=1;//on save oldEbp
 			esp++;
-			printf("BEFORE CALL FUNCTION NUMBER %d, ebp : %d AND savEsp %d\n",Tableau_Ram[PC].result,ebp,PILE_D_EXECUTION[savEbp+1].valeur);
+			//printf("BEFORE CALL FUNCTION NUMBER %d, ebp : %d AND savEsp %d\n",Tableau_Ram[PC].result,ebp,PILE_D_EXECUTION[savEbp+1].valeur);
 			ebp=newEbp_for_call_context ;
 			//printf("-------new ebp after call : %d\n",ebp);
 			PC=Tableau_Ram[PC].result;//on saute à la fonction
 			//printf("-----------PC : %d and ESP %d and savEbp %d \n",PC,esp,savEbp);
-			printf("AFTER CALL FUNCTION NUMBER %d, ebp : %d AND savEesp %d and esp %d\n",PC,ebp,PILE_D_EXECUTION[savEbp+1].valeur,esp);
+			//printf("AFTER CALL FUNCTION NUMBER %d, ebp : %d AND savEesp %d and esp %d\n",PC,ebp,PILE_D_EXECUTION[savEbp+1].valeur,esp);
 		} else  if( strcmp (Tableau_Ram[PC].code_operation,"RET\n")==0) //on restaure le contexte 
 		{
 			//printf("IN RETURN \n");
-			printf("current context : ebp %d | esp %d and save ebp %d and indice save ebp %d  \n" ,ebp, esp, PILE_D_EXECUTION[savEbp+1].valeur ,savEbp+1);
+			//printf("current context : ebp %d | esp %d and save ebp %d and indice save ebp %d  \n" ,ebp, esp, PILE_D_EXECUTION[savEbp+1].valeur ,savEbp+1);
 			esp=ebp;
 			PC=PILE_D_EXECUTION[savEbp].valeur ;
 			ebp= PILE_D_EXECUTION[savEbp+1].valeur ;

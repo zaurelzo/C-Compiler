@@ -1,21 +1,14 @@
- int gh(int a )
-{
-	print(a+19);
-	return a*2;
-}
-
-
-int fact(int n )
-{
-	int c ;	 
-	print(n);
-	return gh(n*4);
-}
-
-
+int global;
+int hj;
+int jkl;
 main()
 {
-	int a ,b ;
+	int r=9;
+	int a =89;
+	print(a);
+	int *k=&a;
+       int **p=&k;
+	**p=r*10;
+	print(a);
 	
-	a = fact(10);
-}	
+}

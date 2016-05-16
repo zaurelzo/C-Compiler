@@ -172,11 +172,13 @@ int recherchet(char * nom_var , int * relative_ou_absolue ,int * typage_var )
 
 	if(strcmp(getMode(),"Pasfonction")==0)//pas en mode fonction, c'est une global
 	{
+		//printf("======je suis dans le if\n");
 		return retour ; 
 	}else
 	{
+		//printf("======je suis dans le if========== et nombre de var %d  et retour %d \n",nombreDeVariabeleglobale,retour );
 		//if(strcmp(nom_var,"a")==0) printf("ret : %d / nbglo %d \n",retour,nombreDeVariabeleglobale);
-		if (retour - nombreDeVariabeleglobale -1 /*+ getTailleTypeRetourFonction()*/<0)
+		if (retour - nombreDeVariabeleglobale -1 <0)
 		{
 			return -1 ;
 		}else 
@@ -236,7 +238,7 @@ int recherchet_spec(char * nom_var , int * relative_ou_absolue ,int * typage_var
 		return retour ; 
 	}else
 	{
-		
+		//printf("////// nombre de var %d  et retour %d \n",nombreDeVariabeleglobale,retour );
 		//if(strcmp(nom_var,"a")==0) printf("ret : %d / nbglo %d \n",retour,nombreDeVariabeleglobale);
 		if (retour <=  nombreDeVariabeleglobale)
 		{

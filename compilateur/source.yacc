@@ -100,6 +100,7 @@ PrototypeAndImplementationGlobalAndMain  :
 			WriteDebugInformationAboutFunction(1);
 			setIDprototypeOrImplementationFunction("Main");
 			//print_TABLE_DES_FONCTION() ;
+			reinitDeclaGlobale();
 			changeMode();//on passe en mode fonction
 			initParametreForNewfunction();
 			setTailleTypeRetourFonction(0);
@@ -682,7 +683,7 @@ ParamAppel :
 		ajouter_parametreAPPEL($1.typage_var);		 
 		CALL_PARAMETERS_ASM($1.adresse, $1.relative_ou_absolue,1);
 	} SuiteParamAppel
-	|;//TODO GERER LE CAS OU LES PARAMETRES SONT VIDES POUR AJOUTER CREER LE APB 
+	|{ CALL_PARAMETERS_ASM_WITHOUT_AARGUMENT() ; };//TODO GERER LE CAS OU LES PARAMETRES SONT VIDES POUR AJOUTER CREER LE APB 
 
 SuiteParamAppel : 
 	tVIR Expression

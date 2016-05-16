@@ -22,6 +22,7 @@ int declaration_asm(char * nom_var,int type_de_la_var)
 
 int declaration_affectation_asm( char * nom_var,int constante ,int dollar_relative_ou_absolue , int dollar_addr,int type_de_la_var)
 {
+	//printf("==========adresse %d %d \n", dollar_addr,dollar_relative_ou_absolue);
 	if (ajouter_Var(nom_var,type_de_la_var,0,constante )==-1)
 	{
 		return -1 ; //pas reussi 
@@ -61,7 +62,7 @@ int declaration_affectation_asm( char * nom_var,int constante ,int dollar_relati
 				printf( "COP @@%d @%d\n",var,dollar_addr);
 			} else if  (dollar_relative_ou_absolue==1 && abs_rel==1)
 			{
-				printf("==================\n");
+				//printf("==================\n");
 				printf( "COP @%d @%d\n",var,dollar_addr);
 			}
 		}else
@@ -464,6 +465,13 @@ void CALL_PARAMETERS_ASM(int dollar_addr , int dollar_relative_ou_absolue,int fi
 	}
 	incrementerPC();
 	depilert(&type,&abs_rel,&typage);
+}
+
+void CALL_PARAMETERS_ASM_WITHOUT_AARGUMENT()
+{
+	
+		printf("APB %d\n",length_table_symbole() );// pour sauvegarder les variables locales
+		incrementerPC();
 }
 
 int VERIFICATION_AND_CALL_GENERATION_ASM()

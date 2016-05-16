@@ -55,6 +55,6 @@ void RETURN_ASM (int dollar_addr, int dollar_relative_ou_absolue,int dollar_typa
 //void APPEL_FONCTION_IN_EXPRESSION_ASM();
 
 void PushResultFunction();
-
+void CALL_PARAMETERS_ASM_WITHOUT_AARGUMENT() ;
 
 #endif 
