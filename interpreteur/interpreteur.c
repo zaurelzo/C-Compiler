@@ -227,19 +227,21 @@ int  printVarLocal(int contexte,char *  name )
 int  printVarGlobale(char * name ) 
 {
 	int i, j ;
+	//printf(" funnction call \n");
 	name[strlen(name)-1]='\0';
 	for (j = 0 ;j<indTabDebugInfo;j++)
 	{
 		if (strcmp(tab_DebugInfo[j].nom_fonction,"global")==0)
 		{
+			//printf("FIND \n");
 			//printf("========nom correcte and nb locale %d and name %s \n",tab_DebugInfo[0].nbLocales,name);
 			for (i = 0; i< tab_DebugInfo[j].nbLocales;i++)
 			{
 				//printf("%s",name);
-				//printf("-----------length de tab : %d and name %d \n",strlen(tab_DebugInfo[0].tab_nom_var[i]),strlen(name));
+				//printf("-----------length de tab : %d and name %d \n",strlen(tab_DebugInfo[j].tab_nom_var[i]),strlen(name));
 				if (strcmp(tab_DebugInfo[j].tab_nom_var[i],name)==0)
 				{
-					//printf("GLOBAL %s : %d\n",name,Tab_Mem_data[0].valeur);
+					printf("GLOBAL %s : %d\n",name,Tab_Mem_data[0].valeur);
 					return 0 ;
 				}/* else 
 				{

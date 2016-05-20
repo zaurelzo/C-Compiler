@@ -1,4 +1,4 @@
-int global;
+int global=8;
 
 int fonct(int a , int b )
 {
