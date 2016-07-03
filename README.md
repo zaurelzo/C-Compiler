@@ -9,6 +9,7 @@ One of the Most interesting project that I have done. The main goal was to desig
 
 
 ## To compile the compiler
+```javascript
   cd compilateur
   ./compile_compilateur
 
