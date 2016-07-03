@@ -9,14 +9,17 @@ One of the Most interesting project that I have done. The main goal was to desig
 
 
 ## To compile the compiler
-```javascript
+```bash
   cd compilateur
   ./compile_compilateur
+```
 
 ## To compile The interpreter
+```bash
   cd interpreteur
   ./compile	
-  
+```
+
 ## To run a default test case or run your own test case
   
 
