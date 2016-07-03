@@ -28,8 +28,8 @@ One of the Most interesting project that I have done. The main goal was to desig
     cd compilateur
     ./hakunaMatata ../dossiertest/nameOfTestCaseFile.c ../dossiertest/nameOfAnOutputFile
   ```
-  the output file name will contain the assembly code. you may want to bee sure that your code is doing what you have expected.
-  So you should run the assemby code with the interpreter. TO do that: 
+  the output file will contain the assembly code. you may want to bee sure that your code is doing what you have expected.
+  So you should run the assemby code with the interpreter. To do that: 
   
   ```bash
     cd interpreteur
