@@ -37,11 +37,13 @@ One of the Most interesting project that I have done. The main goal was to desig
   ```
   We have also added a debug mode in the interpreter. To interpret the code with the debug mode:
     ```bash
-    cd interpreteur
-    ./interpreteur -d ../dossiertest/nameOfAnOutputFile
+        cd interpreteur
+        ./interpreteur -d ../dossiertest/nameOfAnOutputFile
     ```
   
   For the moment, you have 3 commands in the debug mode:
     * printvar nameOfLocalVariable  
-    * printgl nameOfGlobalVariable 
+    
+    * printgl nameOfGlobalVariable
+    
     * Press the ENTER key to run the code step by step
