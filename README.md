@@ -1,5 +1,5 @@
 # Projet_systeme_info
-compiler with lex and yacc 
+Yet an other compiler with lex and yacc. 
 
 Authors:
  * Abdillah Ahamada
@@ -14,7 +14,7 @@ One of the Most interesting project that I have done. The main goal was to desig
   ./compile_compilateur
 ```
 
-## To compile The interpreter
+## To compile the interpreter
 ```bash
   cd interpreteur
   ./compile	
@@ -40,11 +40,3 @@ One of the Most interesting project that I have done. The main goal was to desig
     cd interpreteur
     ../interpreteur -d ../dossiertest/nameOfAnOutputFile
   ```
-  
-  
-  
-
-  
-
-  
-  
