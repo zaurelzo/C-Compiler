@@ -21,14 +21,14 @@ One of the Most interesting project that I have done. The main goal was to desig
 ```
 
 ## To run a test case
-  write the test case in the folder dossierTest.
-  to compile the test case(ie generate the assembly code of your test case ).
+  Write the test case in the folder dossierTest.
+  To compile the test case(ie generate the assembly code of your test case ).
   
   ```bash
     cd compilateur
     ./hakunaMatata ../dossiertest/nameOfTestCaseFile.c ../dossiertest/nameOfAnOutputFile
   ```
-  the output file will contain the assembly code. you may want to bee sure that your code is doing what you have expected.
+  The output file will contain the assembly code. you may want to bee sure that your code is doing what you have expected.
   So you should run the assemby code with the interpreter. To do that: 
   
   ```bash
