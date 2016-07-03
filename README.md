@@ -22,13 +22,12 @@ One of the Most interesting project that I have done. The main goal was to desig
 
 ## To run a test case
   write the test case in the folder dossierTest
-  to compile the test case(ie generate the assembly code of your example)
+  to compile the test case(ie generate the assembly code of your test case )
   
   ```bash
     cd compilateur
     ./hakunaMatata ../dossiertest/nameOfTestCaseFile.c ../dossiertest/nameOfAnOutputFile
-    ```
-
+  ```
   the output file name will contain the assembly code
   
   
