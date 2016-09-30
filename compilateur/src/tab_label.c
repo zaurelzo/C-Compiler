@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "tab_label.h"
+#include "../head/tab_label.h"
 
 
  int indice = 0; 

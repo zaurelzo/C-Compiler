@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "tab_symb.h"
-#include "gestion_des_fonctions.h"
+#include "../head/tab_symb.h"
+#include "../head/gestion_des_fonctions.h"
 
 
 int ind = 0; 

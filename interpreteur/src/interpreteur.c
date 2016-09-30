@@ -1,4 +1,4 @@
-#include "interpreteur.h"
+#include "../head/interpreteur.h"
 
 int PC; //global pour le compteur courant d'instruction
 

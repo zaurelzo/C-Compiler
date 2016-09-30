@@ -1,4 +1,4 @@
-#include "gestion_des_fonctions.h"
+#include "../head/gestion_des_fonctions.h"
 
  int indiceNombreDefonctionDeclare =0 ; 
 int indTableDesParametres = 0 ;

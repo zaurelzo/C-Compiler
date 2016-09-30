@@ -1,6 +1,6 @@
-#include "asm.h"
-#include "tab_symb.h"
-#include "tab_label.h"
+#include "../head/asm.h"
+#include "../head/tab_symb.h"
+#include "../head/tab_label.h"
 
 
 

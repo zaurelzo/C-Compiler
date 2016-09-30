@@ -2,5 +2,5 @@
 #mv fichier_table_des_labels interpreteur
 #mv fichier_table_des_symbols interpreteur
 #cd interpreteur
-gcc main.c interpreteur.c ../compilateur/tab_label.c	../compilateur/gestion_des_fonctions.c  ../compilateur/tab_symb.c -o interpreteur
+gcc src/main.c src/interpreteur.c ../compilateur/src/tab_label.c	../compilateur/src/gestion_des_fonctions.c  ../compilateur/src/tab_symb.c -o interpreteur
 

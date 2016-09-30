@@ -1,12 +1,12 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
-#include "tab_symb.h"
-#include "tab_label.h"
-#include "deuxieme_passe.h"
-#include "asm.h"
-#include "asm_j.h"
-#include "gestion_des_fonctions.h"
+#include "head/tab_symb.h"
+#include "head/tab_label.h"
+#include "head/deuxieme_passe.h"
+#include "head/asm.h"
+#include "head/asm_j.h"
+#include "head/gestion_des_fonctions.h"
 %}
 
 

@@ -24,7 +24,7 @@ fi
 #cat $c
 
 #on prépare l'exe pour la deuxieme passe 
-gcc main.c deuxieme_passe.c gestion_des_fonctions.c tab_label.c tab_symb.c -o deux_passe
+gcc src/main.c src/deuxieme_passe.c src/gestion_des_fonctions.c src/tab_label.c src/tab_symb.c -o deux_passe
 
 ./deux_passe $c $2 #on fait la deuxieme passe avec entrée le fichier avec labels, en sortie le fichier sans labels
 cat $2

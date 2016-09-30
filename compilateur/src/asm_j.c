@@ -1,5 +1,5 @@
-#include "asm_j.h"
-#include "tab_symb.h"
+#include "../head/asm_j.h"
+#include "../head/tab_symb.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>

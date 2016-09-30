@@ -1,14 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "tab_symb.h"
+#include "../head/tab_symb.h"
 //<<<<<<< HEAD
-#include "tab_label.h"
-#include "deuxieme_passe.h"
+#include "../head/tab_label.h"
+#include "../head/deuxieme_passe.h"
 //=======
 //#include "tab_label.h"
 //#include "deuxieme_passe.h"
 //>>>>>>> 3c65610403ddc4ee5af857ed36986294dc93881a
-#include "gestion_des_fonctions.h"
+#include "../head/gestion_des_fonctions.h"
 
 int main(int argc, char const *argv[])
 {
