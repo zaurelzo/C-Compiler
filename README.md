@@ -1,4 +1,4 @@
-# Projet_systeme_info
+# C-Compiler
 Yet an other compiler with lex and yacc. 
 
 Authors:
